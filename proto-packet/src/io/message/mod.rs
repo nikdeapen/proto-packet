@@ -1,1 +1,3 @@
-mod field_header;
+pub use fields::*;
+
+mod fields;
