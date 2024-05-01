@@ -1,6 +1,6 @@
 pub use common::*;
-pub use var::*;
 pub use message::*;
+pub use var::*;
 
 mod common;
 mod message;
