@@ -1,6 +1,8 @@
+use std::fmt::{Display, Formatter};
+use std::str::FromStr;
+
 use crate::var::type_tag::TypeTag;
 use crate::WithName;
-use std::fmt::{Display, Formatter};
 
 /// A primitive type.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
@@ -45,5 +47,20 @@ impl PrimitiveType {
 impl Display for PrimitiveType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.name())
+    }
+}
+
+impl FromStr for PrimitiveType {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "u8" => Self::UnsignedInt8,
+            "u16" => Self::UnsignedInt16,
+            "u32" => Self::UnsignedInt32,
+            "u64" => Self::UnsignedInt64,
+            "u128" => Self::UnsignedInt128,
+            _ => return Err(()),
+        })
     }
 }

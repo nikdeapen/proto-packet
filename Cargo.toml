@@ -4,4 +4,5 @@ members = [
     "proto-packet",
     "proto-packet-gen",
     "proto-packet-tree",
+    "proto-packet-parse",
 ]

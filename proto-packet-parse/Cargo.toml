@@ -1,0 +1,14 @@
+[package]
+name = "proto-packet-parse"
+version = "0.0.0"
+description = "This library provides the ProtoPacket schema tree."
+readme = "README.md"
+repository = "https://github.com/nikdeapen/proto-packet"
+homepage = "https://github.com/nikdeapen/proto-packet/proto-packet-parse"
+authors = ["Nik Deapen <nik@deapen.com>"]
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+lex = { git = "https://github.com/nikdeapen/lex" }
+proto-packet-tree = { path = "../proto-packet-tree" }
