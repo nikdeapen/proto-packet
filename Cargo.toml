@@ -2,5 +2,6 @@
 resolver = "2"
 members = [
     "proto-packet",
+    "proto-packet-gen",
     "proto-packet-tree",
 ]

@@ -1,0 +1,17 @@
+[package]
+name = "proto-packet-gen"
+version = "0.0.0"
+description = "This library provides code generation for ProtoPacket."
+readme = "README.md"
+repository = "https://github.com/nikdeapen/proto-packet"
+homepage = "https://github.com/nikdeapen/proto-packet/proto-packet-gen"
+authors = ["Nik Deapen <nik@deapen.com>"]
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+proto-packet-tree = { path = "../proto-packet-tree" }
+code-gen = { git = "https://github.com/nikdeapen/code-gen", optional = true }
+
+[features]
+rust = ["code-gen/rust"]
