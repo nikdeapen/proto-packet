@@ -2,7 +2,7 @@ use lex::{exact, exact_optional, symbol, whitespace_optional, LexResult, Token};
 
 use proto_packet_tree::Message;
 
-use crate::{message_field, white, white_block};
+use crate::{message_field, white, white_block, white_optional};
 
 /// Parses an optional message.
 /// - Returns `None` when the next non-whitespace token is not `message`.
@@ -21,6 +21,7 @@ pub fn message(token: Token) -> LexResult<Option<Message>, ()> {
             token = t;
         }
 
+        let (_whitespace, token) = white_optional(token);
         let (_close_curly, token) = exact(token, "}")?;
 
         Ok((Some(message), token))

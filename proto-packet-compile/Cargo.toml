@@ -10,6 +10,6 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
-proto-packet-gen = { path = "../proto-packet-gen" }
+proto-packet-gen = { path = "../proto-packet-gen", features = ["rust"] }
 proto-packet-parse = { path = "../proto-packet-parse" }
 proto-packet-tree = { path = "../proto-packet-tree" }
