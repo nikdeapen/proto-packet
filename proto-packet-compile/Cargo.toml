@@ -1,0 +1,15 @@
+[package]
+name = "proto-packet-compile"
+version = "0.0.0"
+description = "This library provides code generation for ProtoPacket."
+readme = "README.md"
+repository = "https://github.com/nikdeapen/proto-packet"
+homepage = "https://github.com/nikdeapen/proto-packet/proto-packet-compile"
+authors = ["Nik Deapen <nik@deapen.com>"]
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+proto-packet-gen = { path = "../proto-packet-gen" }
+proto-packet-parse = { path = "../proto-packet-parse" }
+proto-packet-tree = { path = "../proto-packet-tree" }
