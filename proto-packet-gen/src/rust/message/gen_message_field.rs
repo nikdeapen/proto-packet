@@ -1,6 +1,6 @@
 use code_gen::rust::{
-    gen_builder_copy, gen_getter_copy, gen_setter_copy, Function, ImplBlock, TypeTag as RustType,
-    WithComments, WithFunctions,
+    gen_builder, gen_getter_copy, gen_getter_field_exp, gen_setter_copy, gen_setter_mem_replace,
+    Function, ImplBlock, TypeTag as RustType, WithComments, WithFunctions,
 };
 
 use proto_packet_tree::{Message, MessageField, WithName, WithTypeTag};
@@ -59,15 +59,17 @@ impl<'a> GenMessageField<'a> {
 
     /// Generates the getter functions for the field.
     fn gen_getters(&self, b: &mut ImplBlock, field: &MessageField) -> Result<(), GenError> {
-        if self.typing.is_copy(field.type_tag())? {
-            let name: String = self.naming.field_name(field.name())?;
-            let tag: RustType = self.typing.field_type(field.type_tag())?.to_option();
-            let function: Function = gen_getter_copy(name, tag)
-                .with_comment(format!("Gets the field: `{}`.", field.name()));
-            b.add_function(function);
+        let name: String = self.naming.field_name(field.name())?;
+        let tag: RustType = self.typing.borrowed_type(field.type_tag())?.to_option();
+        let comment: String = format!("Gets the field: `{}`.", field.name());
+        let function: Function = if self.typing.is_copy(field.type_tag())? {
+            gen_getter_copy(name, tag)
         } else {
-            unreachable!()
-        }
+            gen_getter_field_exp(name, tag, |field_name| {
+                format!("self.{}.as_deref()", field_name)
+            })
+        };
+        b.add_function(function.with_comment(comment));
         Ok(())
     }
 }
@@ -77,17 +79,18 @@ impl<'a> GenMessageField<'a> {
 
     /// Generates the setter functions for the field.
     fn gen_setters(&self, b: &mut ImplBlock, field: &MessageField) -> Result<(), GenError> {
-        if self.typing.is_copy(field.type_tag())? {
-            let name: String = self.naming.field_name(field.name())?;
-            let tag: RustType = self.typing.field_type(field.type_tag())?.to_option();
-            let function: Function = gen_setter_copy(name, tag).with_comment(format!(
-                "Sets the field: `{}`. Returns the previous value.",
-                field.name()
-            ));
-            b.add_function(function);
+        let field_name: String = self.naming.field_name(field.name())?;
+        let rust_type: RustType = self.typing.field_type(field.type_tag())?.to_option();
+        let comment: String = format!(
+            "Sets the field: `{}`. Returns the previous value.",
+            field.name()
+        );
+        let function: Function = if self.typing.is_copy(field.type_tag())? {
+            gen_setter_copy(field_name, rust_type)
         } else {
-            unreachable!()
-        }
+            gen_setter_mem_replace(field_name, rust_type)
+        };
+        b.add_function(function.with_comment(comment));
         Ok(())
     }
 }
@@ -97,17 +100,13 @@ impl<'a> GenMessageField<'a> {
 
     /// Generates the builder functions for the field.
     fn gen_builders(&self, b: &mut ImplBlock, field: &MessageField) -> Result<(), GenError> {
-        if self.typing.is_copy(field.type_tag())? {
-            let name: String = self.naming.field_name(field.name())?;
-            let tag: RustType = self.typing.field_type(field.type_tag())?.to_option();
-            let function: Function = gen_builder_copy(name, tag).with_comment(format!(
-                "Builds the field: `{}`. Returns the struct itself.",
-                field.name()
-            ));
-            b.add_function(function);
-        } else {
-            unreachable!()
-        }
+        let name: String = self.naming.field_name(field.name())?;
+        let tag: RustType = self.typing.field_type(field.type_tag())?.to_option();
+        let function: Function = gen_builder(name, tag).with_comment(format!(
+            "Builds the field: `{}`. Returns the struct itself.",
+            field.name()
+        ));
+        b.add_function(function);
         Ok(())
     }
 }

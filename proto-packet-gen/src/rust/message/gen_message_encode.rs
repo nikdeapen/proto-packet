@@ -5,7 +5,9 @@ use code_gen::rust::{
 };
 use code_gen::{Literal, Semi, WithStatements};
 
-use proto_packet_tree::{Message, MessageField, PrimitiveType, TypeTag, WithName, WithTypeTag};
+use proto_packet_tree::{
+    Message, MessageField, PrimitiveType, SpecialType, TypeTag, WithName, WithTypeTag,
+};
 
 use crate::rust::{Naming, Typing};
 use crate::GenError;
@@ -30,43 +32,9 @@ impl<'a> GenMessageEncode<'a> {
 }
 
 impl<'a> GenMessageEncode<'a> {
-    //! EncodedLength
+    //! Field Expression
 
-    /// Generates the impl block for implementing `EncodedLen`.
-    pub fn gen_impl_encoded_len(&self, message: &Message) -> Result<ImplBlock, GenError> {
-        let mut block: ImplBlock = self.naming.type_name(message.name())?.into();
-        block.set_for_trait("EncodedLen");
-
-        let signature: Signature = Signature::from("encoded_len")
-            .with_receiver(Receiver::Borrowed)
-            .with_result(RustPrimitive::UnsignedIntSize);
-        let mut function: Function = Function::from(signature);
-        function.add_statement(Semi::from("let mut encoded_len: usize = 0"));
-
-        for field in message.fields() {
-            function.add_statement(self.gen_encoded_len_statement(field)?);
-        }
-
-        function.add_expression_statement(Literal::from("encoded_len"));
-        block.add_function(function);
-
-        Ok(block)
-    }
-
-    fn gen_encoded_len_statement(&self, field: &MessageField) -> Result<Semi<Literal>, GenError> {
-        if let Some(field_number) = field.field_number() {
-            let field_exp: String =
-                self.gen_field_exp(field.name(), field.type_tag(), field_number)?;
-            // todo -- remove literal
-            Ok(Semi::from(Literal::from(format!(
-                "encoded_len += {}.encoded_len()",
-                field_exp
-            ))))
-        } else {
-            unimplemented!("required fields not yet supported")
-        }
-    }
-
+    /// Generates the field expression for the field.
     fn gen_field_exp(
         &self,
         declared_name: &str,
@@ -95,6 +63,9 @@ impl<'a> GenMessageEncode<'a> {
                     self.field_exp_int(declared_name, false, 128, Some(false), field_number)
                 }
             },
+            TypeTag::Special(special) => match special {
+                SpecialType::String => self.field_exp_string(declared_name, field_number),
+            },
         }
     }
 
@@ -121,6 +92,56 @@ impl<'a> GenMessageEncode<'a> {
             )
         };
         Ok(result)
+    }
+
+    fn field_exp_string(&self, declared_name: &str, field_number: u32) -> Result<String, GenError> {
+        let field_name: String = self.naming.field_name(declared_name)?;
+        let result: String = format!(
+            "BytesField::new({}, self.{}.as_deref())",
+            field_number, field_name
+        );
+        Ok(result)
+    }
+}
+
+impl<'a> GenMessageEncode<'a> {
+    //! EncodedLength
+
+    /// Generates the impl block for implementing `EncodedLen`.
+    pub fn gen_impl_encoded_len(&self, message: &Message) -> Result<ImplBlock, GenError> {
+        let mut block: ImplBlock = self.naming.type_name(message.name())?.into();
+        block.set_for_trait("EncodedLen");
+
+        let signature: Signature = Signature::from("encoded_len")
+            .with_receiver(Receiver::Borrowed)
+            .with_result(RustPrimitive::UnsignedIntSize);
+        let mut function: Function = Function::from(signature);
+        function.add_statement(Semi::from("let mut encoded_len: usize = 0"));
+
+        for field in message.fields() {
+            function.add_statement(self.gen_encoded_len_statement(field)?);
+        }
+
+        function.add_expression_statement(Literal::from("encoded_len"));
+        block.add_function(function);
+
+        Ok(block)
+    }
+
+    /// Generates the encoded length statement for the field.
+    /// todo -- optimize literal allocation
+    fn gen_encoded_len_statement(&self, field: &MessageField) -> Result<Semi<Literal>, GenError> {
+        if let Some(field_number) = field.field_number() {
+            let field_exp: String =
+                self.gen_field_exp(field.name(), field.type_tag(), field_number)?;
+            // todo -- remove literal
+            Ok(Semi::from(Literal::from(format!(
+                "encoded_len += {}.encoded_len()",
+                field_exp
+            ))))
+        } else {
+            unimplemented!("required fields not yet supported")
+        }
     }
 }
 

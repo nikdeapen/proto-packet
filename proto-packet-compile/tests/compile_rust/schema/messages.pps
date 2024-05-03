@@ -16,3 +16,10 @@ message UnsignedInts {
     // The fifth field.
     five u128 = 5;
 }
+
+// A message with special field types.
+message Specials {
+
+    // A string typed field.
+    one string = 1;
+}
