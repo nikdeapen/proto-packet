@@ -67,6 +67,7 @@ impl<'a> GenMessageEncode<'a> {
                 SpecialType::String => self.field_exp_string(declared_name, field_number),
                 SpecialType::UniqueIdentifier => self.field_exp_uuid(declared_name, field_number),
             },
+            TypeTag::Named(_name) => self.field_exp_named(declared_name, field_number),
         }
     }
 
@@ -110,6 +111,12 @@ impl<'a> GenMessageEncode<'a> {
             "UniqueIdentifierField::new({}, self.{})",
             field_number, field_name
         );
+        Ok(result)
+    }
+
+    fn field_exp_named(&self, declared_name: &str, field_number: u32) -> Result<String, GenError> {
+        let field_name: String = self.naming.field_name(declared_name)?;
+        let result: String = format!("CloneField::new({}, self.{})", field_number, field_name);
         Ok(result)
     }
 }

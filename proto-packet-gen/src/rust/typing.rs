@@ -27,6 +27,7 @@ impl Typing {
                 SpecialType::String => false,
                 SpecialType::UniqueIdentifier => true,
             },
+            TypeTag::Named(_) => false,
         };
         Ok(is_copy)
     }
@@ -53,6 +54,7 @@ impl Typing {
                 SpecialType::String => Ok(RustType::Named("String".to_string())),
                 SpecialType::UniqueIdentifier => Ok(RustType::Named("uuid::Uuid".to_string())),
             },
+            TypeTag::Named(name) => Ok(RustType::Named(name.to_string())),
         }
     }
 
@@ -91,6 +93,9 @@ impl Typing {
                 }
                 SpecialType::UniqueIdentifier => RustType::Named("uuid::Uuid".to_string()),
             },
+            TypeTag::Named(name) => {
+                RustType::Named(name.to_string()).to_ref_type(Reference::default())
+            }
         };
         Ok(rust_type)
     }

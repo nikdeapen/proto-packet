@@ -18,11 +18,18 @@ message UnsignedInts {
 }
 
 // A message with special field types.
-message Specials {
+message SpecialTypes {
 
     // A string typed field.
     one string = 1;
 
     // A UUID typed field.
     two uuid = 2;
+}
+
+// A message with named types.
+message NamedTypes {
+
+    // A sub-message with unsigned integers.
+    unsigned_ints UnsignedInts = 1;
 }

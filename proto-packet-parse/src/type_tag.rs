@@ -12,7 +12,7 @@ pub fn type_tag(token: Token) -> LexResult<TypeTag, ()> {
         } else if let Ok(special) = SpecialType::from_str(symbol.value()) {
             Ok((special.to_type_tag(), token))
         } else {
-            Err(symbol.into())
+            Ok((TypeTag::from(symbol.value()), token))
         }
     } else {
         Err(token.into())
