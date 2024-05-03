@@ -1,15 +1,17 @@
 use std::str::FromStr;
 
-use lex::{exact, exact_optional, symbol, symbol_optional, LexError, LexResult, Token};
+use lex::{
+    block_comments, exact, exact_optional, symbol, symbol_optional, LexError, LexResult, Token,
+};
 
-use proto_packet_tree::MessageField;
+use proto_packet_tree::{MessageField, WithComments};
 
-use crate::{type_tag, white, white_block, white_optional};
+use crate::{type_tag, white, white_block, white_optional, LINE_COMMENT_DELIMITER};
 
 /// Parses an optional message field.
 /// - Returns `None` if the next non-whitespace token is not a symbol.
 pub fn message_field(token: Token) -> LexResult<Option<MessageField>, ()> {
-    let (_whitespace, rest) = white_block(token);
+    let (comments, rest) = white_block(token);
     if let (Some(name), token) = symbol_optional(rest) {
         let (_whitespace, token) = white(token)?;
         let (type_tag, token) = type_tag(token)?;
@@ -23,6 +25,10 @@ pub fn message_field(token: Token) -> LexResult<Option<MessageField>, ()> {
 
         let (_whitespace, token) = white_optional(token);
         let (_semi_colon, token) = exact(token, ";")?;
+
+        block_comments(comments, LINE_COMMENT_DELIMITER, |comment| {
+            field.add_comment(comment)
+        });
 
         Ok((Some(field), token))
     } else {

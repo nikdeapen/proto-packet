@@ -1,13 +1,13 @@
-use lex::{exact, exact_optional, symbol, whitespace_optional, LexResult, Token};
+use lex::{block_comments, exact, exact_optional, symbol, whitespace_optional, LexResult, Token};
 
-use proto_packet_tree::Message;
+use proto_packet_tree::{Message, WithComments};
 
-use crate::{message_field, white, white_block, white_optional};
+use crate::{message_field, white, white_block, white_optional, LINE_COMMENT_DELIMITER};
 
 /// Parses an optional message.
 /// - Returns `None` when the next non-whitespace token is not `message`.
 pub fn message(token: Token) -> LexResult<Option<Message>, ()> {
-    let (_white_block, rest) = white_block(token);
+    let (comments, rest) = white_block(token);
     if let (Some(_message), token) = exact_optional(rest, "message") {
         let (_white, token) = white(token)?;
         let (name, token) = symbol(token)?;
@@ -23,6 +23,10 @@ pub fn message(token: Token) -> LexResult<Option<Message>, ()> {
 
         let (_whitespace, token) = white_optional(token);
         let (_close_curly, token) = exact(token, "}")?;
+
+        block_comments(comments, LINE_COMMENT_DELIMITER, |comment| {
+            message.add_comment(comment)
+        });
 
         Ok((Some(message), token))
     } else {
