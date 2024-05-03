@@ -65,6 +65,7 @@ impl<'a> GenMessageEncode<'a> {
             },
             TypeTag::Special(special) => match special {
                 SpecialType::String => self.field_exp_string(declared_name, field_number),
+                SpecialType::UniqueIdentifier => self.field_exp_uuid(declared_name, field_number),
             },
         }
     }
@@ -98,6 +99,15 @@ impl<'a> GenMessageEncode<'a> {
         let field_name: String = self.naming.field_name(declared_name)?;
         let result: String = format!(
             "BytesField::new({}, self.{}.as_deref())",
+            field_number, field_name
+        );
+        Ok(result)
+    }
+
+    fn field_exp_uuid(&self, declared_name: &str, field_number: u32) -> Result<String, GenError> {
+        let field_name: String = self.naming.field_name(declared_name)?;
+        let result: String = format!(
+            "UniqueIdentifierField::new({}, self.{})",
             field_number, field_name
         );
         Ok(result)

@@ -25,6 +25,7 @@ impl Typing {
             },
             TypeTag::Special(special) => match special {
                 SpecialType::String => false,
+                SpecialType::UniqueIdentifier => true,
             },
         };
         Ok(is_copy)
@@ -50,6 +51,7 @@ impl Typing {
             TypeTag::Primitive(primitive) => self.primitive_field_type(*primitive),
             TypeTag::Special(special) => match special {
                 SpecialType::String => Ok(RustType::Named("String".to_string())),
+                SpecialType::UniqueIdentifier => Ok(RustType::Named("uuid::Uuid".to_string())),
             },
         }
     }
@@ -87,6 +89,7 @@ impl Typing {
                 SpecialType::String => {
                     RustType::Named("str".to_string()).to_ref_type(Reference::default())
                 }
+                SpecialType::UniqueIdentifier => RustType::Named("uuid::Uuid".to_string()),
             },
         };
         Ok(rust_type)

@@ -22,4 +22,7 @@ message Specials {
 
     // A string typed field.
     one string = 1;
+
+    // A UUID typed field.
+    two uuid = 2;
 }

@@ -9,12 +9,16 @@ use crate::WithName;
 pub enum SpecialType {
     /// A string type.
     String,
+
+    /// A 16-byte UUID type.
+    UniqueIdentifier,
 }
 
 impl WithName for SpecialType {
     fn name(&self) -> &'static str {
         match self {
             Self::String => "string",
+            Self::UniqueIdentifier => "uuid",
         }
     }
 }
@@ -40,6 +44,7 @@ impl FromStr for SpecialType {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(match s {
             "string" => Self::String,
+            "uuid" => Self::UniqueIdentifier,
             _ => return Err(()),
         })
     }
