@@ -10,4 +10,6 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+proto-packet = { workspace = true }
+
 custom-string = { workspace = true }

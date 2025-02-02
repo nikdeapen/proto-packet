@@ -6,4 +6,6 @@ members = [
 ]
 
 [workspace.dependencies]
+proto-packet = { path = "proto-packet" }
+
 custom-string = { git = "https://github.com/nikdeapen/custom-string" }
