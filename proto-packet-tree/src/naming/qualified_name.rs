@@ -1,6 +1,6 @@
 use custom_string::custom_string;
 
-use crate::{validate_mod_path, validate_type_name};
+use crate::{validate_mod_path, validate_type_name, TypeNameRef};
 
 // An optional mod path with a type name. (ex: the.mod.path.TheTypeName or TheTypeName)
 custom_string!(
@@ -16,6 +16,19 @@ pub fn validate_qualified_name(qualified_name: &str) -> Result<(), &'static str>
         validate_type_name(&qualified_name[(last_dot + 1)..])
     } else {
         validate_type_name(qualified_name)
+    }
+}
+
+impl QualifiedName {
+    //! Properties
+
+    /// Gets the type name.
+    pub fn type_name(&self) -> TypeNameRef {
+        if let Some(dot) = self.value.as_bytes().iter().position(|c| *c == b'.') {
+            unsafe { TypeNameRef::new_unchecked(&self.value()[dot + 1..]) }
+        } else {
+            unsafe { TypeNameRef::new_unchecked(self.value()) }
+        }
     }
 }
 
