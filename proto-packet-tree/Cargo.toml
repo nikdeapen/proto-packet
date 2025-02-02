@@ -13,3 +13,4 @@ license = "MIT"
 proto-packet = { workspace = true }
 
 custom-string = { workspace = true }
+log = "0.4.25"
