@@ -10,6 +10,7 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+proto-packet-compile = { workspace = true }
 proto-packet-gen = { workspace = true, features = ["rust"] }
 proto-packet-parse = { workspace = true }
 proto-packet-tree = { workspace = true }

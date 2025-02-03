@@ -1,22 +1,21 @@
+use clerr::Report;
 use clerr::Severity::Info;
-use clerr::{Code, PrimaryEntry, Report};
 use colored::Colorize;
 use file_storage::{FilePath, FolderPath};
 use lex::{Config, ParseContext, Token};
 
-use proto_packet_gen::rust::GenRust;
 use proto_packet_gen::{Generated, Generator};
 use proto_packet_tree::{ModPath, Project};
 use proto_packet_validate::validate_schema_file;
 
-use crate::args::file_arg;
+use crate::args::{create_generator, file_arg};
 use crate::io::file_content;
 
 pub fn generate(lang: String, file: String) -> Result<(), Report> {
-    let generator: Box<dyn Generator> = generator(lang.as_str())?;
+    let generator: Box<dyn Generator> = create_generator(lang.as_str())?;
     let file: FilePath = file_arg(file)?;
 
-    println!("Generating: {}", file);
+    println!("Generating ({}): {}", lang, file);
 
     let content: String = file_content(&file)?;
     let token: Token = Token::from(content.as_str());
@@ -48,16 +47,4 @@ pub fn generate(lang: String, file: String) -> Result<(), Report> {
             Err(e.to_error().report(file.as_str(), context, token))
         }
     }
-}
-
-fn generator(lang: &str) -> Result<Box<dyn Generator>, Report> {
-    Ok(match lang {
-        "rust" => Box::new(GenRust::default()),
-        _ => {
-            return Err(Report::new(PrimaryEntry::new(Code::error(
-                "CLI",
-                format!("unrecognized language: {}", lang),
-            ))))
-        }
-    })
 }

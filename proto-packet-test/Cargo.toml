@@ -1,0 +1,15 @@
+[package]
+name = "proto-packet-test"
+version = "0.0.0"
+description = "This crate aids in testing generated ProtoPacket Rust code."
+readme = "README.md"
+repository = "https://github.com/nikdeapen/proto-packet"
+homepage = "https://github.com/nikdeapen/proto-packet/proto-packet-test"
+authors = ["Nik Deapen <nik@deapen.com>"]
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+proto-packet = { workspace = true }
+
+uuid = { workspace = true }

@@ -7,6 +7,7 @@ members = [
     "proto-packet-gen",
     "proto-packet-link",
     "proto-packet-parse",
+    "proto-packet-test",
     "proto-packet-tree",
     "proto-packet-validate",
 ]
@@ -28,3 +29,4 @@ lex = { git = "https://github.com/nikdeapen/lex" }
 
 clap = { version = "4.5.27", features = ["derive"] }
 colored = "3.0.0"
+uuid = "1.12.1"

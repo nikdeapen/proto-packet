@@ -11,6 +11,7 @@ impl GenRust {
     pub fn gen_message(&self, message: &Message) -> Source {
         let mut source: Source = Source::default();
 
+        source.add_statement(self.gen_message_imports());
         source.add_statement(self.gen_message_struct(message));
         source.add_statement(self.gen_message_impls(message));
         source.add_statement(self.gen_message_fields(message));

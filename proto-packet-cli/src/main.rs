@@ -15,9 +15,21 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    Parse { file: String },
-    Validate { file: String },
-    Gen { lang: String, file: String },
+    Parse {
+        file: String,
+    },
+    Validate {
+        file: String,
+    },
+    Gen {
+        lang: String,
+        file: String,
+    },
+    Compile {
+        lang: String,
+        source: String,
+        target: String,
+    },
 }
 
 fn main() {
@@ -33,5 +45,10 @@ fn run(cli: Cli) -> Result<(), Report> {
         Commands::Parse { file } => sub::parse(file),
         Commands::Validate { file } => sub::validate(file),
         Commands::Gen { lang, file } => sub::generate(lang, file),
+        Commands::Compile {
+            lang,
+            source,
+            target,
+        } => sub::compile(lang, source, target),
     }
 }

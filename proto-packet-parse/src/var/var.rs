@@ -1,7 +1,7 @@
 use lex::{ParseContext, Token};
 
-use crate::{parse_type_tag, ParseTypeTagError, TypeTagTree};
 use crate::ParseVarErrorReason::*;
+use crate::{parse_type_tag, ParseTypeTagError, TypeTagTree};
 
 #[derive(Debug)]
 pub struct VarTree<'a> {
