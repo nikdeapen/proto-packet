@@ -10,5 +10,8 @@ members = [
 proto-packet = { path = "proto-packet" }
 proto-packet-tree = { path = "proto-packet-tree" }
 
+clerr = { git = "https://github.com/nikdeapen/clerr" }
 custom-string = { git = "https://github.com/nikdeapen/custom-string" }
 lex = { git = "https://github.com/nikdeapen/lex" }
+
+colored = "3.0.0"
