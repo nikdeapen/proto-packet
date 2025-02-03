@@ -24,6 +24,7 @@ proto-packet-validate = { path = "proto-packet-validate" }
 clerr = { git = "https://github.com/nikdeapen/clerr" }
 code-gen = { git = "https://github.com/nikdeapen/code-gen" }
 custom-string = { git = "https://github.com/nikdeapen/custom-string" }
+enc = { git = "https://github.com/nikdeapen/enc", features = ["var-int"] }
 file-storage = { git = "https://github.com/nikdeapen/file-storage" }
 lex = { git = "https://github.com/nikdeapen/lex" }
 
