@@ -3,24 +3,15 @@ use file_storage::FolderPath;
 
 use proto_packet_tree::Project;
 
-use crate::rust::{Naming, Typing};
+use crate::rust::{Mods, Naming, Typing};
 use crate::{Generated, Generator};
 
 /// Responsible for generating code for Rust projects.
-#[derive(Debug)]
-#[allow(dead_code)]
+#[derive(Debug, Default)]
 pub struct GenRust {
     pub(crate) naming: Naming,
     pub(crate) typing: Typing,
-}
-
-impl Default for GenRust {
-    fn default() -> Self {
-        Self {
-            naming: Naming::default(),
-            typing: Typing::default(),
-        }
-    }
+    pub(crate) mods: Mods,
 }
 
 impl Generator for GenRust {
@@ -28,6 +19,8 @@ impl Generator for GenRust {
         let mut generated: Generated = Generated::from(target.clone());
 
         self.gen_type_dec_files(project, &mut generated)
+            .map_err(|e| e.to_report())?;
+        self.gen_mod_files(project, &mut generated)
             .map_err(|e| e.to_report())?;
 
         Ok(generated)
