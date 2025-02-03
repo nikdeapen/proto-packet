@@ -17,6 +17,7 @@ struct Cli {
 enum Commands {
     Parse { file: String },
     Validate { file: String },
+    Gen { lang: String, file: String },
 }
 
 fn main() {
@@ -31,5 +32,6 @@ fn run(cli: Cli) -> Result<(), Report> {
     match cli.command {
         Commands::Parse { file } => sub::parse(file),
         Commands::Validate { file } => sub::validate(file),
+        Commands::Gen { lang, file } => sub::generate(lang, file),
     }
 }

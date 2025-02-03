@@ -1,8 +1,9 @@
-use crate::args::file_arg;
-use crate::io::file_content;
 use clerr::Report;
 use file_storage::FilePath;
 use lex::{Config, ParseContext, Token};
+
+use crate::args::file_arg;
+use crate::io::file_content;
 
 pub fn parse(file: String) -> Result<(), Report> {
     let file: FilePath = file_arg(file)?;

@@ -1,9 +1,11 @@
-use crate::args::file_arg;
-use crate::io::file_content;
 use clerr::Report;
 use file_storage::FilePath;
 use lex::{Config, ParseContext, Token};
+
 use proto_packet_validate::validate_schema_file;
+
+use crate::args::file_arg;
+use crate::io::file_content;
 
 pub fn validate(file: String) -> Result<(), Report> {
     let file: FilePath = file_arg(file)?;
