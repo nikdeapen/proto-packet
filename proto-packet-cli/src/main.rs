@@ -16,6 +16,7 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     Parse { file: String },
+    Validate { file: String },
 }
 
 fn main() {
@@ -29,5 +30,6 @@ fn main() {
 fn run(cli: Cli) -> Result<(), Report> {
     match cli.command {
         Commands::Parse { file } => sub::parse(file),
+        Commands::Validate { file } => sub::validate(file),
     }
 }
