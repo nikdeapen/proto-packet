@@ -1,14 +1,14 @@
-use lex::{ParseContext, Token};
 use lex::parse::IntParser;
+use lex::{ParseContext, Token};
 
 use proto_packet::io::TagNumber;
 use proto_packet_tree::FieldNameRef;
 
-use crate::{
-    Error, ErrorInfo, expected_got_instead, MessageFieldTree, P_MESSAGE,
-    parse_message_field, ParseMessageFieldError,
-};
 use crate::ParseMessageErrorReason::*;
+use crate::{
+    expected_got_instead, parse_message_field, Error, ErrorInfo, MessageFieldTree,
+    ParseMessageFieldError, P_MESSAGE,
+};
 
 #[derive(Debug)]
 pub struct MessageTree<'a> {
