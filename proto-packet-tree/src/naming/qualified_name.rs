@@ -1,6 +1,6 @@
 use custom_string::custom_string;
 
-use crate::{validate_mod_path, validate_type_name, TypeNameRef};
+use crate::{validate_mod_path, validate_type_name, ModPathRef, TypeNameRef};
 
 // An optional mod path with a type name. (ex: the.mod.path.TheTypeName or TheTypeName)
 custom_string!(
@@ -21,6 +21,37 @@ pub fn validate_qualified_name(qualified_name: &str) -> Result<(), &'static str>
 
 impl QualifiedName {
     //! Properties
+
+    /// Gets the optional mod path.
+    pub fn mod_path(&self) -> Option<ModPathRef> {
+        if let Some(dot) = self.value.as_bytes().iter().position(|c| *c == b'.') {
+            Some(unsafe { ModPathRef::new_unchecked(&self.value()[..dot]) })
+        } else {
+            None
+        }
+    }
+
+    /// Gets the type name.
+    pub fn type_name(&self) -> TypeNameRef {
+        if let Some(dot) = self.value.as_bytes().iter().position(|c| *c == b'.') {
+            unsafe { TypeNameRef::new_unchecked(&self.value()[dot + 1..]) }
+        } else {
+            unsafe { TypeNameRef::new_unchecked(self.value()) }
+        }
+    }
+}
+
+impl<'a> QualifiedNameRef<'a> {
+    //! Properties
+
+    /// Gets the optional mod path.
+    pub fn mod_path(&self) -> Option<ModPathRef> {
+        if let Some(dot) = self.value.as_bytes().iter().position(|c| *c == b'.') {
+            Some(unsafe { ModPathRef::new_unchecked(&self.value()[..dot]) })
+        } else {
+            None
+        }
+    }
 
     /// Gets the type name.
     pub fn type_name(&self) -> TypeNameRef {
