@@ -1,7 +1,8 @@
+use enc::{DecodeFromRead, DecodeFromReadPrefix};
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
-use proto_packet::io::{TagNumber, WireType};
+use proto_packet::io::{FieldHeader, TagNumber, WireType};
 use proto_packet::{Message, Packet};
-use std::io::{Error, Write};
+use std::io::{Error, Read, Write};
 
 /// // A message with special types.
 /// message SpecialTypes {
@@ -165,5 +166,46 @@ impl EncodeToWrite for SpecialTypes {
         }
 
         Ok(encoded_len)
+    }
+}
+
+impl DecodeFromRead for SpecialTypes {
+    fn decode_from_read<R>(r: &mut R) -> Result<Self, Error>
+    where
+        R: Read,
+    {
+        let mut result: Self = Self::default();
+
+        while let Some(first) = enc::read_optional_byte(r)? {
+            use enc::DecodeFromReadPrefix;
+            let field_header: FieldHeader =
+                FieldHeader::decode_from_read_prefix_with_first_byte(first, r)?;
+            let tag_number: u32 = field_header.tag_number().tag_number();
+            match tag_number {
+                1 => {
+                    let value: uuid::Uuid =
+                        proto_packet::io::decode_uuid(field_header.wire_type(), r)?;
+                    result.set_one(value);
+                }
+                2 => {
+                    let value: String =
+                        proto_packet::io::decode_string(field_header.wire_type(), r)?;
+                    result.set_two(value);
+                }
+                _ => {}
+            }
+        }
+
+        Ok(result)
+    }
+}
+
+impl DecodeFromReadPrefix for SpecialTypes {
+    fn decode_from_read_prefix_with_first_byte<R>(first: u8, r: &mut R) -> Result<Self, Error>
+    where
+        R: Read,
+    {
+        use DecodeFromRead;
+        Self::decode_from_read_length_prefixed_with_first_byte(first, r)
     }
 }

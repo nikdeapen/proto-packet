@@ -1,7 +1,8 @@
+use enc::{DecodeFromRead, DecodeFromReadPrefix};
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
-use proto_packet::io::{TagNumber, WireType};
+use proto_packet::io::{FieldHeader, TagNumber, WireType};
 use proto_packet::{Message, Packet};
-use std::io::{Error, Write};
+use std::io::{Error, Read, Write};
 
 /// // A message with unsigned integers.
 /// message UnsignedInts {
@@ -352,5 +353,56 @@ impl EncodeToWrite for UnsignedInts {
         }
 
         Ok(encoded_len)
+    }
+}
+
+impl DecodeFromRead for UnsignedInts {
+    fn decode_from_read<R>(r: &mut R) -> Result<Self, Error>
+    where
+        R: Read,
+    {
+        let mut result: Self = Self::default();
+
+        while let Some(first) = enc::read_optional_byte(r)? {
+            use enc::DecodeFromReadPrefix;
+            let field_header: FieldHeader =
+                FieldHeader::decode_from_read_prefix_with_first_byte(first, r)?;
+            let tag_number: u32 = field_header.tag_number().tag_number();
+            match tag_number {
+                1 => {
+                    let value: u8 = proto_packet::io::decode_u8(field_header.wire_type(), r)?;
+                    result.set_one(value);
+                }
+                2 => {
+                    let value: u16 = proto_packet::io::decode_u16(field_header.wire_type(), r)?;
+                    result.set_two(value);
+                }
+                3 => {
+                    let value: u32 = proto_packet::io::decode_u32(field_header.wire_type(), r)?;
+                    result.set_three(value);
+                }
+                4 => {
+                    let value: u64 = proto_packet::io::decode_u64(field_header.wire_type(), r)?;
+                    result.set_four(value);
+                }
+                5 => {
+                    let value: u128 = proto_packet::io::decode_u128(field_header.wire_type(), r)?;
+                    result.set_five(value);
+                }
+                _ => {}
+            }
+        }
+
+        Ok(result)
+    }
+}
+
+impl DecodeFromReadPrefix for UnsignedInts {
+    fn decode_from_read_prefix_with_first_byte<R>(first: u8, r: &mut R) -> Result<Self, Error>
+    where
+        R: Read,
+    {
+        use DecodeFromRead;
+        Self::decode_from_read_length_prefixed_with_first_byte(first, r)
     }
 }
