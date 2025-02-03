@@ -15,6 +15,7 @@ impl GenRust {
         source.add_statement(self.gen_message_struct(message));
         source.add_statement(self.gen_message_impls(message));
         source.add_statement(self.gen_message_fields(message));
+        source.add_statement(self.gen_message_encode(message));
 
         source
     }
