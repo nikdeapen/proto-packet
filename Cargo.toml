@@ -8,5 +8,7 @@ members = [
 
 [workspace.dependencies]
 proto-packet = { path = "proto-packet" }
+proto-packet-tree = { path = "proto-packet-tree" }
 
 custom-string = { git = "https://github.com/nikdeapen/custom-string" }
+lex = { git = "https://github.com/nikdeapen/lex" }
