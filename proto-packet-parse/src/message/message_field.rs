@@ -1,7 +1,10 @@
 use lex::{ParseContext, Token};
 
-use crate::{Error, ErrorInfo, expected_got_instead, P_MESSAGE_FIELD, parse_tag_number_optional, parse_var, ParseTagNumberError, ParseTypeTagError, ParseVarErrorReason, TypeTagTree};
 use crate::ParseMessageFieldErrorReason::*;
+use crate::{
+    expected_got_instead, parse_tag_number_optional, parse_var, Error, ErrorInfo,
+    ParseTagNumberError, ParseTypeTagError, ParseVarErrorReason, TypeTagTree, P_MESSAGE_FIELD,
+};
 
 #[derive(Debug)]
 pub struct MessageFieldTree<'a> {
