@@ -5,12 +5,14 @@ members = [
     "proto-packet-cli",
     "proto-packet-parse",
     "proto-packet-tree",
+    "proto-packet-validate",
 ]
 
 [workspace.dependencies]
 proto-packet = { path = "proto-packet" }
 proto-packet-parse = { path = "proto-packet-parse" }
 proto-packet-tree = { path = "proto-packet-tree" }
+proto-packet-validate = { path = "proto-packet-validate" }
 
 clerr = { git = "https://github.com/nikdeapen/clerr" }
 custom-string = { git = "https://github.com/nikdeapen/custom-string" }
