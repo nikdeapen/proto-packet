@@ -12,6 +12,7 @@ pub struct ErrorInfo {
     pub message: String,      // The file token info message.
 }
 
+pub const P_IMPORT: &'static str = "P_IMPORT";
 pub const P_TYPE_TAG: &'static str = "P_TYPE_TAG";
 pub const P_TAG_NUMBER: &'static str = "P_TAG_NUMBER";
 pub const P_MESSAGE: &'static str = "P_MESSAGE";
