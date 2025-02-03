@@ -34,7 +34,7 @@ impl GenRust {
 
     fn gen_type_dec(&self, type_dec: &TypeDec) -> Source {
         match type_dec {
-            TypeDec::MessageDec(_message) => unimplemented!(),
+            TypeDec::MessageDec(message) => self.gen_message(message),
         }
     }
 }
