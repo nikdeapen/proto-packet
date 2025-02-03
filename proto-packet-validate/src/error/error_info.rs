@@ -7,3 +7,5 @@ pub struct ErrorInfo {
     pub header: String,           // The report error code message.
     pub info: Vec<ColoredString>, // The extra primary entry info.
 }
+
+pub const V_TAG_NUMBER: &'static str = "V_TAG_NUMBER";

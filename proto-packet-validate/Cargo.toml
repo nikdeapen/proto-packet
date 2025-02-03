@@ -10,6 +10,9 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+proto-packet = { workspace = true }
+
+clerr = { workspace = true }
 lex = { workspace = true }
 
 colored = { workspace = true }
