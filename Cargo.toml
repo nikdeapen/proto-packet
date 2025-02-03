@@ -19,6 +19,7 @@ proto-packet-tree = { path = "proto-packet-tree" }
 proto-packet-validate = { path = "proto-packet-validate" }
 
 clerr = { git = "https://github.com/nikdeapen/clerr" }
+code-gen = { git = "https://github.com/nikdeapen/code-gen" }
 custom-string = { git = "https://github.com/nikdeapen/custom-string" }
 file-storage = { git = "https://github.com/nikdeapen/file-storage" }
 lex = { git = "https://github.com/nikdeapen/lex" }
