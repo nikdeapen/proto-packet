@@ -18,7 +18,7 @@ impl<'a> SchemaLinker<'a> {
     ///
     /// # Unsafe
     /// todo
-    pub unsafe fn new_unchecked(
+    pub unsafe fn new(
         mod_path: ModPathRef<'a>,
         all_names: &'a HashMap<ModPathRef<'a>, Vec<TypeNameRef<'a>>>,
     ) -> Self {
@@ -41,7 +41,7 @@ impl<'a> SchemaLinker<'a> {
             .collect();
         let imports: &'b [Import] = schema_file.imports();
         let type_linker: TypeLinker = unsafe {
-            TypeLinker::new_unchecked(
+            TypeLinker::new(
                 self.mod_path,
                 local_names.as_slice(),
                 imports,
