@@ -4,6 +4,7 @@ use lex::{ParseContext, Token};
 
 use proto_packet_tree::{PrimitiveType, SpecialType};
 
+use crate::error::P_TYPE_TAG;
 use crate::ParseTypeTagError::*;
 use crate::{expected_got_instead, parse_qualified_name, Error, ErrorInfo};
 
@@ -33,7 +34,7 @@ impl<'a> Error for ParseTypeTagError {
             UnrecognizedType => expected_got_instead("a recognized type", token),
         };
         ErrorInfo {
-            code: "P_TYPE_TAG",
+            code: P_TYPE_TAG,
             header: "invalid type tag",
             message,
         }
