@@ -1,11 +1,13 @@
 use std::str::Chars;
 
-use proto_packet_tree::{FieldNameRef, TypeNameRef};
+use proto_packet_tree::{FieldNameRef, ModName, TypeNameRef};
+
+use crate::rust::{Error, FileNaming};
 
 /// Responsible for naming things.
 #[derive(Clone, Debug, Default)]
 pub struct Naming {
-    _nothing: (),
+    pub(in crate::rust) file_naming: FileNaming,
 }
 
 impl Naming {
@@ -23,6 +25,22 @@ impl Naming {
     /// Gets the type name for the declared `type_name`.
     pub fn type_name(&self, type_name: TypeNameRef) -> String {
         type_name.to_string()
+    }
+}
+
+impl Naming {
+    //! Mod Names
+
+    /// Converts the `type_name` into a `mod_name`.
+    pub fn mod_name_for_type_name(&self, type_name: TypeNameRef) -> Result<ModName, Error> {
+        let mod_name: String = self.pascal_to_snake_case(type_name.as_ref());
+        ModName::try_from(mod_name).map_err(|(mod_name, error_message)| {
+            Error::TypeNameNotConvertableToModName {
+                type_name: type_name.to_owned(),
+                mod_name,
+                error_message,
+            }
+        })
     }
 }
 

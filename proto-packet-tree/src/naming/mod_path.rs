@@ -1,6 +1,6 @@
 use custom_string::custom_string;
 
-use crate::{validate_mod_name, QualifiedName, TypeNameRef};
+use crate::{validate_mod_name, ModNameRef, QualifiedName, TypeNameRef};
 
 // A mod path.
 custom_string!(ModPath, ModPathRef, |s| validate_mod_path(s));
@@ -11,6 +11,19 @@ pub fn validate_mod_path(mod_path: &str) -> Result<(), &'static str> {
         validate_mod_name(mod_name)?;
     }
     Ok(())
+}
+
+impl ModPath {
+    //! Conversions
+
+    /// Appends the `mod_name`.
+    pub fn with_appended(mut self, mod_name: ModNameRef) -> Self {
+        self.value.reserve(1 + mod_name.len());
+        self.value.push('.');
+        self.value.push_str(mod_name.as_ref());
+
+        self
+    }
 }
 
 impl<'a> ModPathRef<'a> {
