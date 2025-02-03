@@ -1,0 +1,9 @@
+use colored::ColoredString;
+
+/// The info for a validation error.
+#[derive(Debug)]
+pub struct ErrorInfo {
+    pub code: &'static str,       // The report error code.
+    pub header: String,           // The report error code message.
+    pub info: Vec<ColoredString>, // The extra primary entry info.
+}
