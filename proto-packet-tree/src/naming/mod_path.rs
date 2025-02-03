@@ -27,6 +27,17 @@ impl ModPath {
 }
 
 impl<'a> ModPathRef<'a> {
+    //! Properties
+
+    /// Creates an iterator for the mod names.
+    pub fn mod_names(&self) -> impl Iterator<Item = ModNameRef<'a>> {
+        self.value
+            .split('.')
+            .map(|mod_name| unsafe { ModNameRef::new_unchecked(mod_name) })
+    }
+}
+
+impl<'a> ModPathRef<'a> {
     //! Conversions
 
     /// Converts the mod path to a qualified name by appending the type name.

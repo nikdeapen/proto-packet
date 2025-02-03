@@ -1,6 +1,6 @@
 use clerr::{Code, PrimaryEntry, Report};
 
-use proto_packet_tree::TypeName;
+use proto_packet_tree::{QualifiedName, TypeName};
 
 /// A rust code generation error.
 #[derive(Debug)]
@@ -12,6 +12,15 @@ pub enum Error {
     },
     InvalidFileExtension {
         file_extension: String,
+    },
+    InvalidModFileName {
+        file_name: String,
+    },
+    DuplicateTypeName {
+        name: QualifiedName,
+    },
+    TypeNameConflictsWithModName {
+        name: QualifiedName,
     },
 }
 
