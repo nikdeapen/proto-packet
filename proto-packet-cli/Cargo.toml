@@ -8,3 +8,12 @@ homepage = "https://github.com/nikdeapen/proto-packet/proto-packet-cli"
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+proto-packet-parse = { workspace = true }
+
+clerr = { workspace = true }
+file-storage = { workspace = true }
+lex = { workspace = true }
+
+clap = { workspace = true }

@@ -9,10 +9,13 @@ members = [
 
 [workspace.dependencies]
 proto-packet = { path = "proto-packet" }
+proto-packet-parse = { path = "proto-packet-parse" }
 proto-packet-tree = { path = "proto-packet-tree" }
 
 clerr = { git = "https://github.com/nikdeapen/clerr" }
 custom-string = { git = "https://github.com/nikdeapen/custom-string" }
+file-storage = { git = "https://github.com/nikdeapen/file-storage" }
 lex = { git = "https://github.com/nikdeapen/lex" }
 
+clap = { version = "4.5.27", features = ["derive"] }
 colored = "3.0.0"

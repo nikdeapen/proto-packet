@@ -1,0 +1,35 @@
+// A message with unsigned integers.
+message UnsignedInts {
+
+    // The first field.
+    one: u8 = 1;
+
+    // The second field.
+    two: u16 = 2;
+
+    // The third field.
+    three: u32 = 3;
+
+    // The fourth field.
+    four: u64 = 4;
+
+    // The fifth field.
+    five: u128 = 5;
+}
+
+// A message with special types.
+message SpecialTypes {
+
+    // The first field.
+    one: uuid = 1;
+
+    // The second field.
+    two: string = 2;
+}
+
+// A message with named types.
+message NamedTypes {
+
+    // A local message field.
+    local_message: UnsignedInts = 1;
+}

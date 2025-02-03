@@ -46,7 +46,7 @@ pub fn parse_tag_number_optional(
     c: ParseContext,
 ) -> lex::Result<Option<Token>, ParseTagNumberError> {
     let (_white, after_white) = c.white_line_comments();
-    if let (Some(_eq), after_eq) = after_white.mark('_') {
+    if let (Some(_eq), after_eq) = after_white.mark('=') {
         let (_white, after_white) = after_eq.white_line_comments();
         if let (Some(tag_number), after_tag_number) = after_white.symbol() {
             Ok((Some(tag_number), after_tag_number))
