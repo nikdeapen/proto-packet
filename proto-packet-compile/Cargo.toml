@@ -19,5 +19,6 @@ proto-packet-validate = { workspace = true }
 
 clerr = { workspace = true }
 file-storage = { workspace = true }
+lex = { workspace = true }
 
 colored = { workspace = true }
