@@ -9,3 +9,4 @@ pub struct ErrorInfo {
 }
 
 pub const V_TAG_NUMBER: &'static str = "V_TAG_NUMBER";
+pub const V_MESSAGE_FIELD: &'static str = "V_MESSAGE_FIELD";
