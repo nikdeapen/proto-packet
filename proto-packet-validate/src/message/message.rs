@@ -41,7 +41,7 @@ impl<'a> Error for InvalidMessageError<'a> {
                 duplicate_decs(file_name, context, V_MESSAGE, "message names", field_names)
             }
             DuplicateFieldNumber { tag_numbers } => {
-                duplicate_decs(file_name, context, V_MESSAGE, "field num bers", tag_numbers)
+                duplicate_decs(file_name, context, V_MESSAGE, "field numbers", tag_numbers)
             }
         }
     }

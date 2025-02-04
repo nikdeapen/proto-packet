@@ -14,10 +14,10 @@ impl EnumCase {
     //! Construction
 
     /// Creates a new `EnumCase`.
-    pub fn new<N, T>(case_name: N, tag_number: N) -> Self
+    pub fn new<N, T>(case_name: N, tag_number: T) -> Self
     where
         N: Into<CaseName>,
-        N: Into<TagNumber>,
+        T: Into<TagNumber>,
     {
         let case_name: CaseName = case_name.into();
         let tag_number: TagNumber = tag_number.into();
