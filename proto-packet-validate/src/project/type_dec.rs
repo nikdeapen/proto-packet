@@ -6,13 +6,15 @@ use proto_packet_tree::TypeDec;
 
 use crate::InvalidTypeDecError::*;
 use crate::{
-    validate_enum, validate_message, Error, ErrorInfo, InvalidEnumError, InvalidMessageError,
+    validate_enum, validate_message, validate_variant, Error, ErrorInfo, InvalidEnumError,
+    InvalidMessageError, InvalidVariantError,
 };
 
 #[derive(Debug)]
 pub enum InvalidTypeDecError<'a> {
     InvalidMessage(InvalidMessageError<'a>),
     InvalidEnum(InvalidEnumError<'a>),
+    InvalidVariant(InvalidVariantError<'a>),
 }
 
 impl<'a> Error for InvalidTypeDecError<'a> {
@@ -20,6 +22,7 @@ impl<'a> Error for InvalidTypeDecError<'a> {
         match self {
             InvalidMessage(e) => e.info(file_name, context),
             InvalidEnum(e) => e.info(file_name, context),
+            InvalidVariant(e) => e.info(file_name, context),
         }
     }
 }
@@ -34,6 +37,8 @@ pub fn validate_type_dec<'a>(
         EnumDec(enom) => validate_enum(enom)
             .map(|enom| TypeDec::from(enom))
             .map_err(|e| InvalidEnum(e)),
-        _ => unimplemented!(),
+        VariantDec(variant) => validate_variant(variant)
+            .map(|variant| TypeDec::from(variant))
+            .map_err(|e| InvalidVariant(e)),
     }
 }
