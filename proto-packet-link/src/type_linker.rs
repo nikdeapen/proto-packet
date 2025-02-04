@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
-use proto_packet_tree::TypeDec::*;
 use proto_packet_tree::{
     Import, Message, MessageField, ModPathRef, QualifiedName, QualifiedNameRef, TypeDec,
-    TypeNameRef, TypeTag, WithComments, WithFieldName, WithTagNumberOptional, WithTypeName,
-    WithTypeTag,
+    TypeNameRef, TypeTag, Variant, VariantCase, WithCaseName, WithComments, WithFieldName,
+    WithTagNumberOptional, WithTypeName, WithTypeTag,
 };
+use proto_packet_tree::TypeDec::*;
 
 use crate::Error;
 use crate::Error::*;
@@ -49,7 +49,7 @@ impl<'a> TypeLinker<'a> {
         Ok(match type_dec {
             MessageDec(message) => MessageDec(self.link_message(message)?),
             EnumDec(enom) => EnumDec(enom.clone()),
-            VariantDec(_variant) => unimplemented!(),
+            VariantDec(variant) => VariantDec(self.link_variant(variant)?),
         })
     }
 }
@@ -79,6 +79,35 @@ impl<'a> TypeLinker<'a> {
             linked.add_comment(comment);
         }
         linked.set_tag_number(field.tag_number());
+        Ok(linked)
+    }
+}
+
+impl<'a> TypeLinker<'a> {
+    //! Variants
+
+    /// Links the `variant`.
+    fn link_variant(&self, variant: &Variant) -> Result<Variant, Error> {
+        let mut linked: Variant = variant.type_name().into();
+        for comment in variant.comments() {
+            linked.add_comment(comment);
+        }
+        for case in variant.cases() {
+            let linked_case: VariantCase = self.link_variant_case(case)?;
+            debug_assert!(linked.can_add_case(&linked_case));
+            unsafe { linked.add_case(linked_case) };
+        }
+        Ok(linked)
+    }
+
+    /// Links the variant `case`.
+    fn link_variant_case(&self, case: &VariantCase) -> Result<VariantCase, Error> {
+        let type_tag: TypeTag = self.link_type_tag(case.type_tag())?;
+        let mut linked: VariantCase =
+            VariantCase::new(case.case_name(), type_tag, case.tag_number());
+        for comment in case.comments() {
+            linked.add_comment(comment);
+        }
         Ok(linked)
     }
 }
