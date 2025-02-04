@@ -49,6 +49,7 @@ impl<'a> TypeLinker<'a> {
         Ok(match type_dec {
             MessageDec(message) => MessageDec(self.link_message(message)?),
             EnumDec(enom) => EnumDec(enom.clone()),
+            VariantDec(_variant) => unimplemented!(),
         })
     }
 }
