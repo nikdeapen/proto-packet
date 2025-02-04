@@ -15,3 +15,6 @@ proto-packet = { workspace = true }
 enc = { workspace = true }
 
 uuid = { workspace = true }
+
+[dev-dependencies]
+enc = { workspace = true, features = ["hex"] }
