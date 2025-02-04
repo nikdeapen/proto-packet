@@ -12,3 +12,4 @@ mod util;
 
 mod enums;
 mod message;
+mod variant;
