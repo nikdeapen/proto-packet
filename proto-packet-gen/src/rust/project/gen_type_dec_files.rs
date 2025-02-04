@@ -35,6 +35,7 @@ impl GenRust {
     fn gen_type_dec(&self, type_dec: &TypeDec) -> Source {
         match type_dec {
             TypeDec::MessageDec(message) => self.gen_message(message),
+            TypeDec::EnumDec(_enom) => unimplemented!(),
         }
     }
 }

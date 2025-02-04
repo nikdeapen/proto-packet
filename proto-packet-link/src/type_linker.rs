@@ -48,6 +48,7 @@ impl<'a> TypeLinker<'a> {
     pub fn link(&self, type_dec: &TypeDec) -> Result<TypeDec, Error> {
         Ok(match type_dec {
             MessageDec(message) => MessageDec(self.link_message(message)?),
+            EnumDec(_enom) => unimplemented!(),
         })
     }
 }
