@@ -3,14 +3,15 @@ use lex::{ParseContext, Token};
 use crate::ParseTypeDecError::*;
 use crate::TypeDecTree::*;
 use crate::{
-    parse_enum, parse_message, EnumTree, Error, ErrorInfo, MessageTree, ParseEnumError,
-    ParseMessageError,
+    parse_enum, parse_message, parse_variant, EnumTree, Error, ErrorInfo, MessageTree,
+    ParseEnumError, ParseMessageError, ParseVariantError, VariantTree,
 };
 
 #[derive(Debug)]
 pub enum TypeDecTree<'a> {
     MessageDec(MessageTree<'a>),
     EnumDec(EnumTree<'a>),
+    VariantDec(VariantTree<'a>),
 }
 
 impl<'a> TypeDecTree<'a> {
@@ -21,6 +22,7 @@ impl<'a> TypeDecTree<'a> {
         match self {
             MessageDec(message) => message.message_name,
             EnumDec(enom) => enom.enum_name,
+            VariantDec(variant) => variant.variant_name,
         }
     }
 }
@@ -29,6 +31,7 @@ impl<'a> TypeDecTree<'a> {
 pub enum ParseTypeDecError<'a> {
     InvalidMessage(ParseMessageError<'a>),
     InvalidEnum(ParseEnumError<'a>),
+    InvalidVariant(ParseVariantError<'a>),
 }
 
 impl<'a> Error for ParseTypeDecError<'a> {
@@ -36,6 +39,7 @@ impl<'a> Error for ParseTypeDecError<'a> {
         match self {
             InvalidMessage(e) => e.info(token),
             InvalidEnum(e) => e.info(token),
+            InvalidVariant(e) => e.info(token),
         }
     }
 }
@@ -62,6 +66,15 @@ pub fn parse_type_dec(c: ParseContext) -> lex::Result<Option<TypeDecTree>, Parse
             return Ok((Some(EnumDec(enom)), after_enom));
         }
         Err(e) => return Err(e.map(|e| InvalidEnum(e))),
+        _ => {}
+    }
+
+    match parse_variant(after_white) {
+        Ok((Some(mut variant), after_variant)) => {
+            variant.comments = comments;
+            return Ok((Some(VariantDec(variant)), after_variant));
+        }
+        Err(e) => return Err(e.map(|e| InvalidVariant(e))),
         _ => {}
     }
 

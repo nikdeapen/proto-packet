@@ -34,5 +34,6 @@ pub fn validate_type_dec<'a>(
         EnumDec(enom) => validate_enum(enom)
             .map(|enom| TypeDec::from(enom))
             .map_err(|e| InvalidEnum(e)),
+        _ => unimplemented!(),
     }
 }

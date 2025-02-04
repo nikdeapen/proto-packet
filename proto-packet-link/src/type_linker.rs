@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
+use proto_packet_tree::TypeDec::*;
 use proto_packet_tree::{
     Import, Message, MessageField, ModPathRef, QualifiedName, QualifiedNameRef, TypeDec,
     TypeNameRef, TypeTag, Variant, VariantCase, WithCaseName, WithComments, WithFieldName,
     WithTagNumberOptional, WithTypeName, WithTypeTag,
 };
-use proto_packet_tree::TypeDec::*;
 
 use crate::Error;
 use crate::Error::*;
