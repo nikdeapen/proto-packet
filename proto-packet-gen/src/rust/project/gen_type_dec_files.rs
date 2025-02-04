@@ -36,7 +36,7 @@ impl GenRust {
         match type_dec {
             TypeDec::MessageDec(message) => self.gen_message(message),
             TypeDec::EnumDec(enom) => self.gen_enum(enom),
-            TypeDec::VariantDec(_variant) => unimplemented!(),
+            TypeDec::VariantDec(variant) => self.gen_variant(variant),
         }
     }
 }

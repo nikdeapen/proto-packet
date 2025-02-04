@@ -1,0 +1,35 @@
+// A variant with unsigned integers.
+variant UnsignedInts {
+
+    // The first case.
+    One: u8 = 1;
+
+    // The second case.
+    Two: u16 = 2;
+
+    // The third case.
+    Three: u32 = 3;
+
+    // The fourth case.
+    Four: u64 = 4;
+
+    // The fifth case.
+    Five: u128 = 5;
+}
+
+// A variant with special types.
+variant SpecialTypes {
+
+    // The first case.
+    One: uuid = 1;
+
+    // The second case.
+    Two: string = 2;
+}
+
+// A variant with named types.
+variant NamedTypes {
+
+    // A local variant case.
+    LocalVariant: UnsignedInts = 1;
+}
