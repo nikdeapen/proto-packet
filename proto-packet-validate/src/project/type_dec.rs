@@ -27,5 +27,6 @@ pub fn validate_type_dec<'a>(
         MessageDec(message) => validate_message(message)
             .map(|message| TypeDec::from(message))
             .map_err(|e| InvalidMessage(e)),
+        _ => unimplemented!(),
     }
 }

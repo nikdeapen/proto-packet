@@ -2,11 +2,15 @@ use lex::{ParseContext, Token};
 
 use crate::ParseTypeDecError::*;
 use crate::TypeDecTree::*;
-use crate::{parse_message, Error, ErrorInfo, MessageTree, ParseMessageError};
+use crate::{
+    parse_enum, parse_message, EnumTree, Error, ErrorInfo, MessageTree, ParseEnumError,
+    ParseMessageError,
+};
 
 #[derive(Debug)]
 pub enum TypeDecTree<'a> {
     MessageDec(MessageTree<'a>),
+    EnumDec(EnumTree<'a>),
 }
 
 impl<'a> TypeDecTree<'a> {
@@ -16,6 +20,7 @@ impl<'a> TypeDecTree<'a> {
     pub fn type_name_token(&self) -> Token {
         match self {
             MessageDec(message) => message.message_name,
+            EnumDec(enom) => enom.enum_name,
         }
     }
 }
@@ -23,12 +28,14 @@ impl<'a> TypeDecTree<'a> {
 #[derive(Debug)]
 pub enum ParseTypeDecError<'a> {
     InvalidMessage(ParseMessageError<'a>),
+    InvalidEnum(ParseEnumError<'a>),
 }
 
 impl<'a> Error for ParseTypeDecError<'a> {
     fn info(&self, token: &str) -> ErrorInfo {
         match self {
             InvalidMessage(e) => e.info(token),
+            InvalidEnum(e) => e.info(token),
         }
     }
 }
@@ -40,11 +47,21 @@ impl<'a> Error for ParseTypeDecError<'a> {
 pub fn parse_type_dec(c: ParseContext) -> lex::Result<Option<TypeDecTree>, ParseTypeDecError> {
     let (comments, after_white) = c.line_comment_block();
 
-    match parse_message(comments, after_white) {
-        Ok((Some(message), after_message)) => {
-            return Ok((Some(MessageDec(message)), after_message))
+    match parse_message(after_white) {
+        Ok((Some(mut message), after_message)) => {
+            message.comments = comments;
+            return Ok((Some(MessageDec(message)), after_message));
         }
         Err(e) => return Err(e.map(|e| InvalidMessage(e))),
+        _ => {}
+    }
+
+    match parse_enum(after_white) {
+        Ok((Some(mut enom), after_enom)) => {
+            enom.comments = comments;
+            return Ok((Some(EnumDec(enom)), after_enom));
+        }
+        Err(e) => return Err(e.map(|e| InvalidEnum(e))),
         _ => {}
     }
 

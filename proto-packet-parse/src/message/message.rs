@@ -78,15 +78,12 @@ impl<'a> Error for ParseMessageError<'a> {
 ///
 /// Returns `Ok(message, after_close_curly)`.
 /// Returns `Ok(None, c)` if the next token is not `message`.
-pub fn parse_message<'a>(
-    comments: Vec<Token<'a>>,
-    c: ParseContext<'a>,
-) -> lex::Result<'a, Option<MessageTree<'a>>, ParseMessageError<'a>> {
+pub fn parse_message(c: ParseContext) -> lex::Result<Option<MessageTree>, ParseMessageError> {
     match c.exact_symbol("message") {
         (Some(_message), after_message) => match after_message.white_line_comments() {
             (Some(_white), after_white) => match after_white.symbol() {
                 (Some(message_name), after_message_name) => {
-                    parse_message_block(comments, message_name, after_message_name)
+                    parse_message_block(message_name, after_message_name)
                 }
                 (None, _) => Err(after_white.to_error(ParseMessageError {
                     message_name: None,
@@ -103,7 +100,6 @@ pub fn parse_message<'a>(
 }
 
 fn parse_message_block<'a>(
-    comments: Vec<Token<'a>>,
     message_name: Token<'a>,
     c: ParseContext<'a>,
 ) -> lex::Result<'a, Option<MessageTree<'a>>, ParseMessageError<'a>> {
@@ -115,7 +111,7 @@ fn parse_message_block<'a>(
             match after_white.exact("}") {
                 (Some(_close), after_close) => {
                     let tree: MessageTree = MessageTree {
-                        comments,
+                        comments: vec![],
                         message_name,
                         fields,
                     };
