@@ -24,7 +24,7 @@ impl QualifiedName {
 
     /// Gets the optional mod path.
     pub fn mod_path(&self) -> Option<ModPathRef> {
-        if let Some(dot) = self.value.as_bytes().iter().position(|c| *c == b'.') {
+        if let Some(dot) = self.value.as_bytes().iter().rposition(|c| *c == b'.') {
             Some(unsafe { ModPathRef::new_unchecked(&self.value()[..dot]) })
         } else {
             None
@@ -33,7 +33,7 @@ impl QualifiedName {
 
     /// Gets the type name.
     pub fn type_name(&self) -> TypeNameRef {
-        if let Some(dot) = self.value.as_bytes().iter().position(|c| *c == b'.') {
+        if let Some(dot) = self.value.as_bytes().iter().rposition(|c| *c == b'.') {
             unsafe { TypeNameRef::new_unchecked(&self.value()[dot + 1..]) }
         } else {
             unsafe { TypeNameRef::new_unchecked(self.value()) }
