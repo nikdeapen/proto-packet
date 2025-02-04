@@ -10,4 +10,5 @@ mod mods;
 mod project;
 mod util;
 
+mod enums;
 mod message;

@@ -1,6 +1,6 @@
 use std::str::Chars;
 
-use proto_packet_tree::{FieldNameRef, ModName, TypeNameRef};
+use proto_packet_tree::{CaseNameRef, FieldNameRef, ModName, TypeNameRef};
 
 use crate::rust::{Error, FileNaming};
 
@@ -16,6 +16,15 @@ impl Naming {
     /// Gets the field name for the declared `field_name`.
     pub fn field_name(&self, field_name: FieldNameRef) -> String {
         field_name.to_string()
+    }
+}
+
+impl Naming {
+    //! Case Names
+
+    /// Gets the case name for the declared `case_name`.
+    pub fn case_name(&self, case_name: CaseNameRef) -> String {
+        case_name.to_string()
     }
 }
 
