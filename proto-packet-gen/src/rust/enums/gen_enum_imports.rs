@@ -13,6 +13,7 @@ impl GenRust {
             .with_semi("use enc::{EncodedLen, EncodeToSlice, EncodeToWrite}")
             .with_semi("use enc::{DecodeFromRead, DecodeFromReadPrefix}")
             .with_semi("use std::io::{Read, Write, Error}")
+            .with_semi("use std::str::FromStr")
             .with_statement(EmptyLine::default())
     }
 }

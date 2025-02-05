@@ -3,6 +3,7 @@ use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
 use proto_packet::io::WireType;
 use proto_packet::{Enum, Packet};
 use std::io::{Error, Read, Write};
+use std::str::FromStr;
 
 /// An enum with a single case.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
@@ -13,6 +14,17 @@ pub enum SingleCase {
     /// // The only case.
     /// One = 1;
     One,
+}
+
+impl FromStr for SingleCase {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "One" => Ok(Self::One),
+            _ => Err(()),
+        }
+    }
 }
 
 impl SingleCase {

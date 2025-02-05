@@ -3,6 +3,7 @@ use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
 use proto_packet::io::WireType;
 use proto_packet::{Enum, Packet};
 use std::io::{Error, Read, Write};
+use std::str::FromStr;
 
 /// An enum with multiple cases.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
@@ -21,6 +22,19 @@ pub enum MultipleCases {
     /// // The third case.
     /// Three = 3;
     Three,
+}
+
+impl FromStr for MultipleCases {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "One" => Ok(Self::One),
+            "Two" => Ok(Self::Two),
+            "Three" => Ok(Self::Three),
+            _ => Err(()),
+        }
+    }
 }
 
 impl MultipleCases {

@@ -13,6 +13,7 @@ impl GenRust {
 
         source.add_statement(self.gen_enum_imports());
         source.add_statement(self.gen_enum_enum(enom));
+        source.add_statement(self.gen_enum_from_str(enom));
         source.add_statement(self.gen_enum_tag_number(enom));
         source.add_statement(self.gen_enum_impls(enom));
         source.add_statement(self.gen_enum_encode(enom));

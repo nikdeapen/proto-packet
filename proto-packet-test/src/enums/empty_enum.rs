@@ -3,12 +3,23 @@ use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
 use proto_packet::io::WireType;
 use proto_packet::{Enum, Packet};
 use std::io::{Error, Read, Write};
+use std::str::FromStr;
 
 /// An empty enum.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub enum EmptyEnum {
     /// An enum case with an unrecognized tag number.
     Unrecognized(proto_packet::io::TagNumber),
+}
+
+impl FromStr for EmptyEnum {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            _ => Err(()),
+        }
+    }
 }
 
 impl EmptyEnum {
