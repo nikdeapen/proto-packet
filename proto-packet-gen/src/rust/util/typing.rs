@@ -38,6 +38,7 @@ impl Typing {
                 SpecialType::UUID => false,
                 SpecialType::String => true,
             },
+            TypeTag::Slice(_) => true,
             _ => false,
         }
     }
@@ -61,6 +62,7 @@ impl Typing {
             TypeTag::Primitive(primitive) => self.primitive_field_type(*primitive),
             TypeTag::Special(special) => self.special_field_type(*special),
             TypeTag::Named(name) => RustType::from(self.rust_name(name.to_ref())),
+            TypeTag::Slice(base) => RustType::from("Vec").with_generic(self.field_type(base)),
         }
     }
 
@@ -98,6 +100,10 @@ impl Typing {
             TypeTag::Named(name) => {
                 RustType::from(self.rust_name(name.to_ref())).to_ref_type(Reference::default())
             }
+            TypeTag::Slice(base) => self
+                .field_type(base)
+                .to_slice()
+                .to_ref_type(Reference::default()),
         }
     }
 }

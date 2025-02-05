@@ -121,6 +121,7 @@ impl<'a> TypeLinker<'a> {
             TypeTag::Primitive(primitive) => Ok(primitive.to_type_tag()),
             TypeTag::Special(special) => Ok(special.to_type_tag()),
             TypeTag::Named(name) => Ok(self.resolve_name(name.to_ref())?.into()),
+            TypeTag::Slice(base) => Ok(self.link_type_tag(base)?.to_slice()),
         }
     }
 

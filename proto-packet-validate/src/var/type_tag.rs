@@ -43,5 +43,6 @@ pub fn validate_type_tag<'a>(tree: &'a TypeTagTree) -> Result<TypeTag, InvalidTy
                 })?;
             Ok(TypeTag::from(name))
         }
+        TypeTagTree::Slice { base } => Ok(validate_type_tag(base)?.to_slice()),
     }
 }

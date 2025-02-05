@@ -28,6 +28,7 @@ impl GenRust {
                 SpecialType::String => ("Bytes", "string"),
             },
             TypeTag::Named(_) => ("Packet", "packet"),
+            TypeTag::Slice(_) => return None,
         };
         Some(format!(
             "proto_packet::io::{}Field::from_{}(tag_number, value)",

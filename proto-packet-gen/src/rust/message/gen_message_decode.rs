@@ -60,6 +60,7 @@ impl GenRust {
                         SpecialType::String => "string",
                     },
                     TypeTag::Named(_) => "packet",
+                    TypeTag::Slice(_) => "slice_u8",
                 };
 
                 match_case.add_statement(VarInit::from((

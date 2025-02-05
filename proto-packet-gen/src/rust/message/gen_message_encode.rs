@@ -1,9 +1,11 @@
 use code_gen::rust::{IfStatement, ImplBlock};
 use code_gen::{EmptyLine, Source, WithStatements};
 
-use proto_packet::io::TagNumber;
+use proto_packet::io::WireType::Fixed1Byte;
+use proto_packet::io::{TagNumber, WireType};
 use proto_packet_tree::{
-    Message, MessageField, WithFieldName, WithTagNumberOptional, WithTypeName, WithTypeTag,
+    Message, MessageField, PrimitiveType, TypeTag, WithFieldName, WithTagNumberOptional,
+    WithTypeName, WithTypeTag,
 };
 
 use crate::rust::EncodeOp::{EncodeToSlice, EncodeToWrite, EncodedLen};
@@ -136,7 +138,52 @@ impl GenRust {
                 op.encode_call()
             ))
         } else {
-            unreachable!("no field expression for type: {:?}", field.type_tag())
+            match field.type_tag() {
+                TypeTag::Slice(base) => self.gen_message_encode_slice_field_len(op, base),
+                _ => unimplemented!("no field expression for type: {:?}", field.type_tag()),
+            }
         }
+    }
+
+    fn gen_message_encode_slice_field_len(&self, op: EncodeOp, base: &TypeTag) -> Source {
+        let encode_tag: &str = match base {
+            TypeTag::Primitive(primitive) => match primitive {
+                PrimitiveType::UnsignedInt8 => "u8",
+                _ => unimplemented!(),
+            },
+            _ => unimplemented!(),
+        };
+        let list_wire_type: WireType = match base {
+            TypeTag::Primitive(primitive) => match primitive {
+                PrimitiveType::UnsignedInt8 => Fixed1Byte,
+                _ => unimplemented!(),
+            },
+            _ => unimplemented!(),
+        };
+        Source::default()
+            .with_semi(format!(
+                "let field_header_len: usize = {}.{}?",
+                "FieldHeader::new(WireType::List, tag_number)",
+                op.encode_call(),
+            ))
+            .with_semi("encoded_len = encoded_len.checked_add(field_header_len).ok_or(enc::Error::IntegerOverflow)?")
+            .with_semi(format!(
+                "let list_size_bytes: usize = proto_packet::io::encoded_len_slice_{}(value)?",
+                encode_tag,
+            ))
+            .with_semi(format!(
+                "let list_header_len: usize = proto_packet::io::ListHeader::new(WireType::{:?}, list_size_bytes).{}?",
+                list_wire_type,
+                op.encode_call(),
+            ))
+            .with_semi("encoded_len = encoded_len.checked_add(list_header_len).ok_or(enc::Error::IntegerOverflow)?")
+            .with_semi(format!(
+                "let also_list_size_bytes: usize = proto_packet::io::{}_slice_{}(value{})?",
+                op.encode_tag(),
+                encode_tag,
+                op.encode_extra_params()
+            ))
+            .with_semi("debug_assert_eq!(list_size_bytes, also_list_size_bytes)")
+            .with_semi("let field_len: usize = list_size_bytes")
     }
 }

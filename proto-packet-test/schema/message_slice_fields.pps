@@ -1,0 +1,6 @@
+// A message with unsigned integer slices.
+message UnsignedInts {
+
+    // The first field.
+    one: []u8 = 1;
+}

@@ -49,6 +49,7 @@ impl GenRust {
                     SpecialType::String => "string",
                 },
                 TypeTag::Named(_) => "packet",
+                TypeTag::Slice(_base) => unimplemented!(),
             };
 
             match_case.add_statement(VarInit::from((

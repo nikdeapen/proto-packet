@@ -21,17 +21,24 @@ pub enum TypeTagTree<'a> {
     Named {
         name: Token<'a>,
     },
+    Slice {
+        base: Box<TypeTagTree<'a>>,
+    },
 }
 
 #[derive(Debug)]
 pub enum ParseTypeTagError {
     UnrecognizedType,
+    ExpectedClosingSliceBracket,
 }
 
 impl<'a> Error for ParseTypeTagError {
     fn info(&self, token: &str) -> ErrorInfo {
         let message: String = match self {
             UnrecognizedType => expected_got_instead("a recognized type", token),
+            ExpectedClosingSliceBracket => {
+                expected_got_instead("a slice closing bracket `]`", token)
+            }
         };
         ErrorInfo {
             code: P_TYPE_TAG,
@@ -51,6 +58,8 @@ pub fn parse_type_tag(c: ParseContext) -> lex::Result<TypeTagTree, ParseTypeTagE
         Ok((special, after_special))
     } else if let (Some(name), after_name) = parse_named_type(c)? {
         Ok((name, after_name))
+    } else if let (Some(slice), after_slice) = parse_slice_type(c)? {
+        Ok((slice, after_slice))
     } else {
         Err(c.to_error(UnrecognizedType))
     }
@@ -85,6 +94,26 @@ fn parse_special_type(c: ParseContext) -> lex::Result<Option<TypeTagTree>, Parse
 fn parse_named_type(c: ParseContext) -> lex::Result<Option<TypeTagTree>, ParseTypeTagError> {
     if let (Some(name), after_name) = parse_qualified_name(c) {
         Ok((Some(TypeTagTree::Named { name }), after_name))
+    } else {
+        Ok((None, c))
+    }
+}
+
+fn parse_slice_type(c: ParseContext) -> lex::Result<Option<TypeTagTree>, ParseTypeTagError> {
+    if let (Some(_open), c) = c.mark('[') {
+        let (_white, c) = c.white_line_comments();
+        if let (Some(_close), c) = c.mark(']') {
+            let (_white, c) = c.white_line_comments();
+            let (base, c) = parse_type_tag(c)?;
+            Ok((
+                Some(TypeTagTree::Slice {
+                    base: Box::new(base),
+                }),
+                c,
+            ))
+        } else {
+            Err(c.to_error(ExpectedClosingSliceBracket))
+        }
     } else {
         Ok((None, c))
     }
