@@ -48,6 +48,7 @@ impl GenRust {
 
         let mut mods: Vec<ModNameRef> = Vec::default();
         let mut pub_mods: Vec<ModNameRef> = Vec::default();
+
         for (mod_name, subtree) in &tree.subtrees {
             if subtree.is_empty() {
                 mods.push(mod_name.to_ref());
@@ -58,6 +59,7 @@ impl GenRust {
 
         let mut source: Source = Source::default();
 
+        mods.sort();
         if !mods.is_empty() {
             for mod_name in &mods {
                 source.add_semi(format!("pub use {}::*", mod_name));
@@ -68,6 +70,7 @@ impl GenRust {
             }
         }
 
+        pub_mods.sort();
         if !pub_mods.is_empty() {
             if !mods.is_empty() {
                 source.add_statement(EmptyLine::default());
