@@ -1,6 +1,15 @@
+import message_fields.UnsignedInts;
+
 // A message with unsigned integer slices.
-message UnsignedInts {
+message MessageUnsignedIntSlices {
 
     // The first field.
     one: []u8 = 1;
+}
+
+// A message with named type slices.
+message MessageNamedTypeSlices {
+
+    // A message field.
+    one: []UnsignedInts = 1;
 }

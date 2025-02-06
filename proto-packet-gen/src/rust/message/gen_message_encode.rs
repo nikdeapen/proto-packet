@@ -1,8 +1,7 @@
 use code_gen::rust::{IfStatement, ImplBlock};
 use code_gen::{EmptyLine, Source, WithStatements};
 
-use proto_packet::io::WireType::Fixed1Byte;
-use proto_packet::io::{TagNumber, WireType};
+use proto_packet::io::TagNumber;
 use proto_packet_tree::{
     Message, MessageField, PrimitiveType, TypeTag, WithFieldName, WithTagNumberOptional,
     WithTypeName, WithTypeTag,
@@ -151,13 +150,17 @@ impl GenRust {
                 PrimitiveType::UnsignedInt8 => "u8",
                 _ => unimplemented!(),
             },
+            TypeTag::Named(_) => "packet",
             _ => unimplemented!(),
         };
-        let list_wire_type: WireType = match base {
+        let list_wire_type: String = match base {
             TypeTag::Primitive(primitive) => match primitive {
-                PrimitiveType::UnsignedInt8 => Fixed1Byte,
+                PrimitiveType::UnsignedInt8 => "WireType::Fixed1Byte".to_string(),
                 _ => unimplemented!(),
             },
+            TypeTag::Named(name) => {
+                format!("{}::wire_type()", self.typing.rust_name(name.to_ref()))
+            }
             _ => unimplemented!(),
         };
         Source::default()
@@ -172,7 +175,7 @@ impl GenRust {
                 encode_tag,
             ))
             .with_semi(format!(
-                "let list_header_len: usize = proto_packet::io::ListHeader::new(WireType::{:?}, list_size_bytes).{}?",
+                "let list_header_len: usize = proto_packet::io::ListHeader::new({}, list_size_bytes).{}?",
                 list_wire_type,
                 op.encode_call(),
             ))

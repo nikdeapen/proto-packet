@@ -60,7 +60,14 @@ impl GenRust {
                         SpecialType::String => "string",
                     },
                     TypeTag::Named(_) => "packet",
-                    TypeTag::Slice(_) => "slice_u8",
+                    TypeTag::Slice(base) => match base.as_ref() {
+                        TypeTag::Primitive(primitive) => match primitive {
+                            PrimitiveType::UnsignedInt8 => "slice_u8",
+                            _ => unimplemented!(),
+                        },
+                        TypeTag::Named(_) => "slice_packet",
+                        _ => unimplemented!(),
+                    },
                 };
 
                 match_case.add_statement(VarInit::from((

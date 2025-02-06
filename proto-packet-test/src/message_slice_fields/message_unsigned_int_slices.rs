@@ -5,25 +5,25 @@ use proto_packet::{Message, Packet};
 use std::io::{Error, Read, Write};
 
 /// // A message with unsigned integer slices.
-/// message UnsignedInts {
+/// message MessageUnsignedIntSlices {
 ///   
 ///   // The first field.
 ///   one: []u8 = 1;
 /// }
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Default)]
-pub struct UnsignedInts {
+pub struct MessageUnsignedIntSlices {
     one: Option<Vec<u8>>,
 }
 
-impl Packet for UnsignedInts {
+impl Packet for MessageUnsignedIntSlices {
     fn wire_type() -> WireType {
         WireType::LengthPrefixed
     }
 }
 
-impl Message for UnsignedInts {}
+impl Message for MessageUnsignedIntSlices {}
 
-impl UnsignedInts {
+impl MessageUnsignedIntSlices {
     //! Field `one`
     //!
     //! // The first field.
@@ -53,7 +53,7 @@ impl UnsignedInts {
     }
 }
 
-impl EncodedLen for UnsignedInts {
+impl EncodedLen for MessageUnsignedIntSlices {
     fn encoded_len(&self) -> Result<usize, enc::Error> {
         let mut encoded_len: usize = 0;
 
@@ -83,7 +83,7 @@ impl EncodedLen for UnsignedInts {
     }
 }
 
-impl EncodeToSlice for UnsignedInts {
+impl EncodeToSlice for MessageUnsignedIntSlices {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, enc::Error> {
         let mut encoded_len: usize = 0;
 
@@ -114,7 +114,7 @@ impl EncodeToSlice for UnsignedInts {
     }
 }
 
-impl EncodeToWrite for UnsignedInts {
+impl EncodeToWrite for MessageUnsignedIntSlices {
     fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, Error>
     where
         W: Write,
@@ -147,7 +147,7 @@ impl EncodeToWrite for UnsignedInts {
     }
 }
 
-impl DecodeFromRead for UnsignedInts {
+impl DecodeFromRead for MessageUnsignedIntSlices {
     fn decode_from_read<R>(r: &mut R) -> Result<Self, Error>
     where
         R: Read,
@@ -173,7 +173,7 @@ impl DecodeFromRead for UnsignedInts {
     }
 }
 
-impl DecodeFromReadPrefix for UnsignedInts {
+impl DecodeFromReadPrefix for MessageUnsignedIntSlices {
     fn decode_from_read_prefix_with_first_byte<R>(first: u8, r: &mut R) -> Result<Self, Error>
     where
         R: Read,
