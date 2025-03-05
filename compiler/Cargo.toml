@@ -5,4 +5,5 @@ members = [
 ]
 
 [workspace.dependencies]
+proto-packet = { path = "../dep/rust" }
 custom-string = { path = "../../custom-string" }
