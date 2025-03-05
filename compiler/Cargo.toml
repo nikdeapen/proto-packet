@@ -3,3 +3,6 @@ resolver = "2"
 members = [
     "proto-packet-tree"
 ]
+
+[workspace.dependencies]
+custom-string = { path = "../../custom-string" }
