@@ -1,5 +1,9 @@
+use crate::io::DecodingError;
 use crate::io::WireType::*;
+use enc::var_int::VarIntSize;
+use enc::DecodeFromReadPrefix;
 use std::fmt::{Display, Formatter};
+use std::io::Read;
 
 /// A wire type.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
@@ -70,6 +74,24 @@ impl WireType {
     /// Converts the wire type to the high 3-bits of a `u8`.
     pub fn to_high_3_bits(&self) -> u8 {
         self.to_low_3_bits() << 5
+    }
+}
+
+impl WireType {
+    //! Decode
+
+    /// Decodes a `[]u8` value from the `Read` prefix given the `first` byte.
+    pub fn decode_bytes<R>(r: &mut R, first: u8) -> Result<Vec<u8>, DecodingError>
+    where
+        R: Read,
+    {
+        let prefix: usize = VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
+            .map_err(|e| DecodingError::from_length_prefix_error(e))?
+            .value();
+        let mut result: Vec<u8> = vec![0; prefix];
+        r.read_exact(&mut result)
+            .map_err(|e| DecodingError::Source(e))?;
+        Ok(result)
     }
 }
 
