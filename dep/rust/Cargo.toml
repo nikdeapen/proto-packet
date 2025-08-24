@@ -8,3 +8,9 @@ homepage = "https://github.com/nikdeapen/proto-packet/dep/rust"
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+enc = { path = "../../../enc", features = ["var-int"] } # todo -- path dependency
+
+[dev-dependencies]
+enc = { path = "../../../enc", features = ["test"] } # todo -- path dependency
