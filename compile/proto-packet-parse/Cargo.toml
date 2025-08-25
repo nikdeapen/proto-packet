@@ -13,4 +13,5 @@ license = "MIT"
 proto-packet = { workspace = true }
 proto-packet-tree = { workspace = true }
 
+clerr = { workspace = true }
 lex = { workspace = true }

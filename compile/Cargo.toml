@@ -9,5 +9,6 @@ members = [
 proto-packet = { path = "../dep/rust" }
 proto-packet-tree = { path = "proto-packet-tree" }
 
+clerr = { path = "../../clerr" } # todo -- path dependency
 custom-string = { path = "../../custom-string" } # todo -- path dependency
-lex = { path = "../../lex" } # todo -- path dependency
+lex = { path = "../../lex" }
