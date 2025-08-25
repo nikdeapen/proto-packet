@@ -7,5 +7,7 @@ members = [
 
 [workspace.dependencies]
 proto-packet = { path = "../dep/rust" }
+proto-packet-tree = { path = "proto-packet-tree" }
 
 custom-string = { path = "../../custom-string" } # todo -- path dependency
+lex = { path = "../../lex" } # todo -- path dependency

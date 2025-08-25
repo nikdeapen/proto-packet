@@ -8,3 +8,8 @@ homepage = "https://github.com/nikdeapen/proto-packet/compile/proto-packet-parse
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+proto-packet-tree = { workspace = true }
+
+lex = { workspace = true }
