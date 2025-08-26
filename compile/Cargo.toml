@@ -12,12 +12,14 @@ members = [
 
 [workspace.dependencies]
 proto-packet = { path = "../dep/rust" }
+proto-packet-compile = { path = "proto-packet-compile" }
 proto-packet-gen = { path = "proto-packet-gen" }
 proto-packet-link = { path = "proto-packet-link" }
 proto-packet-parse = { path = "proto-packet-parse" }
 proto-packet-tree = { path = "proto-packet-tree" }
 proto-packet-validate = { path = "proto-packet-validate" }
 
+clap = "4.5.46"
 clerr = { path = "../../clerr" } # todo -- path dependency
 code-gen = { path = "../../code-gen" } # todo -- path dependency
 colored = "3.0.0"
