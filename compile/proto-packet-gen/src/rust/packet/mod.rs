@@ -1,3 +1,4 @@
+mod gen_decode;
 mod gen_encode;
 mod gen_fields;
 mod gen_header;
