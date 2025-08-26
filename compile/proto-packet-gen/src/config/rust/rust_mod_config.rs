@@ -1,9 +1,14 @@
+use serde::{Deserialize, Serialize};
+
 /// A rust mod file config.
-#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
+#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]
 pub struct RustModConfig {
     pub retain: Vec<String>,
+    #[serde(default = "default_use_lib_root")]
     pub use_lib_root: bool,
+    #[serde(default = "default_lib_file_name")]
     pub lib_file_name: String,
+    #[serde(default = "default_mod_file_name")]
     pub mod_file_name: String,
 }
 

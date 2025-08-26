@@ -16,6 +16,7 @@ proto-packet-tree = { workspace = true }
 clerr = { workspace = true }
 code-gen = { workspace = true }
 file-storage = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
 
 [features]
 rust = ["code-gen/rust"]

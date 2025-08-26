@@ -11,12 +11,17 @@ members = [
 
 [workspace.dependencies]
 proto-packet = { path = "../dep/rust" }
+proto-packet-gen = { path = "proto-packet-gen" }
+proto-packet-link = { path = "proto-packet-link" }
 proto-packet-parse = { path = "proto-packet-parse" }
 proto-packet-tree = { path = "proto-packet-tree" }
+proto-packet-validate = { path = "proto-packet-validate" }
 
 clerr = { path = "../../clerr" } # todo -- path dependency
 code-gen = { path = "../../code-gen" } # todo -- path dependency
 colored = "3.0.0"
 custom-string = { path = "../../custom-string" } # todo -- path dependency
 file-storage = { path = "../../file-storage" } # todo -- path dependency
+serde = "1.0.219"
+serde_json = "1.0.143"
 lex = { path = "../../lex" }
