@@ -29,3 +29,31 @@ fn default_lib_file_name() -> String {
 fn default_mod_file_name() -> String {
     "mod.rs".to_string()
 }
+
+impl RustModConfig {
+    //! Properties
+
+    /// Gets the mod file path.
+    #[cfg(feature = "rust")]
+    pub fn file_path(
+        &self,
+        target: &file_storage::FolderPath,
+        root: bool,
+    ) -> Result<file_storage::FilePath, crate::rust::Error> {
+        let mod_file_name: &str = if root && self.use_lib_root {
+            self.lib_file_name.as_str()
+        } else {
+            self.mod_file_name.as_str()
+        };
+
+        target
+            .clone_with_extra_capacity(mod_file_name.len())
+            .to_path()
+            .with_appended(mod_file_name)
+            .to_file()
+            .map_err(|file_path| crate::rust::Error::InvalidModFileName {
+                file_path: file_path.export_path(),
+                mod_file_name: mod_file_name.to_string(),
+            })
+    }
+}
