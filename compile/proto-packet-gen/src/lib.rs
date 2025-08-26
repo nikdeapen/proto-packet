@@ -5,3 +5,6 @@ mod code_generator;
 mod generated_code;
 
 pub mod config;
+
+#[cfg(feature = "rust")]
+pub mod rust;
