@@ -16,4 +16,5 @@ proto-packet-tree = { path = "proto-packet-tree" }
 clerr = { path = "../../clerr" } # todo -- path dependency
 colored = "3.0.0"
 custom-string = { path = "../../custom-string" } # todo -- path dependency
+file-storage = { path = "../../file-storage" } # todo -- path dependency
 lex = { path = "../../lex" }
