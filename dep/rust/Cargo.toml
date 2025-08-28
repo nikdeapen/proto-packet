@@ -10,8 +10,8 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
-enc = { path = "../../../enc", features = ["var-int"] } # todo -- path dependency
+enc = { git = "https://github.com/nikdeapen/enc", features = ["var-int"] } # todo -- path dependency
 uuid = "1.18.0"
 
 [dev-dependencies]
-enc = { path = "../../../enc", features = ["test"] } # todo -- path dependency
+enc = { git = "https://github.com/nikdeapen/enc", features = ["test"] } # todo -- path dependency
