@@ -20,11 +20,11 @@ proto-packet-tree = { path = "proto-packet-tree" }
 proto-packet-validate = { path = "proto-packet-validate" }
 
 clap = "4.5.46"
-clerr = { path = "../../clerr" } # todo -- path dependency
-code-gen = { path = "../../code-gen" } # todo -- path dependency
+clerr = { git = "https://github.com/nikdeapen/clerr" } # todo -- path dependency
+code-gen = { git = "https://github.com/nikdeapen/code-gen" } # todo -- path dependency
 colored = "3.0.0"
-custom-string = { path = "../../custom-string" } # todo -- path dependency
-file-storage = { path = "../../file-storage" } # todo -- path dependency
+custom-string = { git = "https://github.com/nikdeapen/custom-string" } # todo -- path dependency
+file-storage = { git = "https://github.com/nikdeapen/file-storage" } # todo -- path dependency
 serde = "1.0.219"
 serde_json = "1.0.143"
-lex = { path = "../../lex" }
+lex = { git = "https://github.com/nikdeapen/lex" } # todo -- path dependency
