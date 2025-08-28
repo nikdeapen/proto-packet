@@ -117,7 +117,7 @@ impl GenRust {
         match_statement.add_match_case(
             MatchCase::from("_")
                 .with_semi(format!(
-                    "let mut w: {}<&mut Vec<u8>> = {}::new(&mut result.{});",
+                    "let mut w: {}<&mut Vec<u8>> = {}::new(&mut result.{})",
                     self.naming.cursor_type_name,
                     self.naming.cursor_type_name,
                     self.naming.unrecognized_fields_name,
