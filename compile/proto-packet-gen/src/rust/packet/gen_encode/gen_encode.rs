@@ -47,7 +47,7 @@ impl GenRust {
 
     pub(in crate::rust) fn gen_encode_struct_source(&self, s: &Struct, op: EncodeOp) -> Source {
         let mut source: Source = Source::default();
-        source.add_semi("let mut encoded_len: usize = 0;");
+        source.add_semi("let mut encoded_len: usize = 0");
 
         for field in s.fields() {
             source.add_statement(EmptyLine::default());
@@ -66,7 +66,7 @@ impl GenRust {
 
     pub(in crate::rust) fn gen_encode_message_source(&self, s: &Message, op: EncodeOp) -> Source {
         let mut source: Source = Source::default();
-        source.add_semi("let mut encoded_len: usize = 0;");
+        source.add_semi("let mut encoded_len: usize = 0");
 
         for field in s.fields() {
             source.add_statement(EmptyLine::default());
@@ -94,7 +94,7 @@ impl GenRust {
 
     pub(in crate::rust) fn gen_encode_enum_source(&self, e: &Enum, op: EncodeOp) -> Source {
         let mut source: Source = Source::default();
-        source.add_semi("let mut encoded_len: usize = 0;");
+        source.add_semi("let mut encoded_len: usize = 0");
 
         let mut match_statement: MatchStatement = MatchStatement::from("self")
             .with_assignment(("tag_number", RustPrimitive::UnsignedInt32));
@@ -118,7 +118,7 @@ impl GenRust {
 
     pub(in crate::rust) fn gen_encode_variant_source(&self, v: &Variant, op: EncodeOp) -> Source {
         let mut source: Source = Source::default();
-        source.add_semi("let mut encoded_len: usize = 0;");
+        source.add_semi("let mut encoded_len: usize = 0");
 
         let mut match_statement: MatchStatement = MatchStatement::from("self");
         for case in v.cases() {

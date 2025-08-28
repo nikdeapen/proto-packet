@@ -30,6 +30,6 @@ impl GenRust {
                 fixed,
             ))
             .with_literal(format!("encoder.{}?", op.encode_call()))
-            .with_semi("};")
+            .with_semi("}")
     }
 }
