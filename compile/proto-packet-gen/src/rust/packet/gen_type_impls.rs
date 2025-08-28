@@ -9,7 +9,7 @@ use proto_packet::io::WireType;
 use proto_packet::io::WireType::{LengthPrefixed, VarInt};
 use proto_packet::PacketType;
 use proto_packet_tree::{
-    Enum, Message, Struct, Variant, WithCaseName, WithTagNumber, WithTypeName,
+    Enum, Message, Struct, TypeNameRef, Variant, WithCaseName, WithTagNumber, WithTypeName,
 };
 
 impl GenRust {
@@ -24,21 +24,24 @@ impl GenRust {
     }
 
     pub(in crate::rust) fn gen_type_impls_enum(&self, e: &Enum) -> Source {
-        self.gen_type_impls(
-            e,
-            PacketType::Enum,
-            VarInt,
-            vec![self.gen_enum_tag_number_fn(e)],
-        )
+        Source::default()
+            .with_statement(self.gen_type_impls(e, PacketType::Enum, VarInt, vec![]))
+            .with_statement(EmptyLine::default())
+            .with_statement(
+                self.gen_impl_with_tag_number(e.type_name(), self.gen_enum_tag_number_fn_source(e)),
+            )
     }
 
     pub(in crate::rust) fn gen_type_impls_variant(&self, v: &Variant) -> Source {
-        self.gen_type_impls(
-            v,
-            PacketType::Variant,
-            LengthPrefixed,
-            vec![self.gen_variant_tag_number_fn(v)],
-        )
+        Source::default()
+            .with_statement(self.gen_type_impls(v, PacketType::Variant, LengthPrefixed, vec![]))
+            .with_statement(EmptyLine::default())
+            .with_statement(
+                self.gen_impl_with_tag_number(
+                    v.type_name(),
+                    self.gen_variant_tag_number_fn_source(v),
+                ),
+            )
     }
 }
 
@@ -82,7 +85,24 @@ impl GenRust {
 impl GenRust {
     //! Gen Type Impls: Tag Number
 
-    fn gen_enum_tag_number_fn(&self, e: &Enum) -> Function {
+    fn gen_impl_with_tag_number(&self, name: TypeNameRef, fn_source: MatchStatement) -> ImplBlock {
+        ImplBlock::from(self.naming.type_name(name))
+            .with_for_trait("WithTagNumber")
+            .with_function(
+                Function::from(
+                    Signature::from("tag_number")
+                        .with_receiver(Borrowed)
+                        .with_result(self.naming.tag_number_type_name.as_str()),
+                )
+                .with_statement(fn_source)
+                .with_literal(format!(
+                    "unsafe {{ {}::new_unchecked({}) }}",
+                    self.naming.tag_number_type_name, "tag_number"
+                )),
+            )
+    }
+
+    fn gen_enum_tag_number_fn_source(&self, e: &Enum) -> MatchStatement {
         let mut match_statement: MatchStatement = MatchStatement::from("self")
             .with_assignment(("tag_number", RustPrimitive::UnsignedInt32));
         for case in e.cases() {
@@ -91,20 +111,10 @@ impl GenRust {
                     .with_literal(case.tag_number().to_string()),
             )
         }
-
-        Function::from(
-            Signature::from("tag_number")
-                .with_receiver(Borrowed)
-                .with_result(self.naming.tag_number_type_name.as_str()),
-        )
-        .with_statement(match_statement)
-        .with_literal(format!(
-            "unsafe {{ {}::new_unchecked({}) }}",
-            self.naming.tag_number_type_name, "tag_number"
-        ))
+        match_statement
     }
 
-    fn gen_variant_tag_number_fn(&self, e: &Variant) -> Function {
+    fn gen_variant_tag_number_fn_source(&self, e: &Variant) -> MatchStatement {
         let mut match_statement: MatchStatement = MatchStatement::from("self")
             .with_assignment(("tag_number", RustPrimitive::UnsignedInt32));
         for case in e.cases() {
@@ -116,16 +126,6 @@ impl GenRust {
                 .with_literal(case.tag_number().to_string()),
             )
         }
-
-        Function::from(
-            Signature::from("tag_number")
-                .with_receiver(Borrowed)
-                .with_result(self.naming.tag_number_type_name.as_str()),
-        )
-        .with_statement(match_statement)
-        .with_literal(format!(
-            "unsafe {{ {}::new_unchecked({}) }}",
-            self.naming.tag_number_type_name, "tag_number"
-        ))
+        match_statement
     }
 }

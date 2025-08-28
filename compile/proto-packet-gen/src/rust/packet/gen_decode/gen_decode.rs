@@ -159,7 +159,7 @@ impl GenRust {
 
         Source::default()
             .with_semi(format!(
-                "let tag_number: u32 = {}::{}(r, first)?.value",
+                "let tag_number: u32 = {}::{}(r, first)?.value()",
                 "enc::var_int::VarInt32", "decode_from_read_prefix_with_first_byte"
             ))
             .with_statement(match_statement)
