@@ -1,9 +1,10 @@
 use crate::io::DecodingError;
 use crate::io::WireType::*;
 use enc::var_int::VarIntSize;
-use enc::DecodeFromReadPrefix;
+use enc::{read_single_byte, DecodeFromReadPrefix, EncodeToWrite};
 use std::fmt::{Display, Formatter};
-use std::io::Read;
+use std::io;
+use std::io::{Read, Take, Write};
 
 /// A wire type.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
@@ -92,6 +93,78 @@ impl WireType {
         r.read_exact(&mut result)
             .map_err(|e| DecodingError::Source(e))?;
         Ok(result)
+    }
+}
+
+impl WireType {
+    //! Transfer
+
+    /// Transfers the wire type data from the `Read` to the `Write`.
+    pub fn transfer<R, W>(&self, r: &mut R, w: &mut W) -> Result<(), io::Error>
+    where
+        R: Read,
+        W: Write,
+    {
+        let first: u8 = read_single_byte(r)?;
+        self.transfer_with_first_byte(r, w, first)
+    }
+
+    /// Transfers wire type from data the `Read` to the `Write` with the `first` byte.
+    pub fn transfer_with_first_byte<R, W>(
+        &self,
+        r: &mut R,
+        w: &mut W,
+        first: u8,
+    ) -> Result<(), io::Error>
+    where
+        R: Read,
+        W: Write,
+    {
+        match self {
+            Fixed1Byte => w.write_all(&[first])?,
+            Fixed2Byte => {
+                let second: u8 = read_single_byte(r)?;
+                w.write_all(&[first, second])?;
+            }
+            Fixed4Byte => {
+                let mut b: [u8; 4] = [0u8; 4];
+                b[0] = first;
+                r.read_exact(&mut b[1..])?;
+                w.write_all(&b)?;
+            }
+            Fixed8Byte => {
+                let mut b: [u8; 8] = [0u8; 8];
+                b[0] = first;
+                r.read_exact(&mut b[1..])?;
+                w.write_all(&b)?;
+            }
+            Fixed16Byte => {
+                let mut b: [u8; 16] = [0u8; 16];
+                b[0] = first;
+                r.read_exact(&mut b[1..])?;
+                w.write_all(&b)?;
+            }
+            VarInt => {
+                let mut current: u8 = first;
+                loop {
+                    w.write_all(&[current])?;
+                    if current & 0x10 == 0 {
+                        break;
+                    }
+                    current = read_single_byte(r)?;
+                }
+            }
+            LengthPrefixed => {
+                let prefix: VarIntSize =
+                    VarIntSize::decode_from_read_prefix_with_first_byte(r, first)?;
+                prefix.encode_to_write(w)?;
+                const _: () = debug_assert!(usize::BITS <= u64::BITS);
+                let mut r: Take<&mut R> = r.take(prefix.value() as u64);
+                io::copy(&mut r, w)?;
+            }
+            List => {}
+        }
+        Ok(())
     }
 }
 

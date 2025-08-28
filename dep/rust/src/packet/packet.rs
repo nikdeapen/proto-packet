@@ -1,5 +1,5 @@
 use crate::io::WireType;
-use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
+use enc::{DecodeFromRead, DecodeFromReadPrefix, EncodeToSlice, EncodeToWrite, EncodedLen};
 use std::fmt::Debug;
 use std::hash::Hash;
 
@@ -15,6 +15,8 @@ pub trait Packet:
     + EncodedLen
     + EncodeToSlice
     + EncodeToWrite
+    + DecodeFromRead
+    + DecodeFromReadPrefix
 {
     /// Gets the wire type.
     fn wire_type() -> WireType;

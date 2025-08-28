@@ -1,13 +1,14 @@
 use crate::io::WireType;
 use enc::{Error, StreamError};
 use std::fmt::{Display, Formatter};
+use std::io;
 use std::string::FromUtf8Error;
 
 /// A decoding error.
 #[derive(Debug)]
 pub enum DecodingError {
     /// There was an error reading the source.
-    Source(std::io::Error),
+    Source(io::Error),
 
     /// The value was out of range.
     ValueOutOfRange,
@@ -23,6 +24,9 @@ pub enum DecodingError {
 
     /// The string value was not valid UTF-8.
     InvalidString(FromUtf8Error),
+
+    /// An error decoding a packet.
+    PacketDecoding(StreamError),
 }
 
 impl DecodingError {
