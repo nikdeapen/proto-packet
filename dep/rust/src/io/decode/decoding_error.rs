@@ -1,5 +1,5 @@
 use crate::io::WireType;
-use enc::StreamError;
+use enc::{Error, StreamError};
 use std::fmt::{Display, Formatter};
 use std::string::FromUtf8Error;
 
@@ -41,6 +41,17 @@ impl DecodingError {
         match error {
             StreamError::Encoding(_) => Self::LengthPrefixOutOfRange,
             StreamError::Source(error) => Self::Source(error),
+        }
+    }
+}
+
+impl From<DecodingError> for StreamError {
+    fn from(error: DecodingError) -> Self {
+        match error {
+            DecodingError::Source(error) => error.into(),
+            _ => StreamError::Encoding(Error::InvalidEncodedData {
+                reason: Some(Box::new(error)),
+            }),
         }
     }
 }
