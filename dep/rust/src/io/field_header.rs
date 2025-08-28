@@ -1,10 +1,10 @@
 use crate::io::{TagNumber, WireType};
 use enc::var_int::{VarInt32, VarIntSize};
 use enc::{
-    read_optional_byte, DecodeFromRead, DecodeFromReadPrefix, EncodeToSlice, EncodeToWrite,
-    EncodedLen, Error, StreamError,
+    impl_encode_to_write_stack_buf, read_optional_byte, DecodeFromRead, DecodeFromReadPrefix,
+    EncodeToSlice, EncodedLen, Error, StreamError,
 };
-use std::io::{Read, Write};
+use std::io::Read;
 
 /// A field header.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
@@ -75,17 +75,7 @@ impl EncodeToSlice for FieldHeader {
     }
 }
 
-impl EncodeToWrite for FieldHeader {
-    fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, StreamError>
-    where
-        W: Write,
-    {
-        let mut buffer: [u8; Self::MAX_ENCODED_LEN] = [0u8; Self::MAX_ENCODED_LEN];
-        let encoded_len: usize = unsafe { self.encode_to_slice_unchecked(&mut buffer)? };
-        w.write_all(&buffer[..encoded_len])?;
-        Ok(encoded_len)
-    }
-}
+impl_encode_to_write_stack_buf!(FieldHeader, Self::MAX_ENCODED_LEN);
 
 impl DecodeFromRead for FieldHeader {
     fn decode_from_read<R>(r: &mut R) -> Result<Self, StreamError>
