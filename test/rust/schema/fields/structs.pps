@@ -25,6 +25,9 @@ struct SpecialTypes {
 
     // A `string` field.
     two: string;
+
+    // A `date` field.
+    three: date;
 }
 
 // A struct with named type fields.

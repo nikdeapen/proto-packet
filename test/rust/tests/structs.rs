@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use enc::test::test_io;
 use proto_packet_test::fields::structs::{NamedTypes, PrimitiveTypes, SpecialTypes};
 use uuid::Uuid;
@@ -14,10 +15,11 @@ fn special_types() {
     let packet: SpecialTypes = SpecialTypes::new(
         Uuid::from_slice(&[0u8, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]).unwrap(),
         "Hello, World!".to_string(),
+        NaiveDate::from_ymd_opt(1970, 1, 1).unwrap(),
     );
     let encoded: &[u8] = &[
         0u8, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 13, b'H', b'e', b'l', b'l', b'o', b',',
-        b' ', b'W', b'o', b'r', b'l', b'd', b'!',
+        b' ', b'W', b'o', b'r', b'l', b'd', b'!', 0,
     ];
     test_io(&packet, encoded, true);
 }

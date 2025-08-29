@@ -20,6 +20,7 @@ impl Typing {
             TypeTag::Special(special) => match special {
                 SpecialType::Uuid => BorrowMethod::Copy,
                 SpecialType::String => BorrowMethod::Deref,
+                SpecialType::Date => BorrowMethod::Copy,
             },
             TypeTag::Named(_) => BorrowMethod::Ref,
             TypeTag::Slice(_) => BorrowMethod::Deref,
@@ -89,6 +90,13 @@ impl Typing {
             TypeTag::Special(special) => match special {
                 SpecialType::Uuid => Fixed16Byte,
                 SpecialType::String => LengthPrefixed,
+                SpecialType::Date => {
+                    if fixed {
+                        Fixed8Byte
+                    } else {
+                        VarInt
+                    }
+                }
             },
             TypeTag::Named(_) => return None,
             TypeTag::Slice(base) => match base.as_ref() {
@@ -122,6 +130,7 @@ impl Typing {
         match special {
             SpecialType::Uuid => RustType::from("uuid::Uuid"),
             SpecialType::String => RustType::from("String"),
+            SpecialType::Date => RustType::from("chrono::NaiveDate"),
         }
     }
 

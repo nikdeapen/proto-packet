@@ -1,4 +1,5 @@
 use crate::io::{Decoder, DecodingError, WireType};
+use chrono::NaiveDate;
 use std::io::Read;
 use uuid::Uuid;
 
@@ -32,3 +33,4 @@ impl_decode_slice!(decode_u64_slice, u64, decode_u64);
 impl_decode_slice!(decode_u128_slice, u128, decode_u128);
 impl_decode_slice!(decode_uuid_slice, Uuid, decode_uuid);
 impl_decode_slice!(decode_string_slice, String, decode_string);
+impl_decode_slice!(decode_date_slice, NaiveDate, decode_date);

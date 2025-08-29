@@ -14,25 +14,31 @@ use std::io::{Read, Write};
 ///    
 ///    // A `string` field.
 ///    two: string;
+///    
+///    // A `date` field.
+///    three: date;
 /// }
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]
 pub struct SpecialTypes {
     one: uuid::Uuid,
     two: String,
+    three: chrono::NaiveDate,
 }
 
 impl SpecialTypes {
     //! Construction
 
     /// Creates a new `SpecialTypes`.
-    pub fn new<F0, F1>(one: F0, two: F1) -> Self
+    pub fn new<F0, F1, F2>(one: F0, two: F1, three: F2) -> Self
     where
         F0: Into<uuid::Uuid>,
         F1: Into<String>,
+        F2: Into<chrono::NaiveDate>,
     {
         Self {
             one: one.into(),
             two: two.into(),
+            three: three.into(),
         }
     }
 }
@@ -97,6 +103,37 @@ impl SpecialTypes {
     }
 }
 
+impl SpecialTypes {
+    //! Field: `three`
+    //!
+    //! // A `date` field.
+    //! three: date;
+
+    /// Gets the field: `three`.
+    pub fn three(&self) -> chrono::NaiveDate {
+        self.three
+    }
+
+    /// Sets the field: `three`. Returns the previous value.
+    pub fn set_three<T>(&mut self, three: T) -> chrono::NaiveDate
+    where
+        T: Into<chrono::NaiveDate>,
+    {
+        let old_three: chrono::NaiveDate = self.three;
+        self.three = three.into();
+        old_three
+    }
+
+    /// Sets the field: `three`. Returns the struct itself.
+    pub fn with_three<T>(mut self, three: T) -> Self
+    where
+        T: Into<chrono::NaiveDate>,
+    {
+        self.set_three(three);
+        self
+    }
+}
+
 impl Packet for SpecialTypes {
     fn wire_type() -> WireType {
         WireType::LengthPrefixed
@@ -121,6 +158,12 @@ impl EncodedLen for SpecialTypes {
             encoder.encoded_len()?
         };
 
+        encoded_len += {
+            let encoder: proto_packet::io::Encoder<chrono::NaiveDate> =
+                proto_packet::io::Encoder::new(&self.three, false);
+            encoder.encoded_len()?
+        };
+
         Ok(encoded_len)
     }
 }
@@ -138,6 +181,12 @@ impl EncodeToSlice for SpecialTypes {
         encoded_len += {
             let encoder: proto_packet::io::Encoder<String> =
                 proto_packet::io::Encoder::new(&self.two, false);
+            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
+        };
+
+        encoded_len += {
+            let encoder: proto_packet::io::Encoder<chrono::NaiveDate> =
+                proto_packet::io::Encoder::new(&self.three, false);
             encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
         };
 
@@ -164,6 +213,12 @@ impl EncodeToWrite for SpecialTypes {
             encoder.encode_to_write(w)?
         };
 
+        encoded_len += {
+            let encoder: proto_packet::io::Encoder<chrono::NaiveDate> =
+                proto_packet::io::Encoder::new(&self.three, false);
+            encoder.encode_to_write(w)?
+        };
+
         Ok(encoded_len)
     }
 }
@@ -185,11 +240,18 @@ impl DecodeFromRead for SpecialTypes {
             decoder.decode_string(WireType::LengthPrefixed, r, first)?
         };
 
+        let decoded_three: chrono::NaiveDate = {
+            let decoder: proto_packet::io::Decoder = proto_packet::io::Decoder::default();
+            let first: u8 = enc::read_single_byte(r)?;
+            decoder.decode_date(WireType::VarInt, r, first)?
+        };
+
         debug_assert!(enc::read_optional_byte(r)?.is_none());
 
         Ok(Self {
             one: decoded_one,
             two: decoded_two,
+            three: decoded_three,
         })
     }
 }

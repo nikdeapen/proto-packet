@@ -10,6 +10,7 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+chrono = "0.4.41"
 enc = { git = "https://github.com/nikdeapen/enc", features = ["var-int"] } # todo -- path dependency
 uuid = "1.18.0"
 

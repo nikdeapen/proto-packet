@@ -14,12 +14,16 @@ use std::io::{Read, Write};
 ///    
 ///    // A `string` field.
 ///    two: string = 2;
+///    
+///    // A `date` field.
+///    three: date = 3;
 /// }
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Default, Serialize, Deserialize)]
 pub struct SpecialTypes {
     packet_unrecognized_fields: Vec<u8>,
     one: Option<uuid::Uuid>,
     two: Option<String>,
+    three: Option<chrono::NaiveDate>,
 }
 
 impl SpecialTypes {
@@ -82,6 +86,37 @@ impl SpecialTypes {
     }
 }
 
+impl SpecialTypes {
+    //! Field: `three`
+    //!
+    //! // A `date` field.
+    //! three: date = 3;
+
+    /// Gets the field: `three`.
+    pub fn three(&self) -> Option<chrono::NaiveDate> {
+        self.three
+    }
+
+    /// Sets the field: `three`. Returns the previous value.
+    pub fn set_three<T>(&mut self, three: T) -> Option<chrono::NaiveDate>
+    where
+        T: Into<Option<chrono::NaiveDate>>,
+    {
+        let old_three: Option<chrono::NaiveDate> = self.three;
+        self.three = three.into();
+        old_three
+    }
+
+    /// Sets the field: `three`. Returns the struct itself.
+    pub fn with_three<T>(mut self, three: T) -> Self
+    where
+        T: Into<Option<chrono::NaiveDate>>,
+    {
+        self.set_three(three);
+        self
+    }
+}
+
 impl Packet for SpecialTypes {
     fn wire_type() -> WireType {
         WireType::LengthPrefixed
@@ -124,6 +159,21 @@ impl EncodedLen for SpecialTypes {
             };
         }
 
+        if let Some(value) = &self.three {
+            encoded_len += {
+                let tag_number: proto_packet::io::TagNumber =
+                    unsafe { proto_packet::io::TagNumber::new_unchecked(3) };
+                let header: proto_packet::io::FieldHeader =
+                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
+                header.encoded_len()?
+            };
+            encoded_len += {
+                let encoder: proto_packet::io::Encoder<chrono::NaiveDate> =
+                    proto_packet::io::Encoder::new(value, false);
+                encoder.encoded_len()?
+            };
+        }
+
         Ok(encoded_len)
     }
 }
@@ -157,6 +207,21 @@ impl EncodeToSlice for SpecialTypes {
             };
             encoded_len += {
                 let encoder: proto_packet::io::Encoder<String> =
+                    proto_packet::io::Encoder::new(value, false);
+                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
+            };
+        }
+
+        if let Some(value) = &self.three {
+            encoded_len += {
+                let tag_number: proto_packet::io::TagNumber =
+                    unsafe { proto_packet::io::TagNumber::new_unchecked(3) };
+                let header: proto_packet::io::FieldHeader =
+                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
+                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
+            };
+            encoded_len += {
+                let encoder: proto_packet::io::Encoder<chrono::NaiveDate> =
                     proto_packet::io::Encoder::new(value, false);
                 encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
             };
@@ -203,6 +268,21 @@ impl EncodeToWrite for SpecialTypes {
             };
         }
 
+        if let Some(value) = &self.three {
+            encoded_len += {
+                let tag_number: proto_packet::io::TagNumber =
+                    unsafe { proto_packet::io::TagNumber::new_unchecked(3) };
+                let header: proto_packet::io::FieldHeader =
+                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
+                header.encode_to_write(w)?
+            };
+            encoded_len += {
+                let encoder: proto_packet::io::Encoder<chrono::NaiveDate> =
+                    proto_packet::io::Encoder::new(value, false);
+                encoder.encode_to_write(w)?
+            };
+        }
+
         Ok(encoded_len)
     }
 }
@@ -235,6 +315,15 @@ impl DecodeFromRead for SpecialTypes {
                         decoder.decode_string(WireType::LengthPrefixed, r, first)?
                     };
                     result.set_two(value);
+                }
+                3 => {
+                    let value: chrono::NaiveDate = {
+                        let decoder: proto_packet::io::Decoder =
+                            proto_packet::io::Decoder::default();
+                        let first: u8 = enc::read_single_byte(r)?;
+                        decoder.decode_date(WireType::VarInt, r, first)?
+                    };
+                    result.set_three(value);
                 }
                 _ => {
                     let mut w: std::io::Cursor<&mut Vec<u8>> =

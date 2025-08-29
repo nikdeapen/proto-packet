@@ -25,6 +25,9 @@ message SpecialTypes {
 
     // A `string` field.
     two: string = 2;
+
+    // A `date` field.
+    three: date = 3;
 }
 
 // A message with named type fields.

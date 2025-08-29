@@ -38,7 +38,7 @@ impl GenRust {
                 "tag_number"
             ))
             .with_literal(format!("header.{}?", op.encode_call()))
-            .with_literal("};")
+            .with_semi("}")
             .with_statement(self.gen_encode_value(field_exp, type_tag, fixed, op))
     }
 
@@ -78,6 +78,13 @@ impl GenRust {
             TypeTag::Special(special) => match special {
                 SpecialType::Uuid => Fixed16Byte,
                 SpecialType::String => LengthPrefixed,
+                SpecialType::Date => {
+                    if fixed {
+                        Fixed4Byte
+                    } else {
+                        VarInt
+                    }
+                }
             },
             TypeTag::Named(name) => {
                 return format!("{}::wire_type()", self.typing.rust_name(name.to_ref()))

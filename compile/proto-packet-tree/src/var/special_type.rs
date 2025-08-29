@@ -10,6 +10,9 @@ pub enum SpecialType {
 
     /// A sequence of chars.
     String,
+
+    /// A date.
+    Date,
 }
 
 impl SpecialType {
@@ -26,6 +29,7 @@ impl AsRef<str> for SpecialType {
         match self {
             Self::Uuid => "uuid",
             Self::String => "string",
+            Self::Date => "date",
         }
     }
 }
@@ -49,6 +53,7 @@ impl FromStr for SpecialType {
         Ok(match s {
             "uuid" => Self::Uuid,
             "string" => Self::String,
+            "date" => Self::Date,
             _ => return Err(()),
         })
     }
