@@ -10,6 +10,12 @@ pub enum DecodingError {
     /// There was an error reading the source.
     Source(io::Error),
 
+    /// An invalid list header error.
+    InvalidListHeader(Error),
+
+    /// The list wire type was invalid.
+    InvalidListWire(WireType),
+
     /// The value was out of range.
     ValueOutOfRange,
 
@@ -44,6 +50,13 @@ impl DecodingError {
     pub fn from_length_prefix_error(error: StreamError) -> Self {
         match error {
             StreamError::Encoding(_) => Self::LengthPrefixOutOfRange,
+            StreamError::Source(error) => Self::Source(error),
+        }
+    }
+
+    pub fn from_list_header(error: StreamError) -> Self {
+        match error {
+            StreamError::Encoding(error) => Self::InvalidListHeader(error),
             StreamError::Source(error) => Self::Source(error),
         }
     }
