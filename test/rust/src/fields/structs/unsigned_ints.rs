@@ -6,8 +6,8 @@ use proto_packet::{Packet, Struct};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
-/// // A struct with primitive type fields.
-/// struct PrimitiveTypes {
+/// // A struct with unsigned integers.
+/// struct UnsignedInts {
 ///    
 ///    // A `u8` field.
 ///    one: u8;
@@ -25,7 +25,7 @@ use std::io::{Read, Write};
 ///    five: u128;
 /// }
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]
-pub struct PrimitiveTypes {
+pub struct UnsignedInts {
     one: u8,
     two: u16,
     three: u32,
@@ -33,10 +33,10 @@ pub struct PrimitiveTypes {
     five: u128,
 }
 
-impl PrimitiveTypes {
+impl UnsignedInts {
     //! Construction
 
-    /// Creates a new `PrimitiveTypes`.
+    /// Creates a new `UnsignedInts`.
     pub fn new<F0, F1, F2, F3, F4>(one: F0, two: F1, three: F2, four: F3, five: F4) -> Self
     where
         F0: Into<u8>,
@@ -55,7 +55,7 @@ impl PrimitiveTypes {
     }
 }
 
-impl PrimitiveTypes {
+impl UnsignedInts {
     //! Field: `one`
     //!
     //! // A `u8` field.
@@ -86,7 +86,7 @@ impl PrimitiveTypes {
     }
 }
 
-impl PrimitiveTypes {
+impl UnsignedInts {
     //! Field: `two`
     //!
     //! // A `u16` field.
@@ -117,7 +117,7 @@ impl PrimitiveTypes {
     }
 }
 
-impl PrimitiveTypes {
+impl UnsignedInts {
     //! Field: `three`
     //!
     //! // A `u32` field.
@@ -148,7 +148,7 @@ impl PrimitiveTypes {
     }
 }
 
-impl PrimitiveTypes {
+impl UnsignedInts {
     //! Field: `four`
     //!
     //! // A `u64` field.
@@ -179,7 +179,7 @@ impl PrimitiveTypes {
     }
 }
 
-impl PrimitiveTypes {
+impl UnsignedInts {
     //! Field: `five`
     //!
     //! // A `u128` field.
@@ -210,15 +210,15 @@ impl PrimitiveTypes {
     }
 }
 
-impl Packet for PrimitiveTypes {
+impl Packet for UnsignedInts {
     fn wire_type() -> WireType {
         WireType::LengthPrefixed
     }
 }
 
-impl Struct for PrimitiveTypes {}
+impl Struct for UnsignedInts {}
 
-impl EncodedLen for PrimitiveTypes {
+impl EncodedLen for UnsignedInts {
     fn encoded_len(&self) -> Result<usize, Error> {
         let mut encoded_len: usize = 0;
 
@@ -256,7 +256,7 @@ impl EncodedLen for PrimitiveTypes {
     }
 }
 
-impl EncodeToSlice for PrimitiveTypes {
+impl EncodeToSlice for UnsignedInts {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
         let mut encoded_len: usize = 0;
 
@@ -294,7 +294,7 @@ impl EncodeToSlice for PrimitiveTypes {
     }
 }
 
-impl EncodeToWrite for PrimitiveTypes {
+impl EncodeToWrite for UnsignedInts {
     fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, StreamError>
     where
         W: Write,
@@ -335,7 +335,7 @@ impl EncodeToWrite for PrimitiveTypes {
     }
 }
 
-impl DecodeFromRead for PrimitiveTypes {
+impl DecodeFromRead for UnsignedInts {
     fn decode_from_read<R>(r: &mut R) -> Result<Self, StreamError>
     where
         R: Read,
@@ -382,7 +382,7 @@ impl DecodeFromRead for PrimitiveTypes {
     }
 }
 
-impl DecodeFromReadPrefix for PrimitiveTypes {
+impl DecodeFromReadPrefix for UnsignedInts {
     fn decode_from_read_prefix_with_first_byte<R>(r: &mut R, first: u8) -> Result<Self, StreamError>
     where
         R: Read,

@@ -10,11 +10,11 @@ use std::io::{Read, Write};
 /// struct NamedTypes {
 ///    
 ///    // A `struct` field.
-///    one: fields.structs.PrimitiveTypes;
+///    one: fields.structs.UnsignedInts;
 /// }
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]
 pub struct NamedTypes {
-    one: crate::fields::structs::PrimitiveTypes,
+    one: crate::fields::structs::UnsignedInts,
 }
 
 impl NamedTypes {
@@ -23,7 +23,7 @@ impl NamedTypes {
     /// Creates a new `NamedTypes`.
     pub fn new<F0>(one: F0) -> Self
     where
-        F0: Into<crate::fields::structs::PrimitiveTypes>,
+        F0: Into<crate::fields::structs::UnsignedInts>,
     {
         Self { one: one.into() }
     }
@@ -33,17 +33,17 @@ impl NamedTypes {
     //! Field: `one`
     //!
     //! // A `struct` field.
-    //! one: fields.structs.PrimitiveTypes;
+    //! one: fields.structs.UnsignedInts;
 
     /// Gets the field: `one`.
-    pub fn one(&self) -> &crate::fields::structs::PrimitiveTypes {
+    pub fn one(&self) -> &crate::fields::structs::UnsignedInts {
         &self.one
     }
 
     /// Sets the field: `one`. Returns the previous value.
-    pub fn set_one<T>(&mut self, one: T) -> crate::fields::structs::PrimitiveTypes
+    pub fn set_one<T>(&mut self, one: T) -> crate::fields::structs::UnsignedInts
     where
-        T: Into<crate::fields::structs::PrimitiveTypes>,
+        T: Into<crate::fields::structs::UnsignedInts>,
     {
         std::mem::replace(&mut self.one, one.into())
     }
@@ -51,7 +51,7 @@ impl NamedTypes {
     /// Sets the field: `one`. Returns the struct itself.
     pub fn with_one<T>(mut self, one: T) -> Self
     where
-        T: Into<crate::fields::structs::PrimitiveTypes>,
+        T: Into<crate::fields::structs::UnsignedInts>,
     {
         self.set_one(one);
         self
@@ -71,7 +71,7 @@ impl EncodedLen for NamedTypes {
         let mut encoded_len: usize = 0;
 
         encoded_len += {
-            let encoder: proto_packet::io::Encoder<crate::fields::structs::PrimitiveTypes> =
+            let encoder: proto_packet::io::Encoder<crate::fields::structs::UnsignedInts> =
                 proto_packet::io::Encoder::new(&self.one, false);
             encoder.encoded_len()?
         };
@@ -85,7 +85,7 @@ impl EncodeToSlice for NamedTypes {
         let mut encoded_len: usize = 0;
 
         encoded_len += {
-            let encoder: proto_packet::io::Encoder<crate::fields::structs::PrimitiveTypes> =
+            let encoder: proto_packet::io::Encoder<crate::fields::structs::UnsignedInts> =
                 proto_packet::io::Encoder::new(&self.one, false);
             encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
         };
@@ -102,7 +102,7 @@ impl EncodeToWrite for NamedTypes {
         let mut encoded_len: usize = 0;
 
         encoded_len += {
-            let encoder: proto_packet::io::Encoder<crate::fields::structs::PrimitiveTypes> =
+            let encoder: proto_packet::io::Encoder<crate::fields::structs::UnsignedInts> =
                 proto_packet::io::Encoder::new(&self.one, false);
             encoder.encode_to_write(w)?
         };
@@ -116,14 +116,10 @@ impl DecodeFromRead for NamedTypes {
     where
         R: Read,
     {
-        let decoded_one: crate::fields::structs::PrimitiveTypes = {
+        let decoded_one: crate::fields::structs::UnsignedInts = {
             let decoder: proto_packet::io::Decoder = proto_packet::io::Decoder::default();
             let first: u8 = enc::read_single_byte(r)?;
-            decoder.decode_packet(
-                crate::fields::structs::PrimitiveTypes::wire_type(),
-                r,
-                first,
-            )?
+            decoder.decode_packet(crate::fields::structs::UnsignedInts::wire_type(), r, first)?
         };
 
         debug_assert!(enc::read_optional_byte(r)?.is_none());

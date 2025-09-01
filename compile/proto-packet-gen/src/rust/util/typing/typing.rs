@@ -1,7 +1,5 @@
 use crate::rust::BorrowMethod;
 use code_gen::rust::{Reference, RustPrimitive, RustType};
-use proto_packet::io::WireType;
-use proto_packet::io::WireType::*;
 use proto_packet_tree::{PrimitiveType, QualifiedNameRef, SpecialType, TypeTag};
 
 /// Responsible for type conversions.
@@ -38,79 +36,6 @@ impl Typing {
 }
 
 impl Typing {
-    //! Wire Types
-
-    /// Gets the `WireType` expression for the `declared`.
-    pub fn wire_type_exp(&self, declared: &TypeTag, fixed: bool) -> String {
-        if let Some(wire_type) = self.wire_type(declared, fixed) {
-            format!("WireType::{}", wire_type)
-        } else if let TypeTag::Named(name) = declared {
-            format!("{}::wire_type()", self.rust_name(name.to_ref()))
-        } else {
-            unreachable!()
-        }
-    }
-
-    /// Gets the optional `WireType` for the `declared`.
-    ///
-    /// Returns `None` for `Packet` types.
-    fn wire_type(&self, declared: &TypeTag, fixed: bool) -> Option<WireType> {
-        Some(match declared {
-            TypeTag::Primitive(primitive) => match primitive {
-                PrimitiveType::UnsignedInt8 => Fixed1Byte,
-                PrimitiveType::UnsignedInt16 => {
-                    if fixed {
-                        Fixed2Byte
-                    } else {
-                        VarInt
-                    }
-                }
-                PrimitiveType::UnsignedInt32 => {
-                    if fixed {
-                        Fixed4Byte
-                    } else {
-                        VarInt
-                    }
-                }
-                PrimitiveType::UnsignedInt64 => {
-                    if fixed {
-                        Fixed8Byte
-                    } else {
-                        VarInt
-                    }
-                }
-                PrimitiveType::UnsignedInt128 => {
-                    if fixed {
-                        Fixed16Byte
-                    } else {
-                        VarInt
-                    }
-                }
-            },
-            TypeTag::Special(special) => match special {
-                SpecialType::Uuid => Fixed16Byte,
-                SpecialType::String => LengthPrefixed,
-                SpecialType::Date => {
-                    if fixed {
-                        Fixed8Byte
-                    } else {
-                        VarInt
-                    }
-                }
-            },
-            TypeTag::Named(_) => return None,
-            TypeTag::Slice(base) => match base.as_ref() {
-                TypeTag::Primitive(primitive) => match primitive {
-                    PrimitiveType::UnsignedInt8 => LengthPrefixed,
-                    _ => List,
-                },
-                _ => List,
-            },
-        })
-    }
-}
-
-impl Typing {
     //! Mappings
 
     /// Maps the `primitive` type.
@@ -121,6 +46,11 @@ impl Typing {
             PrimitiveType::UnsignedInt32 => RustPrimitive::UnsignedInt32,
             PrimitiveType::UnsignedInt64 => RustPrimitive::UnsignedInt64,
             PrimitiveType::UnsignedInt128 => RustPrimitive::UnsignedInt128,
+            PrimitiveType::SignedInt8 => RustPrimitive::SignedInt8,
+            PrimitiveType::SignedInt16 => RustPrimitive::SignedInt16,
+            PrimitiveType::SignedInt32 => RustPrimitive::SignedInt32,
+            PrimitiveType::SignedInt64 => RustPrimitive::SignedInt64,
+            PrimitiveType::SignedInt128 => RustPrimitive::SignedInt128,
         }
         .to_type_tag()
     }

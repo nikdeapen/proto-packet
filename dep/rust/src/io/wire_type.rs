@@ -1,4 +1,5 @@
 use crate::io::DecodingError;
+use crate::io::DecodingError::Source;
 use crate::io::WireType::*;
 use enc::var_int::VarIntSize;
 use enc::{read_single_byte, DecodeFromReadPrefix, EncodeToWrite};
@@ -81,6 +82,47 @@ impl WireType {
 impl WireType {
     //! Decode
 
+    /// Decodes a `Fixed2Byte` value from the `Read` prefix given the `first` byte.
+    pub fn decode_fixed_2_byte<R>(r: &mut R, first: u8) -> Result<[u8; 2], DecodingError>
+    where
+        R: Read,
+    {
+        Ok([first, read_single_byte(r).map_err(|e| Source(e))?])
+    }
+
+    /// Decodes a `Fixed4Byte` value from the `Read` prefix given the `first` byte.
+    pub fn decode_fixed_4_byte<R>(r: &mut R, first: u8) -> Result<[u8; 4], DecodingError>
+    where
+        R: Read,
+    {
+        let mut buffer: [u8; 4] = [0u8; 4];
+        buffer[0] = first;
+        r.read_exact(&mut buffer[1..]).map_err(|e| Source(e))?;
+        Ok(buffer)
+    }
+
+    /// Decodes a `Fixed8Byte` value from the `Read` prefix given the `first` byte.
+    pub fn decode_fixed_8_byte<R>(r: &mut R, first: u8) -> Result<[u8; 8], DecodingError>
+    where
+        R: Read,
+    {
+        let mut buffer: [u8; 8] = [0u8; 8];
+        buffer[0] = first;
+        r.read_exact(&mut buffer[1..]).map_err(|e| Source(e))?;
+        Ok(buffer)
+    }
+
+    /// Decodes a `Fixed16Byte` value from the `Read` prefix given the `first` byte.
+    pub fn decode_fixed_16_byte<R>(r: &mut R, first: u8) -> Result<[u8; 16], DecodingError>
+    where
+        R: Read,
+    {
+        let mut buffer: [u8; 16] = [0u8; 16];
+        buffer[0] = first;
+        r.read_exact(&mut buffer[1..]).map_err(|e| Source(e))?;
+        Ok(buffer)
+    }
+
     /// Decodes a `[]u8` value from the `Read` prefix given the `first` byte.
     pub fn decode_bytes<R>(r: &mut R, first: u8) -> Result<Vec<u8>, DecodingError>
     where
@@ -90,8 +132,7 @@ impl WireType {
             .map_err(|e| DecodingError::from_length_prefix_error(e))?
             .value();
         let mut result: Vec<u8> = vec![0; prefix];
-        r.read_exact(&mut result)
-            .map_err(|e| DecodingError::Source(e))?;
+        r.read_exact(&mut result).map_err(|e| Source(e))?;
         Ok(result)
     }
 }
