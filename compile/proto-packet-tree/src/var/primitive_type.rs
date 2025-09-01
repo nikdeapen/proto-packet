@@ -34,6 +34,9 @@ pub enum PrimitiveType {
 
     /// A signed 128-bit integer.
     SignedInt128,
+
+    /// A boolean value.
+    Bool,
 }
 
 impl PrimitiveType {
@@ -58,6 +61,7 @@ impl AsRef<str> for PrimitiveType {
             Self::SignedInt32 => "i32",
             Self::SignedInt64 => "i64",
             Self::SignedInt128 => "i128",
+            Self::Bool => "bool",
         }
     }
 }
@@ -89,6 +93,7 @@ impl FromStr for PrimitiveType {
             "i32" => Self::SignedInt32,
             "i64" => Self::SignedInt64,
             "i128" => Self::SignedInt128,
+            "bool" => Self::Bool,
             _ => return Err(()),
         })
     }

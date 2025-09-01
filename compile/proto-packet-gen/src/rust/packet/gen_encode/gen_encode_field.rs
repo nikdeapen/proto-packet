@@ -103,6 +103,7 @@ impl GenRust {
                         VarInt
                     }
                 }
+                PrimitiveType::Bool => Fixed1Byte,
             },
             TypeTag::Special(special) => match special {
                 SpecialType::Uuid => Fixed16Byte,

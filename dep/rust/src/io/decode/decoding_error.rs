@@ -26,7 +26,7 @@ pub enum DecodingError {
     InvalidWireType(WireType),
 
     /// The encoded boolean value was invalid.
-    InvalidEncodedBool(u8),
+    InvalidEncodedBoolean(u8),
 
     /// The string value was not valid UTF-8.
     InvalidString(FromUtf8Error),

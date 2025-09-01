@@ -51,6 +51,7 @@ impl Typing {
             PrimitiveType::SignedInt32 => RustPrimitive::SignedInt32,
             PrimitiveType::SignedInt64 => RustPrimitive::SignedInt64,
             PrimitiveType::SignedInt128 => RustPrimitive::SignedInt128,
+            PrimitiveType::Bool => RustPrimitive::Boolean,
         }
         .to_type_tag()
     }

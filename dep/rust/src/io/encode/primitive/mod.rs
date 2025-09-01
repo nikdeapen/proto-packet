@@ -1,3 +1,4 @@
+mod bool;
 mod sint;
 mod sint_8;
 mod uint;

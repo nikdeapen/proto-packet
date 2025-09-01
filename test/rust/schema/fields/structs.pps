@@ -36,6 +36,14 @@ struct SignedInts {
     five: i128;
 }
 
+
+// A struct with primitive types.
+struct PrimitiveTypes {
+
+    // A `bool` field.
+    one: bool;
+}
+
 // A struct with special type fields.
 struct SpecialTypes {
 
