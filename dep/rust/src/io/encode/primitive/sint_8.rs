@@ -34,10 +34,8 @@ mod tests {
         let test_cases: &[(i8, bool, &[u8])] = &[
             (0, true, &[0]),
             (0, false, &[0]),
-            (0x7F, true, &[0x7F]),
-            (0x7F, false, &[0x7F]),
-            (i8::MAX, true, &[255]),
-            (i8::MAX, false, &[255]),
+            (i8::MAX, true, &[127]),
+            (i8::MAX, false, &[127]),
         ];
 
         for (value, fixed, expected) in test_cases {
