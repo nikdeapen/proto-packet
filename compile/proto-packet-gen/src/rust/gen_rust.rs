@@ -28,7 +28,7 @@ impl GenRust {
 }
 
 impl GenRust {
-    //! Type Decs
+    //! Type Declarations
 
     fn gen_type_dec_files(
         &self,

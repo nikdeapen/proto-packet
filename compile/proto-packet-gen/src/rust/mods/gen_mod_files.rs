@@ -66,11 +66,19 @@ impl GenRust {
         mods.sort();
         if !mods.is_empty() {
             for mod_name in &mods {
-                source.add_semi(format!("pub use {}::*", mod_name));
+                if self.naming.is_keyword(mod_name) {
+                    source.add_semi(format!("pub use r#{}::*", mod_name));
+                } else {
+                    source.add_semi(format!("pub use {}::*", mod_name));
+                }
             }
             source.add_statement(EmptyLine::default());
             for mod_name in &mods {
-                source.add_semi(format!("mod {}", mod_name));
+                if self.naming.is_keyword(mod_name) {
+                    source.add_semi(format!("mod r#{}", mod_name));
+                } else {
+                    source.add_semi(format!("mod {}", mod_name));
+                }
             }
         }
 
