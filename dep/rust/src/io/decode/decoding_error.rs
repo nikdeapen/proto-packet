@@ -1,5 +1,5 @@
 use crate::io::WireType;
-use enc::{Error, StreamError};
+use enc::Error;
 use std::fmt::{Display, Formatter};
 use std::io;
 use std::string::FromUtf8Error;
@@ -32,43 +32,43 @@ pub enum DecodingError {
     InvalidString(FromUtf8Error),
 
     /// An error decoding a packet.
-    PacketDecoding(StreamError),
+    PacketDecoding(Error),
 }
 
 impl DecodingError {
     //! Construction
 
     /// Creates a decoding error from the var-int stream `error`.
-    pub fn from_var_int_error(error: StreamError) -> Self {
+    pub fn from_var_int_error(error: Error) -> Self {
         match error {
-            StreamError::Encoding(_) => Self::ValueOutOfRange,
-            StreamError::Source(error) => Self::Source(error),
+            Error::Source(error) => Self::Source(error),
+            _ => Self::ValueOutOfRange,
         }
     }
 
     /// Creates a decoding error from the length-prefix var-int stream `error`.
-    pub fn from_length_prefix_error(error: StreamError) -> Self {
+    pub fn from_length_prefix_error(error: Error) -> Self {
         match error {
-            StreamError::Encoding(_) => Self::LengthPrefixOutOfRange,
-            StreamError::Source(error) => Self::Source(error),
+            Error::Source(error) => Self::Source(error),
+            _ => Self::LengthPrefixOutOfRange,
         }
     }
 
-    pub fn from_list_header(error: StreamError) -> Self {
+    pub fn from_list_header(error: Error) -> Self {
         match error {
-            StreamError::Encoding(error) => Self::InvalidListHeader(error),
-            StreamError::Source(error) => Self::Source(error),
+            Error::Source(error) => Self::Source(error),
+            error => Self::InvalidListHeader(error),
         }
     }
 }
 
-impl From<DecodingError> for StreamError {
+impl From<DecodingError> for Error {
     fn from(error: DecodingError) -> Self {
         match error {
             DecodingError::Source(error) => error.into(),
-            _ => StreamError::Encoding(Error::InvalidEncodedData {
+            _ => Error::InvalidEncodedData {
                 reason: Some(Box::new(error)),
-            }),
+            },
         }
     }
 }

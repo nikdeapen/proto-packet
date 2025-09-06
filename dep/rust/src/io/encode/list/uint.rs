@@ -1,7 +1,7 @@
 use crate::io::encode::list::util::{encode_to_slice, encode_to_write, encoded_len};
 use crate::io::{Encoder, WireType};
 use enc::var_int::{VarInt128, VarInt16, VarInt32, VarInt64};
-use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error, StreamError};
+use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
 use std::io::Write;
 
 macro_rules! impl_encode_list_uint {
@@ -37,7 +37,7 @@ macro_rules! impl_encode_list_uint {
         }
 
         impl EncodeToWrite for Encoder<'_, Vec<$uint_type>> {
-            fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, StreamError>
+            fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, Error>
             where
                 W: Write,
             {

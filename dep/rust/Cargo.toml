@@ -11,8 +11,8 @@ license = "MIT"
 
 [dependencies]
 chrono = "0.4.41"
-enc = { version = "0.13.0", features = ["var-int"] }
+enc = { version = "0.14.0-rc.2", features = ["var-int"] }
 uuid = "1.18.0"
 
 [dev-dependencies]
-enc = { version = "0.13.0", features = ["test"] }
+enc = { version = "0.14.0-rc.2", features = ["test"] }

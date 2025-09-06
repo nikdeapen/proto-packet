@@ -2,7 +2,7 @@ use crate::io::{TagNumber, WireType};
 use enc::var_int::{VarInt32, VarIntSize};
 use enc::{
     impl_encode_to_write_stack_buf, read_optional_byte, DecodeFromRead, DecodeFromReadPrefix,
-    EncodeToSlice, EncodedLen, Error, StreamError,
+    EncodeToSlice, EncodedLen, Error,
 };
 use std::io::Read;
 
@@ -78,7 +78,7 @@ impl EncodeToSlice for FieldHeader {
 impl_encode_to_write_stack_buf!(FieldHeader, Self::MAX_ENCODED_LEN);
 
 impl DecodeFromRead for FieldHeader {
-    fn decode_from_read<R>(r: &mut R) -> Result<Self, StreamError>
+    fn decode_from_read<R>(r: &mut R) -> Result<Self, Error>
     where
         R: Read,
     {
@@ -89,7 +89,7 @@ impl DecodeFromRead for FieldHeader {
 }
 
 impl DecodeFromReadPrefix for FieldHeader {
-    fn decode_from_read_prefix_with_first_byte<R>(r: &mut R, first: u8) -> Result<Self, StreamError>
+    fn decode_from_read_prefix_with_first_byte<R>(r: &mut R, first: u8) -> Result<Self, Error>
     where
         R: Read,
     {

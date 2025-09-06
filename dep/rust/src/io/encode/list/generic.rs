@@ -1,7 +1,7 @@
 use crate::io::encode::list::util::*;
 use crate::io::Encoder;
 use crate::io::WireType;
-use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error, StreamError};
+use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
 use std::io::Write;
 use uuid::Uuid;
 
@@ -28,7 +28,7 @@ macro_rules! impl_encoder_generic_list {
         }
 
         impl EncodeToWrite for Encoder<'_, Vec<$generic_type>> {
-            fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, StreamError>
+            fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, Error>
             where
                 W: Write,
             {

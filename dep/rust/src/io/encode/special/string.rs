@@ -1,6 +1,6 @@
 use crate::io::Encoder;
 use enc::var_int::VarIntSize;
-use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error, StreamError};
+use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
 use std::io::Write;
 
 impl EncodedLen for Encoder<'_, String> {
@@ -19,7 +19,7 @@ impl EncodeToSlice for Encoder<'_, String> {
 }
 
 impl EncodeToWrite for Encoder<'_, String> {
-    fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, StreamError>
+    fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, Error>
     where
         W: Write,
     {

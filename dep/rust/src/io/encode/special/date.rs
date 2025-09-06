@@ -1,6 +1,6 @@
 use crate::io::Encoder;
 use chrono::NaiveDate;
-use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error, StreamError};
+use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
 use std::io::Write;
 
 impl Encoder<'_, NaiveDate> {
@@ -26,7 +26,7 @@ impl EncodeToSlice for Encoder<'_, NaiveDate> {
 }
 
 impl EncodeToWrite for Encoder<'_, NaiveDate> {
-    fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, StreamError>
+    fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, Error>
     where
         W: Write,
     {

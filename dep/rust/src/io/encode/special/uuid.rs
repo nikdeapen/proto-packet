@@ -1,5 +1,5 @@
 use crate::io::Encoder;
-use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error, StreamError};
+use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
 use std::io::Write;
 use uuid::Uuid;
 
@@ -17,7 +17,7 @@ impl EncodeToSlice for Encoder<'_, Uuid> {
 }
 
 impl EncodeToWrite for Encoder<'_, Uuid> {
-    fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, StreamError>
+    fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, Error>
     where
         W: Write,
     {

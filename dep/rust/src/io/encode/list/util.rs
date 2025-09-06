@@ -1,6 +1,6 @@
 use crate::io::{ListHeader, WireType};
 use enc::Error::IntegerOverflow;
-use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error, StreamError};
+use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
 use std::io;
 
 /// Gets the encoded length of the `list` value.
@@ -73,10 +73,10 @@ pub fn encode_to_write<T, W, EF, ELF>(
     w: &mut W,
     encode_fn: EF,
     encoded_len_fn: ELF,
-) -> Result<usize, StreamError>
+) -> Result<usize, Error>
 where
     W: io::Write,
-    EF: Fn(&T, &mut W) -> Result<usize, StreamError>,
+    EF: Fn(&T, &mut W) -> Result<usize, Error>,
     ELF: Fn(&T) -> Result<usize, Error>,
 {
     let size: usize = list_size(list, wire, encoded_len_fn)?;
