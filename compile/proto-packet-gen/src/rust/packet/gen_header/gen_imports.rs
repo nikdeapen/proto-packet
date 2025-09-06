@@ -13,7 +13,7 @@ impl GenRust {
             .with_semi("use std::io::{Read, Write}")
             .with_semi("use enc::{EncodedLen, EncodeToSlice, EncodeToWrite}")
             .with_semi("use enc::{DecodeFromRead, DecodeFromReadPrefix}")
-            .with_semi("use enc::{Error, StreamError}")
+            .with_semi("use enc::Error")
             .with_semi("use serde::{Serialize, Deserialize}");
 
         if packet_type == PacketType::Enum || packet_type == PacketType::Variant {

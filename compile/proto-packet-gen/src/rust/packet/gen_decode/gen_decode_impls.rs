@@ -26,7 +26,7 @@ impl GenRust {
             .with_result(
                 RustType::from("Result")
                     .with_generic(RustType::from("Self"))
-                    .with_generic("StreamError"),
+                    .with_generic("Error"),
             );
         ImplBlock::from(type_name)
             .with_for_trait("DecodeFromRead")
@@ -53,7 +53,7 @@ impl GenRust {
             .with_result(
                 RustType::from("Result")
                     .with_generic(RustType::from("Self"))
-                    .with_generic("StreamError"),
+                    .with_generic("Error"),
             );
         ImplBlock::from(type_name)
             .with_for_trait("DecodeFromReadPrefix")
