@@ -4,6 +4,7 @@ pub use message::*;
 pub use project::*;
 pub use r#enum::*;
 pub use r#struct::*;
+pub use service::*;
 pub use var::*;
 pub use variant::*;
 
@@ -12,6 +13,7 @@ mod r#enum;
 mod error;
 mod message;
 mod project;
+mod service;
 mod r#struct;
 mod var;
 mod variant;

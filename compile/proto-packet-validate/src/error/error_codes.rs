@@ -62,3 +62,5 @@ pub const V_TAG_NUMBER: ErrorCode = ErrorCode("V_TAG_NUMBER");
 pub const V_TYPE_TAG: ErrorCode = ErrorCode("V_TYPE_TAG");
 pub const V_VARIANT: ErrorCode = ErrorCode("V_VARIANT");
 pub const V_VARIANT_CASE: ErrorCode = ErrorCode("V_VARIANT_CASE");
+pub const V_SERVICE: ErrorCode = ErrorCode("V_SERVICE");
+pub const V_SERVICE_CALL: ErrorCode = ErrorCode("V_SERVICE_CALL");
