@@ -44,3 +44,7 @@ pub const P_STRUCT_FIELD: ErrorCode =
 pub const P_VARIANT: ErrorCode = ErrorCode("P_VARIANT", "invalid variant declaration");
 pub const P_VARIANT_CASE: ErrorCode =
     ErrorCode("P_VARIANT_CASE", "invalid variant case declaration");
+
+pub const P_SERVICE: ErrorCode = ErrorCode("P_SERVICE", "invalid service declaration");
+pub const P_SERVICE_CALL: ErrorCode =
+    ErrorCode("P_SERVICE_CALL", "invalid service call declaration");
