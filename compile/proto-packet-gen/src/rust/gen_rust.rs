@@ -57,9 +57,9 @@ impl GenRust {
         match type_dec {
             TypeDec::StructDec(structure) => self.gen_struct(mod_path, structure),
             TypeDec::MessageDec(message) => self.gen_message(mod_path, message),
-            TypeDec::EnumDec(enom) => self.gen_enum(mod_path, enom),
+            TypeDec::EnumDec(enumeration) => self.gen_enum(mod_path, enumeration),
             TypeDec::VariantDec(variant) => self.gen_variant(mod_path, variant),
-            TypeDec::ServiceDec(_) => todo!(),
+            TypeDec::ServiceDec(service) => self.gen_service(mod_path, service),
         }
     }
 }
