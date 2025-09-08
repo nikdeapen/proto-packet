@@ -5,8 +5,9 @@ use proto_packet_tree::TypeDec;
 
 use crate::InvalidTypeDecError::*;
 use crate::{
-    validate_enum, validate_message, validate_struct, validate_variant, Error, ErrorInfo,
-    InvalidEnumError, InvalidMessageError, InvalidStructError, InvalidVariantError,
+    validate_enum, validate_message, validate_service, validate_struct, validate_variant, Error,
+    ErrorInfo, InvalidEnumError, InvalidMessageError, InvalidServiceError, InvalidStructError,
+    InvalidVariantError,
 };
 
 #[derive(Debug)]
@@ -15,6 +16,37 @@ pub enum InvalidTypeDecError<'a> {
     InvalidMessage(InvalidMessageError<'a>),
     InvalidEnum(InvalidEnumError<'a>),
     InvalidVariant(InvalidVariantError<'a>),
+    InvalidService(InvalidServiceError<'a>),
+}
+
+impl<'a> From<InvalidStructError<'a>> for InvalidTypeDecError<'a> {
+    fn from(error: InvalidStructError<'a>) -> Self {
+        InvalidStruct(error)
+    }
+}
+
+impl<'a> From<InvalidMessageError<'a>> for InvalidTypeDecError<'a> {
+    fn from(error: InvalidMessageError<'a>) -> Self {
+        InvalidMessage(error)
+    }
+}
+
+impl<'a> From<InvalidEnumError<'a>> for InvalidTypeDecError<'a> {
+    fn from(error: InvalidEnumError<'a>) -> Self {
+        InvalidEnum(error)
+    }
+}
+
+impl<'a> From<InvalidVariantError<'a>> for InvalidTypeDecError<'a> {
+    fn from(error: InvalidVariantError<'a>) -> Self {
+        InvalidVariant(error)
+    }
+}
+
+impl<'a> From<InvalidServiceError<'a>> for InvalidTypeDecError<'a> {
+    fn from(error: InvalidServiceError<'a>) -> Self {
+        InvalidService(error)
+    }
 }
 
 impl<'a> Error for InvalidTypeDecError<'a> {
@@ -24,6 +56,7 @@ impl<'a> Error for InvalidTypeDecError<'a> {
             InvalidMessage(e) => e.info(file_name, context),
             InvalidEnum(e) => e.info(file_name, context),
             InvalidVariant(e) => e.info(file_name, context),
+            InvalidService(e) => e.info(file_name, context),
         }
     }
 }
@@ -32,18 +65,10 @@ pub fn validate_type_dec<'a>(
     tree: &'a TypeDecTree<'a>,
 ) -> Result<TypeDec, InvalidTypeDecError<'a>> {
     match tree {
-        StructDec(structure) => validate_struct(structure)
-            .map(|structure| TypeDec::from(structure))
-            .map_err(|e| InvalidStruct(e)),
-        MessageDec(message) => validate_message(message)
-            .map(|message| TypeDec::from(message))
-            .map_err(|e| InvalidMessage(e)),
-        EnumDec(enom) => validate_enum(enom)
-            .map(|enom| TypeDec::from(enom))
-            .map_err(|e| InvalidEnum(e)),
-        VariantDec(variant) => validate_variant(variant)
-            .map(|variant| TypeDec::from(variant))
-            .map_err(|e| InvalidVariant(e)),
-        ServiceDec(_service) => todo!(),
+        MessageDec(message) => Ok(validate_message(message)?.into()),
+        StructDec(structure) => Ok(validate_struct(structure)?.into()),
+        EnumDec(enumeration) => Ok(validate_enum(enumeration)?.into()),
+        VariantDec(variant) => Ok(validate_variant(variant)?.into()),
+        ServiceDec(service) => Ok(validate_service(service)?.into()),
     }
 }
