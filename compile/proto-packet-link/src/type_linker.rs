@@ -2,9 +2,10 @@ use crate::Error;
 use crate::Error::*;
 use proto_packet_tree::TypeDec::*;
 use proto_packet_tree::{
-    Import, Message, MessageField, ModPathRef, QualifiedName, QualifiedNameRef, Struct,
-    StructField, TypeDec, TypeNameRef, TypeTag, Variant, VariantCase, WithCaseName, WithComments,
-    WithFieldName, WithTagNumber, WithTypeName, WithTypeTag,
+    Import, Message, MessageField, ModPathRef, QualifiedName, QualifiedNameRef, Service,
+    ServiceCall, Struct, StructField, TypeDec, TypeNameRef, TypeTag, Variant, VariantCase,
+    WithCaseName, WithComments, WithFieldName, WithServiceCallName, WithTagNumber, WithTypeName,
+    WithTypeTag,
 };
 use std::collections::HashMap;
 
@@ -49,7 +50,7 @@ impl<'a> TypeLinker<'a> {
             MessageDec(message) => MessageDec(self.link_message(message)?),
             EnumDec(enom) => EnumDec(enom.clone()),
             VariantDec(variant) => VariantDec(self.link_variant(variant)?),
-            ServiceDec(_) => todo!(),
+            ServiceDec(service) => ServiceDec(self.link_service(service)?),
         })
     }
 }
@@ -134,6 +135,36 @@ impl<'a> TypeLinker<'a> {
         let mut linked: VariantCase =
             VariantCase::new(case.case_name(), type_tag, case.tag_number());
         for comment in case.comments() {
+            linked.add_comment(comment);
+        }
+        Ok(linked)
+    }
+}
+
+impl<'a> TypeLinker<'a> {
+    //! Services
+
+    /// Links the `service`.
+    fn link_service(&self, service: &Service) -> Result<Service, Error> {
+        let mut linked: Service = service.type_name().into();
+        for comment in service.comments() {
+            linked.add_comment(comment);
+        }
+        for service_call in service.service_calls() {
+            let linked_service_call: ServiceCall = self.link_service_call(service_call)?;
+            debug_assert!(linked.can_add_service_call(&linked_service_call));
+            unsafe { linked.add_service_call(linked_service_call) };
+        }
+        Ok(linked)
+    }
+
+    /// Links the `service_call`.
+    fn link_service_call(&self, service_call: &ServiceCall) -> Result<ServiceCall, Error> {
+        let input_type: TypeTag = self.link_type_tag(service_call.input_type())?;
+        let output_type: TypeTag = self.link_type_tag(service_call.output_type())?;
+        let mut linked: ServiceCall =
+            ServiceCall::new(service_call.service_call_name(), input_type, output_type);
+        for comment in service_call.comments() {
             linked.add_comment(comment);
         }
         Ok(linked)
