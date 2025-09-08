@@ -59,6 +59,7 @@ impl GenRust {
             TypeDec::MessageDec(message) => self.gen_message(mod_path, message),
             TypeDec::EnumDec(enom) => self.gen_enum(mod_path, enom),
             TypeDec::VariantDec(variant) => self.gen_variant(mod_path, variant),
+            TypeDec::ServiceDec(_) => todo!(),
         }
     }
 }

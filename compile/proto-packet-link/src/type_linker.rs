@@ -49,6 +49,7 @@ impl<'a> TypeLinker<'a> {
             MessageDec(message) => MessageDec(self.link_message(message)?),
             EnumDec(enom) => EnumDec(enom.clone()),
             VariantDec(variant) => VariantDec(self.link_variant(variant)?),
+            ServiceDec(_) => todo!(),
         })
     }
 }
