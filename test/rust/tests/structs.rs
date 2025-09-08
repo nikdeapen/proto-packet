@@ -1,4 +1,5 @@
 use chrono::NaiveDate;
+use proto_packet_test::fields::messages;
 use proto_packet_test::fields::structs::{NamedTypes, PrimitiveTypes, SpecialTypes};
 use uuid::Uuid;
 
@@ -27,9 +28,12 @@ fn special_types() {
 
 #[test]
 fn named_types() {
-    let packet: NamedTypes = NamedTypes::new(PrimitiveTypes::new(
-        1, 2u16, 3u32, 4u64, 5u128, 6i8, 7i16, 8i32, 9i64, 10i128, true,
-    ));
-    let encoded: &[u8] = &[11, 1, 2, 3, 4, 5, 6, 14, 16, 18, 20, 1];
+    let packet: NamedTypes = NamedTypes::new(
+        PrimitiveTypes::new(
+            1, 2u16, 3u32, 4u64, 5u128, 6i8, 7i16, 8i32, 9i64, 10i128, true,
+        ),
+        messages::PrimitiveTypes::default(),
+    );
+    let encoded: &[u8] = &[11, 1, 2, 3, 4, 5, 6, 14, 16, 18, 20, 1, 0];
     enc::test::test_io(&packet, encoded, true);
 }

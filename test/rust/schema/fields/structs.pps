@@ -53,4 +53,7 @@ struct NamedTypes {
 
     // A `struct` field.
     one: PrimitiveTypes;
+
+    // A `message` field.
+    two: fields.messages.PrimitiveTypes;
 }
