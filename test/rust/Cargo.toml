@@ -11,10 +11,10 @@ license = "MIT"
 
 [dependencies]
 chrono = { version = "0.4.41", features = ["serde"] }
-enc = { git = "https://github.com/nikdeapen/enc", features = ["var-int"] }
+enc = { version = "0.14.0-rc.2", features = ["var-int"] }
 proto-packet = { path = "../../dep/rust" }
 serde = { version = "1.0.219", features = ["derive"] }
 uuid = { version = "1.18.0", features = ["serde"] }
 
 [dev-dependencies]
-enc = { git = "https://github.com/nikdeapen/enc", features = ["test"] }
+enc = { version = "0.14.0-rc.2", features = ["test"] }

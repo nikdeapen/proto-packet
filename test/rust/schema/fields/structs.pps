@@ -1,5 +1,5 @@
-// A struct with unsigned integers.
-struct UnsignedInts {
+// A struct with primitive types.
+struct PrimitiveTypes {
 
     // A `u8` field.
     one: u8;
@@ -15,33 +15,24 @@ struct UnsignedInts {
 
     // A `u128` field.
     five: u128;
-}
-
-// A struct with signed integers.
-struct SignedInts {
 
     // An `i8` field.
-    one: i8;
+    six: i8;
 
     // An `i16` field.
-    two: i16;
+    seven: i16;
 
     // An `i32` field.
-    three: i32;
+    eight: i32;
 
     // An `i64` field.
-    four: i64;
+    nine: i64;
 
     // An `i128` field.
-    five: i128;
-}
-
-
-// A struct with primitive types.
-struct PrimitiveTypes {
+    ten: i128;
 
     // A `bool` field.
-    one: bool;
+    eleven: bool;
 }
 
 // A struct with special type fields.
@@ -61,5 +52,5 @@ struct SpecialTypes {
 struct NamedTypes {
 
     // A `struct` field.
-    one: UnsignedInts;
+    one: PrimitiveTypes;
 }

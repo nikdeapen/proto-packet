@@ -1,6 +1,6 @@
+use enc::Error;
 use enc::{DecodeFromRead, DecodeFromReadPrefix};
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
-use enc::{Error, StreamError};
 use proto_packet::io::WireType;
 use proto_packet::{Packet, Struct};
 use serde::{Deserialize, Serialize};
@@ -195,7 +195,7 @@ impl EncodeToSlice for SpecialTypes {
 }
 
 impl EncodeToWrite for SpecialTypes {
-    fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, StreamError>
+    fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, Error>
     where
         W: Write,
     {
@@ -224,7 +224,7 @@ impl EncodeToWrite for SpecialTypes {
 }
 
 impl DecodeFromRead for SpecialTypes {
-    fn decode_from_read<R>(r: &mut R) -> Result<Self, StreamError>
+    fn decode_from_read<R>(r: &mut R) -> Result<Self, Error>
     where
         R: Read,
     {
@@ -257,7 +257,7 @@ impl DecodeFromRead for SpecialTypes {
 }
 
 impl DecodeFromReadPrefix for SpecialTypes {
-    fn decode_from_read_prefix_with_first_byte<R>(r: &mut R, first: u8) -> Result<Self, StreamError>
+    fn decode_from_read_prefix_with_first_byte<R>(r: &mut R, first: u8) -> Result<Self, Error>
     where
         R: Read,
     {
