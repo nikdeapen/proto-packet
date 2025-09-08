@@ -44,5 +44,6 @@ pub fn validate_type_dec<'a>(
         VariantDec(variant) => validate_variant(variant)
             .map(|variant| TypeDec::from(variant))
             .map_err(|e| InvalidVariant(e)),
+        ServiceDec(_service) => todo!(),
     }
 }

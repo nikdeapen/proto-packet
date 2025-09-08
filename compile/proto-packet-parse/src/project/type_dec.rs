@@ -1,9 +1,9 @@
 use crate::ParseTypeDecError::*;
 use crate::TypeDecTree::*;
 use crate::{
-    parse_enum, parse_message, parse_struct, parse_variant, EnumTree, Error, ErrorInfo,
-    MessageTree, ParseEnumError, ParseMessageError, ParseStructError, ParseVariantError,
-    StructTree, VariantTree,
+    parse_enum, parse_message, parse_service, parse_struct, parse_variant, EnumTree, Error,
+    ErrorInfo, MessageTree, ParseEnumError, ParseMessageError, ParseServiceError, ParseStructError,
+    ParseVariantError, ServiceTree, StructTree, VariantTree,
 };
 use lex::{ParseContext, ParseResult, Token};
 
@@ -13,6 +13,7 @@ pub enum TypeDecTree<'a> {
     MessageDec(MessageTree<'a>),
     EnumDec(EnumTree<'a>),
     VariantDec(VariantTree<'a>),
+    ServiceDec(ServiceTree<'a>),
 }
 
 impl<'a> TypeDecTree<'a> {
@@ -25,6 +26,7 @@ impl<'a> TypeDecTree<'a> {
             MessageDec(message) => message.message_name,
             EnumDec(enom) => enom.enum_name,
             VariantDec(variant) => variant.variant_name,
+            ServiceDec(service) => service.service_name,
         }
     }
 }
@@ -35,6 +37,7 @@ pub enum ParseTypeDecError<'a> {
     InvalidMessage(ParseMessageError<'a>),
     InvalidEnum(ParseEnumError<'a>),
     InvalidVariant(ParseVariantError<'a>),
+    InvalidService(ParseServiceError<'a>),
 }
 
 impl<'a> Error for ParseTypeDecError<'a> {
@@ -44,6 +47,7 @@ impl<'a> Error for ParseTypeDecError<'a> {
             InvalidMessage(e) => e.info(token),
             InvalidEnum(e) => e.info(token),
             InvalidVariant(e) => e.info(token),
+            InvalidService(e) => e.info(token),
         }
     }
 }
@@ -88,6 +92,15 @@ pub fn parse_type_dec(c: ParseContext) -> ParseResult<Option<TypeDecTree>, Parse
             return Ok((Some(VariantDec(variant)), after_variant));
         }
         Err(e) => return Err(e.map(|e| InvalidVariant(e))),
+        _ => {}
+    }
+
+    match parse_service(after_white) {
+        Ok((Some(mut service), after_service)) => {
+            service.comments = comments;
+            return Ok((Some(ServiceDec(service)), after_service));
+        }
+        Err(e) => return Err(e.map(|e| InvalidService(e))),
         _ => {}
     }
 
