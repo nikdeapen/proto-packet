@@ -47,7 +47,7 @@ impl DecodingError {
     }
 
     /// Creates a decoding error from the length-prefix var-int stream `error`.
-    pub fn from_length_prefix_error(error: Error) -> Self {
+    pub fn error_reading_length_prefix(error: Error) -> Self {
         match error {
             Error::Source(error) => Self::Source(error),
             _ => Self::LengthPrefixOutOfRange,
@@ -70,6 +70,12 @@ impl From<DecodingError> for Error {
                 reason: Some(Box::new(error)),
             },
         }
+    }
+}
+
+impl From<io::Error> for DecodingError {
+    fn from(error: io::Error) -> Self {
+        Self::Source(error)
     }
 }
 

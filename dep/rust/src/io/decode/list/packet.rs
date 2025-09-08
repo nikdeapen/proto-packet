@@ -23,8 +23,8 @@ impl Decoder {
                 let header: ListHeader =
                     ListHeader::decode_from_read_prefix_with_first_byte(r, first)
                         .map_err(|e| DecodingError::from_list_header(e))?;
-                if header.element_wire_type() != P::wire_type() {
-                    Err(InvalidListWire(header.element_wire_type()))
+                if header.wire_type() != P::wire_type() {
+                    Err(InvalidListWire(header.wire_type()))
                 } else {
                     self.decode_list_value(header, r, |r, first| {
                         P::decode_from_read_prefix_with_first_byte(r, first)

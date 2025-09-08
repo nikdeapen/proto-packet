@@ -20,7 +20,7 @@ impl Decoder {
         match wire {
             LengthPrefixed => {
                 let prefix: usize = VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
-                    .map_err(|e| DecodingError::from_length_prefix_error(e))?
+                    .map_err(|e| DecodingError::error_reading_length_prefix(e))?
                     .value();
                 let mut buffer: Vec<u8> = vec![0u8; prefix];
                 r.read_exact(&mut buffer)
@@ -32,7 +32,7 @@ impl Decoder {
                     ListHeader::decode_from_read_prefix_with_first_byte(r, first)
                         .map_err(|e| DecodingError::from_list_header(e))?;
                 self.decode_list_value(header, r, |r, first| {
-                    self.decode_u8(header.element_wire_type(), r, first)
+                    self.decode_u8(header.wire_type(), r, first)
                 })
             }
             _ => Err(DecodingError::InvalidWireType(wire)),

@@ -15,9 +15,11 @@ pub trait Packet:
     + EncodedLen
     + EncodeToSlice
     + EncodeToWrite
-    + DecodeFromRead
+    + DecodeFromRead // todo -- do we need both `DecodeFromRead` & `DecodeFromReadPrefix`?
     + DecodeFromReadPrefix
 {
     /// Gets the wire type.
     fn wire_type() -> WireType;
+
+    // todo -- packet type fn?
 }

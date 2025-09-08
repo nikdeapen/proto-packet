@@ -1,16 +1,13 @@
 use crate::io::{TagNumber, WireType};
 use enc::var_int::{VarInt32, VarIntSize};
-use enc::{
-    impl_encode_to_write_stack_buf, read_optional_byte, DecodeFromRead, DecodeFromReadPrefix,
-    EncodeToSlice, EncodedLen, Error,
-};
+use enc::{impl_encode_to_write_stack_buf, DecodeFromReadPrefix, EncodeToSlice, EncodedLen, Error};
 use std::io::Read;
 
 /// A field header.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub struct FieldHeader {
-    wire: WireType,
-    tag: TagNumber,
+    wire_type: WireType,
+    tag_number: TagNumber,
 }
 
 impl FieldHeader {
@@ -27,8 +24,11 @@ impl FieldHeader {
     //! Construction
 
     /// Creates a new field header.
-    pub const fn new(wire: WireType, tag: TagNumber) -> Self {
-        Self { wire, tag }
+    pub const fn new(wire_type: WireType, tag_number: TagNumber) -> Self {
+        Self {
+            wire_type,
+            tag_number,
+        }
     }
 }
 
@@ -37,72 +37,72 @@ impl FieldHeader {
 
     /// Gets the wire type.
     pub fn wire_type(&self) -> WireType {
-        self.wire
+        self.wire_type
     }
 
     /// Gets the tag number.
     pub fn tag_number(&self) -> TagNumber {
-        self.tag
+        self.tag_number
+    }
+
+    /// Gets the `extra` portion of the tag number that doesn't fit in the first byte.
+    ///
+    /// # Safety
+    /// The `tag_number` must be greater than `MAX_SINGLE_BYTE_TAG_NUMBER`.
+    #[inline(always)]
+    unsafe fn extra(&self) -> u32 {
+        debug_assert!(self.tag_number.value() > Self::MAX_SINGLE_BYTE_TAG_NUMBER);
+
+        self.tag_number.value() - Self::MAX_SINGLE_BYTE_TAG_NUMBER - 1
     }
 }
 
 impl EncodedLen for FieldHeader {
     fn encoded_len(&self) -> Result<usize, Error> {
-        Ok(if self.tag.value() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
-            1
-        } else {
-            let extra: u32 = self.tag.value() - Self::MAX_SINGLE_BYTE_TAG_NUMBER - 1;
-            let extra: usize = VarInt32::from(extra).encoded_len()?;
-            1 + extra
-        })
+        Ok(
+            if self.tag_number.value() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
+                1
+            } else {
+                1 + VarInt32::from(unsafe { self.extra() }).encoded_len()?
+            },
+        )
     }
 }
 
 impl EncodeToSlice for FieldHeader {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
-        Ok(if self.tag.value() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
-            let first: u8 = self.wire.to_high_3_bits() | (self.tag.value() as u8);
-            *target.get_unchecked_mut(0) = first;
-            1
-        } else {
-            *target.get_unchecked_mut(0) = self.wire.to_high_3_bits();
-
-            let extra: u32 = self.tag.value() - Self::MAX_SINGLE_BYTE_TAG_NUMBER - 1;
-            let extra: usize = VarInt32::from(extra).encode_to_slice_unchecked(&mut target[1..])?;
-
-            1 + extra
-        })
+        Ok(
+            if self.tag_number.value() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
+                let first: u8 = self.wire_type.to_high_3_bits() | (self.tag_number.value() as u8);
+                *target.get_unchecked_mut(0) = first;
+                1
+            } else {
+                *target.get_unchecked_mut(0) = self.wire_type.to_high_3_bits();
+                let extra: usize = VarInt32::from(unsafe { self.extra() })
+                    .encode_to_slice_unchecked(&mut target[1..])?;
+                1 + extra
+            },
+        )
     }
 }
 
 impl_encode_to_write_stack_buf!(FieldHeader, Self::MAX_ENCODED_LEN);
-
-impl DecodeFromRead for FieldHeader {
-    fn decode_from_read<R>(r: &mut R) -> Result<Self, Error>
-    where
-        R: Read,
-    {
-        let header: FieldHeader = FieldHeader::decode_from_read_prefix(r)?;
-        debug_assert_eq!(read_optional_byte(r)?, None);
-        Ok(header)
-    }
-}
 
 impl DecodeFromReadPrefix for FieldHeader {
     fn decode_from_read_prefix_with_first_byte<R>(r: &mut R, first: u8) -> Result<Self, Error>
     where
         R: Read,
     {
-        let wire: WireType = WireType::from_high_3_bits(first);
-        let tag: u32 = (first & 0x1F) as u32;
-        let tag: u32 = if tag == 0 {
+        let wire_type: WireType = WireType::from_high_3_bits(first);
+        let tag_number: u32 = (first & 0x1F) as u32;
+        let tag_number: u32 = if tag_number == 0 {
             let extra: u32 = VarInt32::decode_from_read_prefix(r)?.value();
             extra + 1 + Self::MAX_SINGLE_BYTE_TAG_NUMBER
         } else {
-            tag
+            tag_number
         };
-        let tag: TagNumber = unsafe { TagNumber::new_unchecked(tag) };
-        Ok(Self::new(wire, tag))
+        let tag_number: TagNumber = unsafe { TagNumber::new_unchecked(tag_number) };
+        Ok(Self::new(wire_type, tag_number))
     }
 }
 
@@ -129,7 +129,8 @@ mod test {
         ];
         for (wire, tag, expected) in test_cases {
             let header: FieldHeader = FieldHeader::new(*wire, TagNumber::new(*tag).unwrap());
-            enc::test::test_io(&header, *expected, false);
+            enc::test::test_encode(&header, *expected);
+            enc::test::test_decode_from_read_prefix(*expected, &header, false);
         }
     }
 }
