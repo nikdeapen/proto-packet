@@ -5,7 +5,7 @@ use code_gen::rust::{
     WithFunctions, WithResult, WithVarParams,
 };
 use code_gen::{EmptyLine, Source, WithStatements};
-use proto_packet_tree::{Struct, WithFieldName, WithTypeName, WithTypeTag};
+use proto_packet_tree::{Struct, WithFieldName, WithTypeTag};
 
 impl GenRust {
     //! Gen Constructor
@@ -25,13 +25,9 @@ impl GenRust {
             ));
         }
 
-        let mut new_fn: Function =
-            Function::from(new_sig)
-                .with_access(Public)
-                .with_comment(format!(
-                    " Creates a new `{}`.",
-                    self.naming.type_name(s.type_name())
-                ));
+        let mut new_fn: Function = Function::from(new_sig)
+            .with_access(Public)
+            .with_comment(format!(" Creates a new `{}`.", self.naming.type_name(s)));
         new_fn.add_literal("Self {");
         for field in s.fields() {
             new_fn.add_literal(format!(
@@ -42,7 +38,7 @@ impl GenRust {
         }
         new_fn.add_literal("}");
 
-        let block: ImplBlock = ImplBlock::from(self.naming.type_name(s.type_name()))
+        let block: ImplBlock = ImplBlock::from(self.naming.type_name(s))
             .with_comment(" Construction")
             .with_function(new_fn);
 

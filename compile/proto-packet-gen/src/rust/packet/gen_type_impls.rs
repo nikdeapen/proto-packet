@@ -9,7 +9,7 @@ use proto_packet::io::WireType;
 use proto_packet::io::WireType::{LengthPrefixed, VarInt};
 use proto_packet::PacketType;
 use proto_packet_tree::{
-    Enum, Message, Struct, TypeNameRef, Variant, WithCaseName, WithTagNumber, WithTypeName,
+    Enum, Message, Struct, Variant, WithCaseName, WithTagNumber, WithTypeName,
 };
 
 impl GenRust {
@@ -27,9 +27,7 @@ impl GenRust {
         Source::default()
             .with_statement(self.gen_type_impls(e, PacketType::Enum, VarInt, vec![]))
             .with_statement(EmptyLine::default())
-            .with_statement(
-                self.gen_impl_with_tag_number(e.type_name(), self.gen_enum_tag_number_fn_source(e)),
-            )
+            .with_statement(self.gen_impl_with_tag_number(e, self.gen_enum_tag_number_fn_source(e)))
     }
 
     pub(in crate::rust) fn gen_type_impls_variant(&self, v: &Variant) -> Source {
@@ -37,10 +35,7 @@ impl GenRust {
             .with_statement(self.gen_type_impls(v, PacketType::Variant, LengthPrefixed, vec![]))
             .with_statement(EmptyLine::default())
             .with_statement(
-                self.gen_impl_with_tag_number(
-                    v.type_name(),
-                    self.gen_variant_tag_number_fn_source(v),
-                ),
+                self.gen_impl_with_tag_number(v, self.gen_variant_tag_number_fn_source(v)),
             )
     }
 }
@@ -59,7 +54,7 @@ impl GenRust {
         T: WithTypeName,
     {
         let mut type_impl: ImplBlock =
-            ImplBlock::from(element.type_name()).with_for_trait(packet_type.to_string());
+            ImplBlock::from(self.naming.type_name(element)).with_for_trait(packet_type.to_string());
         type_fns.drain(..).for_each(|f| type_impl.add_function(f));
 
         Source::default()
@@ -76,7 +71,7 @@ impl GenRust {
         let wire_type: Function =
             Function::from(Signature::from("wire_type").with_result("WireType"))
                 .with_literal(format!("WireType::{}", wire_type));
-        ImplBlock::from(self.naming.type_name(element.type_name()))
+        ImplBlock::from(self.naming.type_name(element))
             .with_for_trait("Packet")
             .with_function(wire_type)
     }
@@ -85,8 +80,11 @@ impl GenRust {
 impl GenRust {
     //! Gen Type Impls: Tag Number
 
-    fn gen_impl_with_tag_number(&self, name: TypeNameRef, fn_source: MatchStatement) -> ImplBlock {
-        ImplBlock::from(self.naming.type_name(name))
+    fn gen_impl_with_tag_number<E>(&self, element: &E, fn_source: MatchStatement) -> ImplBlock
+    where
+        E: WithTypeName,
+    {
+        ImplBlock::from(self.naming.type_name(element))
             .with_for_trait("WithTagNumber")
             .with_function(
                 Function::from(

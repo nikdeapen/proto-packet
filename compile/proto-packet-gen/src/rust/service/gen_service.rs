@@ -6,7 +6,10 @@ impl GenRust {
     //! Gen Service
 
     /// Generates the source code for the `service`.
-    pub(in crate::rust) fn gen_service(&self, _mod_path: ModPathRef, service: &Service) -> Source {
-        Source::default().with_statement(self.gen_service_trait(service))
+    pub(in crate::rust) fn gen_service(&self, mod_path: ModPathRef, service: &Service) -> Source {
+        Source::default()
+            .with_statement(self.gen_service_imports(service))
+            .with_statement(self.gen_service_trait(service))
+            .with_statement(self.gen_service_service(mod_path, service))
     }
 }

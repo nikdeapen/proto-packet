@@ -65,7 +65,7 @@ impl GenRust {
         T: WithTypeName,
         F: WithComments + WithFieldName + WithTypeTag,
     {
-        let mut block: ImplBlock = ImplBlock::from(self.naming.type_name(element.type_name()));
+        let mut block: ImplBlock = ImplBlock::from(self.naming.type_name(element));
 
         block.add_comment(format!(" Field: `{}`", field.field_name()));
         block.add_comment(" ");

@@ -4,14 +4,14 @@ use code_gen::rust::{
     Enum as RustEnum, RustType, Struct as RustStruct, StructField, WithAccess, WithStructFields,
 };
 use proto_packet::PacketType;
-use proto_packet_tree::{Enum, Message, Struct, Variant, WithTypeName};
+use proto_packet_tree::{Enum, Message, Struct, Variant};
 
 impl GenRust {
     //! Gen Type Dec
 
     /// Generates the struct declaration for the struct `s`.
     pub(in crate::rust) fn gen_type_dec_struct(&self, s: &Struct) -> RustStruct {
-        let mut result: RustStruct = RustStruct::from(self.naming.type_name(s.type_name()));
+        let mut result: RustStruct = RustStruct::from(self.naming.type_name(s));
 
         self.gen_type_dec_comments_struct(&mut result, s);
         self.gen_derives(&mut result, PacketType::Struct);
@@ -26,7 +26,7 @@ impl GenRust {
 
     /// Generates the struct declaration for the message `m`.
     pub(in crate::rust) fn gen_type_dec_message(&self, m: &Message) -> RustStruct {
-        let mut result: RustStruct = RustStruct::from(self.naming.type_name(m.type_name()));
+        let mut result: RustStruct = RustStruct::from(self.naming.type_name(m));
 
         self.gen_type_dec_comments_message(&mut result, m);
         self.gen_derives(&mut result, PacketType::Message);
@@ -45,7 +45,7 @@ impl GenRust {
 
     /// Generates the enum declaration for the enum `e`.
     pub(in crate::rust) fn gen_type_dec_enum(&self, e: &Enum) -> RustEnum {
-        let mut result: RustEnum = RustEnum::from(self.naming.type_name(e.type_name()));
+        let mut result: RustEnum = RustEnum::from(self.naming.type_name(e));
 
         self.gen_type_dec_comments_enum(&mut result, e);
         self.gen_derives(&mut result, PacketType::Enum);
@@ -60,7 +60,7 @@ impl GenRust {
 
     /// Generates the enum declaration for the variant `v`.
     pub(in crate::rust) fn gen_type_dec_variant(&self, v: &Variant) -> RustEnum {
-        let mut result: RustEnum = RustEnum::from(self.naming.type_name(v.type_name()));
+        let mut result: RustEnum = RustEnum::from(self.naming.type_name(v));
 
         self.gen_type_dec_comments_variant(&mut result, v);
         self.gen_derives(&mut result, PacketType::Variant);

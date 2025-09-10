@@ -4,14 +4,14 @@ use code_gen::rust::{
     Receiver, RustType, Signature, SignatureDec, Trait, WithAccess, WithComments as RustComments,
     WithReceiver, WithResult, WithTraitFunctions, WithVarParams,
 };
-use proto_packet_tree::{Service, ServiceCall, WithComments, WithServiceCallName, WithTypeName};
+use proto_packet_tree::{Service, ServiceCall, WithComments, WithServiceCallName};
 
 impl GenRust {
     //! Gen Service: Trait
 
     /// Generates the trait declaration for the `service`.
     pub(in crate::rust::service) fn gen_service_trait(&self, service: &Service) -> Trait {
-        let mut result: Trait = Trait::from(self.naming.type_name(service.type_name()));
+        let mut result: Trait = Trait::from(self.naming.type_name(service));
 
         for comment in service.comments() {
             result.add_comment(comment);
@@ -36,7 +36,7 @@ impl GenRust {
         .with_result(
             RustType::from("Result")
                 .with_generic(self.typing.owned(service_call.output_type()))
-                .with_generic(RustType::from("()")),
+                .with_generic(RustType::from("ServiceError")),
         );
 
         let mut signature: SignatureDec = SignatureDec::from(signature);

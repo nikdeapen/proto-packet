@@ -1,5 +1,5 @@
 use crate::rust::Naming;
-use proto_packet_tree::{CaseNameRef, FieldNameRef, ServiceCallNameRef, TypeNameRef};
+use proto_packet_tree::{CaseNameRef, FieldNameRef, ServiceCallNameRef, TypeNameRef, WithTypeName};
 
 impl Naming {
     //! Field Names
@@ -32,8 +32,11 @@ impl Naming {
     //! Type Names
 
     /// Gets the rust type name for the `type_name`.
-    pub fn type_name(&self, type_name: TypeNameRef) -> String {
-        type_name.to_string()
+    pub fn type_name<E>(&self, element: &E) -> String
+    where
+        E: WithTypeName,
+    {
+        element.type_name().to_string()
     }
 }
 
