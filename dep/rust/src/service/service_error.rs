@@ -1,6 +1,7 @@
 use actix_web::http::StatusCode;
 use actix_web::HttpResponse;
 use enc::Error;
+use std::fmt::Debug;
 
 /// A service error.
 pub struct ServiceError {
@@ -17,6 +18,16 @@ impl ServiceError {
 
     pub fn from_read_error(_error: Error) -> Self {
         todo!()
+    }
+
+    pub fn bad_request<R>(reason: &str, request: R) -> Self
+    where
+        R: Debug,
+    {
+        Self {
+            status: StatusCode::BAD_REQUEST,
+            message: format!("{}: {:?}", reason, request),
+        }
     }
 }
 
