@@ -2,7 +2,7 @@ use enc::Error;
 use enc::{DecodeFromRead, DecodeFromReadPrefix};
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
 use proto_packet::io::WireType;
-use proto_packet::{Packet, Struct};
+use proto_packet::{Packet, PacketType, Struct};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
@@ -448,79 +448,31 @@ impl Packet for PrimitiveTypes {
     fn wire_type() -> WireType {
         WireType::LengthPrefixed
     }
+
+    fn packet_type() -> PacketType {
+        PacketType::Struct
+    }
 }
 
 impl Struct for PrimitiveTypes {}
 
 impl EncodedLen for PrimitiveTypes {
     fn encoded_len(&self) -> Result<usize, Error> {
+        use proto_packet::io::Encoder;
+
         let mut encoded_len: usize = 0;
 
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u8> =
-                proto_packet::io::Encoder::new(&self.one, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u16> =
-                proto_packet::io::Encoder::new(&self.two, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u32> =
-                proto_packet::io::Encoder::new(&self.three, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u64> =
-                proto_packet::io::Encoder::new(&self.four, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u128> =
-                proto_packet::io::Encoder::new(&self.five, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i8> =
-                proto_packet::io::Encoder::new(&self.six, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i16> =
-                proto_packet::io::Encoder::new(&self.seven, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i32> =
-                proto_packet::io::Encoder::new(&self.eight, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i64> =
-                proto_packet::io::Encoder::new(&self.nine, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i128> =
-                proto_packet::io::Encoder::new(&self.ten, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<bool> =
-                proto_packet::io::Encoder::new(&self.eleven, false);
-            encoder.encoded_len()?
-        };
+        proto_packet::impl_struct_field_encoded_len!(&self.one, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.two, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.three, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.four, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.five, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.six, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.seven, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.eight, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.nine, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.ten, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.eleven, false, encoded_len);
 
         Ok(encoded_len)
     }
@@ -528,73 +480,76 @@ impl EncodedLen for PrimitiveTypes {
 
 impl EncodeToSlice for PrimitiveTypes {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
+        use proto_packet::io::Encoder;
+
         let mut encoded_len: usize = 0;
 
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u8> =
-                proto_packet::io::Encoder::new(&self.one, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u16> =
-                proto_packet::io::Encoder::new(&self.two, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u32> =
-                proto_packet::io::Encoder::new(&self.three, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u64> =
-                proto_packet::io::Encoder::new(&self.four, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u128> =
-                proto_packet::io::Encoder::new(&self.five, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i8> =
-                proto_packet::io::Encoder::new(&self.six, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i16> =
-                proto_packet::io::Encoder::new(&self.seven, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i32> =
-                proto_packet::io::Encoder::new(&self.eight, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i64> =
-                proto_packet::io::Encoder::new(&self.nine, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i128> =
-                proto_packet::io::Encoder::new(&self.ten, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<bool> =
-                proto_packet::io::Encoder::new(&self.eleven, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.one,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.two,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.three,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.four,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.five,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.six,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.seven,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.eight,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.nine,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.ten,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.eleven,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
 
         Ok(encoded_len)
     }
@@ -605,73 +560,21 @@ impl EncodeToWrite for PrimitiveTypes {
     where
         W: Write,
     {
+        use proto_packet::io::Encoder;
+
         let mut encoded_len: usize = 0;
 
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u8> =
-                proto_packet::io::Encoder::new(&self.one, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u16> =
-                proto_packet::io::Encoder::new(&self.two, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u32> =
-                proto_packet::io::Encoder::new(&self.three, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u64> =
-                proto_packet::io::Encoder::new(&self.four, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<u128> =
-                proto_packet::io::Encoder::new(&self.five, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i8> =
-                proto_packet::io::Encoder::new(&self.six, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i16> =
-                proto_packet::io::Encoder::new(&self.seven, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i32> =
-                proto_packet::io::Encoder::new(&self.eight, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i64> =
-                proto_packet::io::Encoder::new(&self.nine, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<i128> =
-                proto_packet::io::Encoder::new(&self.ten, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<bool> =
-                proto_packet::io::Encoder::new(&self.eleven, false);
-            encoder.encode_to_write(w)?
-        };
+        proto_packet::impl_struct_field_encode_to_write!(&self.one, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.two, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.three, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.four, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.five, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.six, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.seven, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.eight, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.nine, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.ten, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.eleven, false, encoded_len, w);
 
         Ok(encoded_len)
     }

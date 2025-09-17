@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-/// A type of packet.
+/// A type of `Packet`.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub enum PacketType {
     Struct,

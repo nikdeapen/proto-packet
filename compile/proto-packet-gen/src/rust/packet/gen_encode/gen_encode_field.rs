@@ -42,7 +42,7 @@ impl GenRust {
             .with_statement(self.gen_encode_value(field_exp, type_tag, fixed, op))
     }
 
-    fn gen_wire_type_exp(&self, type_tag: &TypeTag, fixed: bool) -> String {
+    pub fn gen_wire_type_exp(&self, type_tag: &TypeTag, fixed: bool) -> String {
         let wire_type: WireType = match type_tag {
             TypeTag::Primitive(primitive) => match primitive {
                 PrimitiveType::UnsignedInt8 => Fixed1Byte,

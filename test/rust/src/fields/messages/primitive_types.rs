@@ -2,7 +2,7 @@ use enc::Error;
 use enc::{DecodeFromRead, DecodeFromReadPrefix};
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
 use proto_packet::io::WireType;
-use proto_packet::{Message, Packet};
+use proto_packet::{Message, Packet, PacketType};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
@@ -403,178 +403,97 @@ impl Packet for PrimitiveTypes {
     fn wire_type() -> WireType {
         WireType::LengthPrefixed
     }
+
+    fn packet_type() -> PacketType {
+        PacketType::Message
+    }
 }
 
 impl Message for PrimitiveTypes {}
 
 impl EncodedLen for PrimitiveTypes {
     fn encoded_len(&self) -> Result<usize, Error> {
+        use proto_packet::io::{Encoder, FieldHeader, TagNumber};
+
         let mut encoded_len: usize = 0;
 
-        if let Some(value) = &self.one {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::Fixed1Byte, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u8> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.two {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u16> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.three {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(3) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u32> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.four {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(4) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u64> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.five {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(5) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u128> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.six {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(6) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::Fixed1Byte, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i8> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.seven {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(7) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i16> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.eight {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(8) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i32> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.nine {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(9) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i64> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.ten {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(10) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i128> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.eleven {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(11) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::Fixed1Byte, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<bool> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
+        proto_packet::impl_message_field_encoded_len!(
+            &self.one,
+            false,
+            1,
+            WireType::Fixed1Byte,
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.two,
+            false,
+            2,
+            WireType::VarInt,
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.three,
+            false,
+            3,
+            WireType::VarInt,
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.four,
+            false,
+            4,
+            WireType::VarInt,
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.five,
+            false,
+            5,
+            WireType::VarInt,
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.six,
+            false,
+            6,
+            WireType::Fixed1Byte,
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.seven,
+            false,
+            7,
+            WireType::VarInt,
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.eight,
+            false,
+            8,
+            WireType::VarInt,
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.nine,
+            false,
+            9,
+            WireType::VarInt,
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.ten,
+            false,
+            10,
+            WireType::VarInt,
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.eleven,
+            false,
+            11,
+            WireType::Fixed1Byte,
+            encoded_len
+        );
 
         Ok(encoded_len)
     }
@@ -582,172 +501,98 @@ impl EncodedLen for PrimitiveTypes {
 
 impl EncodeToSlice for PrimitiveTypes {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
+        use proto_packet::io::{Encoder, FieldHeader, TagNumber};
+
         let mut encoded_len: usize = 0;
 
-        if let Some(value) = &self.one {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::Fixed1Byte, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u8> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.two {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u16> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.three {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(3) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u32> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.four {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(4) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u64> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.five {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(5) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u128> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.six {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(6) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::Fixed1Byte, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i8> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.seven {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(7) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i16> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.eight {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(8) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i32> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.nine {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(9) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i64> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.ten {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(10) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i128> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.eleven {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(11) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::Fixed1Byte, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<bool> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.one,
+            false,
+            1,
+            WireType::Fixed1Byte,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.two,
+            false,
+            2,
+            WireType::VarInt,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.three,
+            false,
+            3,
+            WireType::VarInt,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.four,
+            false,
+            4,
+            WireType::VarInt,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.five,
+            false,
+            5,
+            WireType::VarInt,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.six,
+            false,
+            6,
+            WireType::Fixed1Byte,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.seven,
+            false,
+            7,
+            WireType::VarInt,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.eight,
+            false,
+            8,
+            WireType::VarInt,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.nine,
+            false,
+            9,
+            WireType::VarInt,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.ten,
+            false,
+            10,
+            WireType::VarInt,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.eleven,
+            false,
+            11,
+            WireType::Fixed1Byte,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
 
         Ok(encoded_len)
     }
@@ -758,172 +603,98 @@ impl EncodeToWrite for PrimitiveTypes {
     where
         W: Write,
     {
+        use proto_packet::io::{Encoder, FieldHeader, TagNumber};
+
         let mut encoded_len: usize = 0;
 
-        if let Some(value) = &self.one {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::Fixed1Byte, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u8> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.two {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u16> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.three {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(3) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u32> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.four {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(4) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u64> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.five {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(5) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<u128> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.six {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(6) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::Fixed1Byte, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i8> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.seven {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(7) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i16> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.eight {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(8) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i32> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.nine {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(9) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i64> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.ten {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(10) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::VarInt, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<i128> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.eleven {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(11) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::Fixed1Byte, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<bool> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.one,
+            false,
+            1,
+            WireType::Fixed1Byte,
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.two,
+            false,
+            2,
+            WireType::VarInt,
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.three,
+            false,
+            3,
+            WireType::VarInt,
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.four,
+            false,
+            4,
+            WireType::VarInt,
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.five,
+            false,
+            5,
+            WireType::VarInt,
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.six,
+            false,
+            6,
+            WireType::Fixed1Byte,
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.seven,
+            false,
+            7,
+            WireType::VarInt,
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.eight,
+            false,
+            8,
+            WireType::VarInt,
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.nine,
+            false,
+            9,
+            WireType::VarInt,
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.ten,
+            false,
+            10,
+            WireType::VarInt,
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.eleven,
+            false,
+            11,
+            WireType::Fixed1Byte,
+            encoded_len,
+            w
+        );
 
         Ok(encoded_len)
     }

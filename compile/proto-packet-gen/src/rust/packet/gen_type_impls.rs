@@ -59,21 +59,30 @@ impl GenRust {
 
         Source::default()
             .with_statement(EmptyLine::default())
-            .with_statement(self.gen_packet_impl(element, wire_type))
+            .with_statement(self.gen_packet_impl(element, wire_type, packet_type))
             .with_statement(EmptyLine::default())
             .with_statement(type_impl)
     }
 
-    fn gen_packet_impl<T>(&self, element: &T, wire_type: WireType) -> ImplBlock
+    fn gen_packet_impl<T>(
+        &self,
+        element: &T,
+        wire_type: WireType,
+        packet_type: PacketType,
+    ) -> ImplBlock
     where
         T: WithTypeName,
     {
         let wire_type: Function =
             Function::from(Signature::from("wire_type").with_result("WireType"))
                 .with_literal(format!("WireType::{}", wire_type));
+        let packet_type: Function =
+            Function::from(Signature::from("packet_type").with_result("PacketType"))
+                .with_literal(format!("PacketType::{}", packet_type));
         ImplBlock::from(self.naming.type_name(element))
             .with_for_trait("Packet")
             .with_function(wire_type)
+            .with_function(packet_type)
     }
 }
 

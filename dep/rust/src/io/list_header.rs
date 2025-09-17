@@ -63,11 +63,9 @@ impl EncodeToSlice for ListHeader {
             1
         } else {
             *target.get_unchecked_mut(0) = self.wire_type.to_high_3_bits() | 0x1F;
-
+            let target: &mut [u8] = &mut target[1..];
             let extra: usize = self.size - Self::MAX_SINGLE_BYTE_LIST_SIZE;
-            let extra: usize =
-                VarIntSize::from(extra).encode_to_slice_unchecked(&mut target[1..])?;
-
+            let extra: usize = VarIntSize::from(extra).encode_to_slice_unchecked(target)?;
             1 + extra
         })
     }
@@ -93,6 +91,26 @@ impl DecodeFromReadPrefix for ListHeader {
 }
 
 #[cfg(test)]
-mod tests {
-    // todo -- testing
+mod test {
+    use crate::io::WireType::*;
+    use crate::io::{ListHeader, WireType};
+
+    #[test]
+    fn io() {
+        let test_cases: &[(WireType, usize, &[u8])] = &[
+            (Fixed1Byte, 1, &[0b0000_0001]),
+            (Fixed2Byte, 2, &[0b0010_0010]),
+            (Fixed4Byte, 3, &[0b0100_0011]),
+            (Fixed8Byte, 0x1E, &[0b0111_1110]),
+            (Fixed8Byte, 0x1F, &[0b0111_1111, 1]),
+            (Fixed16Byte, 0x20, &[0b1001_1111, 2]),
+            (VarInt, 0x21, &[0b1011_1111, 3]),
+            (List, 0xFFFF_FFFF, &[0b1111_1111, 225, 255, 255, 255, 15]),
+        ];
+        for (wire, len, expected) in test_cases {
+            let header: ListHeader = ListHeader::new(*wire, *len);
+            enc::test::test_encode(&header, *expected);
+            enc::test::test_decode_from_read_prefix(*expected, &header, false);
+        }
+    }
 }

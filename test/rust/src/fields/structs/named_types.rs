@@ -2,7 +2,7 @@ use enc::Error;
 use enc::{DecodeFromRead, DecodeFromReadPrefix};
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
 use proto_packet::io::WireType;
-use proto_packet::{Packet, Struct};
+use proto_packet::{Packet, PacketType, Struct};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
@@ -99,25 +99,22 @@ impl Packet for NamedTypes {
     fn wire_type() -> WireType {
         WireType::LengthPrefixed
     }
+
+    fn packet_type() -> PacketType {
+        PacketType::Struct
+    }
 }
 
 impl Struct for NamedTypes {}
 
 impl EncodedLen for NamedTypes {
     fn encoded_len(&self) -> Result<usize, Error> {
+        use proto_packet::io::Encoder;
+
         let mut encoded_len: usize = 0;
 
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<crate::fields::structs::PrimitiveTypes> =
-                proto_packet::io::Encoder::new(&self.one, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<crate::fields::messages::PrimitiveTypes> =
-                proto_packet::io::Encoder::new(&self.two, false);
-            encoder.encoded_len()?
-        };
+        proto_packet::impl_struct_field_encoded_len!(&self.one, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.two, false, encoded_len);
 
         Ok(encoded_len)
     }
@@ -125,19 +122,22 @@ impl EncodedLen for NamedTypes {
 
 impl EncodeToSlice for NamedTypes {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
+        use proto_packet::io::Encoder;
+
         let mut encoded_len: usize = 0;
 
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<crate::fields::structs::PrimitiveTypes> =
-                proto_packet::io::Encoder::new(&self.one, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<crate::fields::messages::PrimitiveTypes> =
-                proto_packet::io::Encoder::new(&self.two, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.one,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.two,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
 
         Ok(encoded_len)
     }
@@ -148,19 +148,12 @@ impl EncodeToWrite for NamedTypes {
     where
         W: Write,
     {
+        use proto_packet::io::Encoder;
+
         let mut encoded_len: usize = 0;
 
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<crate::fields::structs::PrimitiveTypes> =
-                proto_packet::io::Encoder::new(&self.one, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<crate::fields::messages::PrimitiveTypes> =
-                proto_packet::io::Encoder::new(&self.two, false);
-            encoder.encode_to_write(w)?
-        };
+        proto_packet::impl_struct_field_encode_to_write!(&self.one, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.two, false, encoded_len, w);
 
         Ok(encoded_len)
     }

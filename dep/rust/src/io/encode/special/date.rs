@@ -4,12 +4,11 @@ use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
 use std::io::Write;
 
 impl Encoder<'_, NaiveDate> {
-    //!
+    //! Encoded Value
 
-    fn encoded_value(&self) -> u32 {
+    fn encoded_value(&self) -> i64 {
         let epoch: NaiveDate = NaiveDate::from_ymd_opt(1970, 1, 1).unwrap();
-        let days: i64 = self.value.signed_duration_since(epoch).num_days();
-        days as u32 // todo -- lol
+        self.value.signed_duration_since(epoch).num_days()
     }
 }
 

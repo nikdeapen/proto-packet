@@ -2,7 +2,7 @@ use enc::Error;
 use enc::{DecodeFromRead, DecodeFromReadPrefix};
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
 use proto_packet::io::WireType;
-use proto_packet::{Packet, Struct};
+use proto_packet::{Packet, PacketType, Struct};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
@@ -138,31 +138,23 @@ impl Packet for SpecialTypes {
     fn wire_type() -> WireType {
         WireType::LengthPrefixed
     }
+
+    fn packet_type() -> PacketType {
+        PacketType::Struct
+    }
 }
 
 impl Struct for SpecialTypes {}
 
 impl EncodedLen for SpecialTypes {
     fn encoded_len(&self) -> Result<usize, Error> {
+        use proto_packet::io::Encoder;
+
         let mut encoded_len: usize = 0;
 
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<uuid::Uuid> =
-                proto_packet::io::Encoder::new(&self.one, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<String> =
-                proto_packet::io::Encoder::new(&self.two, false);
-            encoder.encoded_len()?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<chrono::NaiveDate> =
-                proto_packet::io::Encoder::new(&self.three, false);
-            encoder.encoded_len()?
-        };
+        proto_packet::impl_struct_field_encoded_len!(&self.one, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.two, false, encoded_len);
+        proto_packet::impl_struct_field_encoded_len!(&self.three, false, encoded_len);
 
         Ok(encoded_len)
     }
@@ -170,25 +162,28 @@ impl EncodedLen for SpecialTypes {
 
 impl EncodeToSlice for SpecialTypes {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
+        use proto_packet::io::Encoder;
+
         let mut encoded_len: usize = 0;
 
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<uuid::Uuid> =
-                proto_packet::io::Encoder::new(&self.one, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<String> =
-                proto_packet::io::Encoder::new(&self.two, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<chrono::NaiveDate> =
-                proto_packet::io::Encoder::new(&self.three, false);
-            encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-        };
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.one,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.two,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_struct_field_encode_to_slice_unchecked!(
+            &self.three,
+            false,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
 
         Ok(encoded_len)
     }
@@ -199,25 +194,13 @@ impl EncodeToWrite for SpecialTypes {
     where
         W: Write,
     {
+        use proto_packet::io::Encoder;
+
         let mut encoded_len: usize = 0;
 
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<uuid::Uuid> =
-                proto_packet::io::Encoder::new(&self.one, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<String> =
-                proto_packet::io::Encoder::new(&self.two, false);
-            encoder.encode_to_write(w)?
-        };
-
-        encoded_len += {
-            let encoder: proto_packet::io::Encoder<chrono::NaiveDate> =
-                proto_packet::io::Encoder::new(&self.three, false);
-            encoder.encode_to_write(w)?
-        };
+        proto_packet::impl_struct_field_encode_to_write!(&self.one, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.two, false, encoded_len, w);
+        proto_packet::impl_struct_field_encode_to_write!(&self.three, false, encoded_len, w);
 
         Ok(encoded_len)
     }

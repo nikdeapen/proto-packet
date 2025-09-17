@@ -2,7 +2,7 @@ use enc::Error;
 use enc::{DecodeFromRead, DecodeFromReadPrefix};
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
 use proto_packet::io::WireType;
-use proto_packet::{Message, Packet};
+use proto_packet::{Message, Packet, PacketType};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
@@ -84,47 +84,34 @@ impl Packet for NamedTypes {
     fn wire_type() -> WireType {
         WireType::LengthPrefixed
     }
+
+    fn packet_type() -> PacketType {
+        PacketType::Message
+    }
 }
 
 impl Message for NamedTypes {}
 
 impl EncodedLen for NamedTypes {
     fn encoded_len(&self) -> Result<usize, Error> {
+        use proto_packet::io::{Encoder, FieldHeader, TagNumber};
+
         let mut encoded_len: usize = 0;
 
-        if let Some(value) = &self.one {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-                let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                    crate::fields::messages::PrimitiveTypes::wire_type(),
-                    tag_number,
-                );
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<crate::fields::messages::PrimitiveTypes> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
-
-        if let Some(value) = &self.two {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
-                let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                    crate::fields::structs::PrimitiveTypes::wire_type(),
-                    tag_number,
-                );
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<crate::fields::structs::PrimitiveTypes> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
+        proto_packet::impl_message_field_encoded_len!(
+            &self.one,
+            false,
+            1,
+            crate::fields::messages::PrimitiveTypes::wire_type(),
+            encoded_len
+        );
+        proto_packet::impl_message_field_encoded_len!(
+            &self.two,
+            false,
+            2,
+            crate::fields::structs::PrimitiveTypes::wire_type(),
+            encoded_len
+        );
 
         Ok(encoded_len)
     }
@@ -132,41 +119,26 @@ impl EncodedLen for NamedTypes {
 
 impl EncodeToSlice for NamedTypes {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
+        use proto_packet::io::{Encoder, FieldHeader, TagNumber};
+
         let mut encoded_len: usize = 0;
 
-        if let Some(value) = &self.one {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-                let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                    crate::fields::messages::PrimitiveTypes::wire_type(),
-                    tag_number,
-                );
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<crate::fields::messages::PrimitiveTypes> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
-
-        if let Some(value) = &self.two {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
-                let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                    crate::fields::structs::PrimitiveTypes::wire_type(),
-                    tag_number,
-                );
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<crate::fields::structs::PrimitiveTypes> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.one,
+            false,
+            1,
+            crate::fields::messages::PrimitiveTypes::wire_type(),
+            encoded_len,
+            &mut target[encoded_len..]
+        );
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.two,
+            false,
+            2,
+            crate::fields::structs::PrimitiveTypes::wire_type(),
+            encoded_len,
+            &mut target[encoded_len..]
+        );
 
         Ok(encoded_len)
     }
@@ -177,41 +149,26 @@ impl EncodeToWrite for NamedTypes {
     where
         W: Write,
     {
+        use proto_packet::io::{Encoder, FieldHeader, TagNumber};
+
         let mut encoded_len: usize = 0;
 
-        if let Some(value) = &self.one {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-                let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                    crate::fields::messages::PrimitiveTypes::wire_type(),
-                    tag_number,
-                );
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<crate::fields::messages::PrimitiveTypes> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
-
-        if let Some(value) = &self.two {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
-                let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                    crate::fields::structs::PrimitiveTypes::wire_type(),
-                    tag_number,
-                );
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<crate::fields::structs::PrimitiveTypes> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.one,
+            false,
+            1,
+            crate::fields::messages::PrimitiveTypes::wire_type(),
+            encoded_len,
+            w
+        );
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.two,
+            false,
+            2,
+            crate::fields::structs::PrimitiveTypes::wire_type(),
+            encoded_len,
+            w
+        );
 
         Ok(encoded_len)
     }

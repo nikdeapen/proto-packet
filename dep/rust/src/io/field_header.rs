@@ -1,5 +1,5 @@
 use crate::io::{TagNumber, WireType};
-use enc::var_int::{VarInt32, VarIntSize};
+use enc::var_int::VarInt32;
 use enc::{impl_encode_to_write_stack_buf, DecodeFromReadPrefix, EncodeToSlice, EncodedLen, Error};
 use std::io::Read;
 
@@ -16,8 +16,8 @@ impl FieldHeader {
     /// The maximum tag number for a field header encoded within a single byte. (31)
     pub const MAX_SINGLE_BYTE_TAG_NUMBER: u32 = 0x1F;
 
-    /// The maximum encoded length of a field header.
-    pub const MAX_ENCODED_LEN: usize = 1 + VarIntSize::MAX_ENCODED_LEN;
+    /// The maximum encoded length of a field header. (5)
+    pub const MAX_ENCODED_LEN: usize = 1 + VarInt32::MAX_ENCODED_LEN;
 }
 
 impl FieldHeader {

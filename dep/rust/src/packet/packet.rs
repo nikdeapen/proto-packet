@@ -1,4 +1,5 @@
 use crate::io::WireType;
+use crate::PacketType;
 use enc::{DecodeFromRead, DecodeFromReadPrefix, EncodeToSlice, EncodeToWrite, EncodedLen};
 use std::fmt::Debug;
 use std::hash::Hash;
@@ -15,11 +16,12 @@ pub trait Packet:
     + EncodedLen
     + EncodeToSlice
     + EncodeToWrite
-    + DecodeFromRead // todo -- do we need both `DecodeFromRead` & `DecodeFromReadPrefix`?
+    + DecodeFromRead
     + DecodeFromReadPrefix
 {
     /// Gets the wire type.
     fn wire_type() -> WireType;
 
-    // todo -- packet type fn?
+    /// Gets the packet type.
+    fn packet_type() -> PacketType;
 }

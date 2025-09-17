@@ -2,7 +2,7 @@ use enc::Error;
 use enc::{DecodeFromRead, DecodeFromReadPrefix};
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen};
 use proto_packet::io::WireType;
-use proto_packet::{Message, Packet};
+use proto_packet::{Message, Packet, PacketType};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
@@ -49,28 +49,27 @@ impl Packet for MyRequest {
     fn wire_type() -> WireType {
         WireType::LengthPrefixed
     }
+
+    fn packet_type() -> PacketType {
+        PacketType::Message
+    }
 }
 
 impl Message for MyRequest {}
 
 impl EncodedLen for MyRequest {
     fn encoded_len(&self) -> Result<usize, Error> {
+        use proto_packet::io::{Encoder, FieldHeader, TagNumber};
+
         let mut encoded_len: usize = 0;
 
-        if let Some(value) = &self.message {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::LengthPrefixed, tag_number);
-                header.encoded_len()?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<String> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encoded_len()?
-            };
-        }
+        proto_packet::impl_message_field_encoded_len!(
+            &self.message,
+            false,
+            1,
+            WireType::LengthPrefixed,
+            encoded_len
+        );
 
         Ok(encoded_len)
     }
@@ -78,22 +77,18 @@ impl EncodedLen for MyRequest {
 
 impl EncodeToSlice for MyRequest {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
+        use proto_packet::io::{Encoder, FieldHeader, TagNumber};
+
         let mut encoded_len: usize = 0;
 
-        if let Some(value) = &self.message {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::LengthPrefixed, tag_number);
-                header.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<String> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_slice_unchecked(&mut target[encoded_len..])?
-            };
-        }
+        proto_packet::impl_message_field_encode_to_slice_unchecked!(
+            &self.message,
+            false,
+            1,
+            WireType::LengthPrefixed,
+            encoded_len,
+            &mut target[encoded_len..]
+        );
 
         Ok(encoded_len)
     }
@@ -104,22 +99,18 @@ impl EncodeToWrite for MyRequest {
     where
         W: Write,
     {
+        use proto_packet::io::{Encoder, FieldHeader, TagNumber};
+
         let mut encoded_len: usize = 0;
 
-        if let Some(value) = &self.message {
-            encoded_len += {
-                let tag_number: proto_packet::io::TagNumber =
-                    unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-                let header: proto_packet::io::FieldHeader =
-                    proto_packet::io::FieldHeader::new(WireType::LengthPrefixed, tag_number);
-                header.encode_to_write(w)?
-            };
-            encoded_len += {
-                let encoder: proto_packet::io::Encoder<String> =
-                    proto_packet::io::Encoder::new(value, false);
-                encoder.encode_to_write(w)?
-            };
-        }
+        proto_packet::impl_message_field_encode_to_write!(
+            &self.message,
+            false,
+            1,
+            WireType::LengthPrefixed,
+            encoded_len,
+            w
+        );
 
         Ok(encoded_len)
     }

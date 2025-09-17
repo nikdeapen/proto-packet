@@ -8,7 +8,10 @@ impl GenRust {
     /// Generates the imports for the `packet_type`.
     pub(in crate::rust) fn gen_imports(&self, packet_type: PacketType) -> Source {
         let mut source: Source = Source::default()
-            .with_semi(format!("use proto_packet::{{Packet, {}}}", packet_type))
+            .with_semi(format!(
+                "use proto_packet::{{Packet, PacketType, {}}}",
+                packet_type
+            ))
             .with_semi("use proto_packet::io::WireType")
             .with_semi("use std::io::{Read, Write}")
             .with_semi("use enc::{EncodedLen, EncodeToSlice, EncodeToWrite}")

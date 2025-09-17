@@ -1,6 +1,6 @@
 use crate::rust::EncodeOp::{EncodeToSlice, EncodeToWrite, EncodedLen};
 use crate::rust::{EncodeOp, GenRust};
-use code_gen::rust::{IfStatement, MatchCase, MatchStatement, RustPrimitive};
+use code_gen::rust::{MatchCase, MatchStatement, RustPrimitive};
 use code_gen::{EmptyLine, Source, WithStatements};
 use proto_packet_tree::{
     Enum, Message, Struct, TypeNameRef, Variant, WithCaseName, WithFieldName, WithTagNumber,
@@ -47,15 +47,21 @@ impl GenRust {
 
     pub(in crate::rust) fn gen_encode_struct_source(&self, s: &Struct, op: EncodeOp) -> Source {
         let mut source: Source = Source::default();
+        source.add_semi("use proto_packet::io::Encoder");
+        source.add_statement(EmptyLine::default());
         source.add_semi("let mut encoded_len: usize = 0");
+        source.add_statement(EmptyLine::default());
 
+        //    ($field:expr, $fixed:literal, $encoded_len:ident) => {
         for field in s.fields() {
-            source.add_statement(EmptyLine::default());
-            source.add_statement(self.gen_encode_value(
-                format!("&self.{}", self.naming.field_name(field.field_name())).as_str(),
-                field.type_tag(),
+            source.add_semi(format!(
+                "{}::{}{}!(&self.{}, {}, encoded_len{})",
+                "proto_packet",
+                "impl_struct_field_",
+                op.encode_tag(),
+                self.naming.field_name(field.field_name()),
                 false, // todo -- fixed
-                op,
+                op.encode_extra_params()
             ));
         }
 
@@ -66,25 +72,23 @@ impl GenRust {
 
     pub(in crate::rust) fn gen_encode_message_source(&self, s: &Message, op: EncodeOp) -> Source {
         let mut source: Source = Source::default();
+        source.add_semi("use proto_packet::io::{Encoder, FieldHeader, TagNumber}");
+        source.add_statement(EmptyLine::default());
         source.add_semi("let mut encoded_len: usize = 0");
+        source.add_statement(EmptyLine::default());
 
         for field in s.fields() {
-            source.add_statement(EmptyLine::default());
-            source.add_statement(
-                IfStatement::from(format!(
-                    "let Some(value) = &self.{}",
-                    self.naming.field_name(field.field_name())
-                ))
-                .with_success_statements(Source::default().with_statement(
-                    self.gen_encode_field(
-                        "value",
-                        field.type_tag(),
-                        false, // todo -- fixed
-                        field.tag_number(),
-                        op,
-                    ),
-                )),
-            );
+            source.add_semi(format!(
+                "{}::{}{}!(&self.{}, {}, {}, {}, encoded_len{})",
+                "proto_packet",
+                "impl_message_field_",
+                op.encode_tag(),
+                self.naming.field_name(field.field_name()),
+                false, // todo -- fixed
+                field.tag_number(),
+                self.gen_wire_type_exp(field.type_tag(), false), // todo -- fixed
+                op.encode_extra_params()
+            ));
         }
 
         source.add_statement(EmptyLine::default());
