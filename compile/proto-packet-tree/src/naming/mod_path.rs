@@ -24,12 +24,12 @@ impl ModPath {
     ///
     /// # Unsafe
     /// The `mod_path` must be valid.
-    unsafe fn mod_names_internal<'a>(mod_path: &'a str) -> impl Iterator<Item = ModNameRef<'a>> {
+    unsafe fn mod_names_internal(mod_path: &str) -> impl Iterator<Item = ModNameRef<'_>> {
         mod_path.split(".").map(|s| ModNameRef::new_unchecked(s))
     }
 
     /// Gets the mod names.
-    pub fn mod_names<'a>(&'a self) -> impl Iterator<Item = ModNameRef<'a>> {
+    pub fn mod_names(&self) -> impl Iterator<Item = ModNameRef<'_>> {
         unsafe { Self::mod_names_internal(self.value()) }
     }
 }
@@ -38,7 +38,7 @@ impl<'a> ModPathRef<'a> {
     //! Properties
 
     /// Gets the mod names.
-    pub fn mod_names(&'a self) -> impl Iterator<Item = ModNameRef<'a>> {
+    pub fn mod_names(&self) -> impl Iterator<Item = ModNameRef<'_>> {
         unsafe { ModPath::mod_names_internal(self.value) }
     }
 }
@@ -103,5 +103,5 @@ impl<'a> ModPathRef<'a> {
 /// An element with a mod path.
 pub trait WithModPath {
     /// Gets the mod path.
-    fn mod_path<'a>(&'a self) -> ModPathRef<'a>;
+    fn mod_path(&self) -> ModPathRef<'_>;
 }

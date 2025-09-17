@@ -63,7 +63,7 @@ impl Service {
     /// Checks if the `service_call` can be added.
     ///
     /// Returns `true` if:
-    ///     1. The service_call name is not already present.
+    ///     1. The service_call name is not yet present.
     pub fn can_add_service_call(&self, service_call: &ServiceCall) -> bool {
         self.service_call_with_name(service_call.service_call_name())
             .is_none()

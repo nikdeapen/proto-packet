@@ -41,7 +41,7 @@ impl WithComments for StructField {
 }
 
 impl WithFieldName for StructField {
-    fn field_name<'a>(&'a self) -> FieldNameRef<'a> {
+    fn field_name(&self) -> FieldNameRef<'_> {
         self.field_name.to_ref()
     }
 }

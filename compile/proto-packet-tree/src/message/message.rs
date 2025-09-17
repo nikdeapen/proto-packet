@@ -40,7 +40,7 @@ impl WithComments for Message {
 }
 
 impl WithTypeName for Message {
-    fn type_name<'a>(&'a self) -> TypeNameRef<'a> {
+    fn type_name(&self) -> TypeNameRef<'_> {
         self.message_name.to_ref()
     }
 }
@@ -75,8 +75,8 @@ impl Message {
     /// Checks if the `field` can be added.
     ///
     /// Returns `true` if:
-    ///     1. The field name is not already present.
-    ///     2. The tag number is not already present.
+    ///     1. The field name is not yet present.
+    ///     2. The tag number is not yet present.
     pub fn can_add_field(&self, field: &MessageField) -> bool {
         self.field_with_name(field.field_name()).is_none()
             && self.field_with_tag_number(field.tag_number()).is_none()

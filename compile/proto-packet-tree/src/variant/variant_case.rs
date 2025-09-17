@@ -1,8 +1,7 @@
-use proto_packet::io::TagNumber;
-
 use crate::{
     CaseName, CaseNameRef, TypeTag, WithCaseName, WithComments, WithTagNumber, WithTypeTag,
 };
+use proto_packet::io::TagNumber;
 
 /// A variant case.
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
@@ -47,7 +46,7 @@ impl WithComments for VariantCase {
 }
 
 impl WithCaseName for VariantCase {
-    fn case_name<'a>(&'a self) -> CaseNameRef<'a> {
+    fn case_name(&self) -> CaseNameRef<'_> {
         self.case_name.to_ref()
     }
 }

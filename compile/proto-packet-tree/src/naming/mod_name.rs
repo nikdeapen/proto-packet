@@ -23,5 +23,5 @@ pub fn validate_mod_name(mod_name: &str) -> Result<(), &'static str> {
 /// An element with a mod name.
 pub trait WithModName {
     /// Gets the mod name.
-    fn mod_name<'a>(&'a self) -> ModNameRef<'a>;
+    fn mod_name(&self) -> ModNameRef<'_>;
 }

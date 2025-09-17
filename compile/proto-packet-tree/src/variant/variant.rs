@@ -1,8 +1,7 @@
-use proto_packet::io::TagNumber;
-
 use crate::{
     TypeName, TypeNameRef, VariantCase, WithCaseName, WithComments, WithTagNumber, WithTypeName,
 };
+use proto_packet::io::TagNumber;
 
 /// A variant.
 ///
@@ -41,7 +40,7 @@ impl WithComments for Variant {
 }
 
 impl WithTypeName for Variant {
-    fn type_name<'a>(&'a self) -> TypeNameRef<'a> {
+    fn type_name(&self) -> TypeNameRef<'_> {
         self.variant_name.to_ref()
     }
 }
@@ -76,9 +75,8 @@ impl Variant {
     /// Checks if the `case` can be added.
     ///
     /// Returns `true` if:
-    ///     1. The case name is not already present.
-    ///     2. The tag number is not already present.
-    ///     3. If the tag number is `None` all the current tag numbers are also `None`.
+    ///     1. The case name is not yet present.
+    ///     2. The tag number is not yet present.
     pub fn can_add_case(&self, case: &VariantCase) -> bool {
         self.case_with_name(case.case_name()).is_none()
             && self.case_with_number(case.tag_number()).is_none()

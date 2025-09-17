@@ -5,8 +5,6 @@ use proto_packet::io::TagNumber;
 
 /// An enum.
 ///
-/// todo -- link to enum docs
-///
 /// # Invariants
 /// 1. No two cases can have the same name.
 /// 2. No two cases can have the same tag number.
@@ -42,7 +40,7 @@ impl WithComments for Enum {
 }
 
 impl WithTypeName for Enum {
-    fn type_name<'a>(&'a self) -> TypeNameRef<'a> {
+    fn type_name(&self) -> TypeNameRef<'_> {
         self.enum_name.to_ref()
     }
 }
@@ -77,8 +75,8 @@ impl Enum {
     /// Checks if the `case` can be added.
     ///
     /// Returns `true` if:
-    ///     1. The case name is not already present.
-    ///     2. The tag number is not already present.
+    ///     1. The case name is not yet present.
+    ///     2. The tag number is not yet present.
     pub fn can_add_case(&self, case: &EnumCase) -> bool {
         self.case_with_name(case.case_name()).is_none()
             && self.case_with_tag_number(case.tag_number()).is_none()

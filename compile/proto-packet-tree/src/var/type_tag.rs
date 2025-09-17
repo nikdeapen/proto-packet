@@ -1,6 +1,5 @@
-use std::fmt::{Debug, Display, Formatter};
-
 use crate::{PrimitiveType, QualifiedName, SpecialType};
+use std::fmt::{Debug, Display, Formatter};
 
 /// A type tag.
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]

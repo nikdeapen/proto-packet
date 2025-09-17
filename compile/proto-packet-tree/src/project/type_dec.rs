@@ -32,8 +32,8 @@ impl From<Message> for TypeDec {
 }
 
 impl From<Enum> for TypeDec {
-    fn from(enom: Enum) -> Self {
-        Self::EnumDec(enom)
+    fn from(enumeration: Enum) -> Self {
+        Self::EnumDec(enumeration)
     }
 }
 

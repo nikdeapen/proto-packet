@@ -42,7 +42,7 @@ impl WithComments for EnumCase {
 }
 
 impl WithCaseName for EnumCase {
-    fn case_name<'a>(&'a self) -> CaseNameRef<'a> {
+    fn case_name(&self) -> CaseNameRef<'_> {
         self.case_name.to_ref()
     }
 }

@@ -36,7 +36,7 @@ impl WithComments for Struct {
 }
 
 impl WithTypeName for Struct {
-    fn type_name<'a>(&'a self) -> TypeNameRef<'a> {
+    fn type_name(&self) -> TypeNameRef<'_> {
         self.struct_name.to_ref()
     }
 }
@@ -63,9 +63,7 @@ impl Struct {
     /// Checks if the `field` can be added.
     ///
     /// Returns `true` if:
-    ///     1. The field name is not already present.
-    ///     2. The tag number is not already present.
-    ///     3. If the tag number is `None` all the current tag numbers are also `None`.
+    ///     1. The field name is not yet present.
     pub fn can_add_field(&self, field: &StructField) -> bool {
         self.field_with_name(field.field_name()).is_none()
     }

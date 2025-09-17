@@ -36,9 +36,9 @@ impl QualifiedName {
     ///
     /// # Unsafe
     /// The `qualified_name` must be valid.
-    unsafe fn mod_path_and_type_name<'a>(
-        qualified_name: &'a str,
-    ) -> (Option<ModPathRef<'a>>, TypeNameRef<'a>) {
+    unsafe fn mod_path_and_type_name(
+        qualified_name: &str,
+    ) -> (Option<ModPathRef<'_>>, TypeNameRef<'_>) {
         if let Some(last_dot) = qualified_name.as_bytes().iter().rposition(|c| *c == b'.') {
             let mod_path: &str = &qualified_name[..last_dot];
             let type_name: &str = &qualified_name[(last_dot + 1)..];
@@ -54,12 +54,12 @@ impl QualifiedName {
     }
 
     /// Gets the optional mod path.
-    pub fn mod_path<'a>(&'a self) -> Option<ModPathRef<'a>> {
+    pub fn mod_path(&self) -> Option<ModPathRef<'_>> {
         unsafe { Self::mod_path_and_type_name(self.value.as_str()).0 }
     }
 
     /// Gets the type name.
-    pub fn type_name<'a>(&'a self) -> TypeNameRef<'a> {
+    pub fn type_name(&self) -> TypeNameRef<'_> {
         unsafe { Self::mod_path_and_type_name(self.value.as_str()).1 }
     }
 }
@@ -68,12 +68,12 @@ impl<'a> QualifiedNameRef<'a> {
     //! Properties
 
     /// Gets the optional mod path.
-    pub fn mod_path(&'a self) -> Option<ModPathRef<'a>> {
+    pub fn mod_path(&self) -> Option<ModPathRef<'_>> {
         unsafe { QualifiedName::mod_path_and_type_name(self.value).0 }
     }
 
     /// Gets the type name.
-    pub fn type_name(&'a self) -> TypeNameRef<'a> {
+    pub fn type_name(&self) -> TypeNameRef<'_> {
         unsafe { QualifiedName::mod_path_and_type_name(self.value).1 }
     }
 }
@@ -81,5 +81,5 @@ impl<'a> QualifiedNameRef<'a> {
 /// An element with a qualified name.
 pub trait WithQualifiedName {
     /// Gets the qualified name.
-    fn qualified_name<'a>(&'a self) -> QualifiedNameRef<'a>;
+    fn qualified_name(&self) -> QualifiedNameRef<'_>;
 }

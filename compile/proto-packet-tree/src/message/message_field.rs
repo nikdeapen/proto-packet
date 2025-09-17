@@ -46,7 +46,7 @@ impl WithComments for MessageField {
 }
 
 impl WithFieldName for MessageField {
-    fn field_name<'a>(&'a self) -> FieldNameRef<'a> {
+    fn field_name(&self) -> FieldNameRef<'_> {
         self.field_name.to_ref()
     }
 }
