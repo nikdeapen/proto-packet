@@ -5,6 +5,6 @@ use proto_packet_tree::Project;
 
 /// Responsible for generating code.
 pub trait CodeGenerator {
-    /// Generates the code for the `project`.
+    /// Generates the code for the `project` with the `target` folder.
     fn generate(&self, project: &Project, target: &FolderPath) -> Result<GeneratedCode, Report>;
 }

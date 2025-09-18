@@ -11,7 +11,7 @@ impl GenRust {
         Source::default()
             .with_statement(self.gen_imports(PacketType::Struct))
             .with_statement(self.gen_type_dec_struct(s))
-            .with_statement(self.gen_constructor_struct(s))
+            .with_statement(self.gen_struct_constructors(s))
             .with_statement(self.gen_fields_struct(s))
             .with_statement(self.gen_type_impls_struct(s))
             .with_statement(self.gen_encode_struct(s))

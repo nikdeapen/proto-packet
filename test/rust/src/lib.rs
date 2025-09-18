@@ -1,2 +1,1 @@
-pub mod fields;
-pub mod services;
+pub mod structs;

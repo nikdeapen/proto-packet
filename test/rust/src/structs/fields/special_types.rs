@@ -18,7 +18,7 @@ use std::io::{Read, Write};
 ///    // A `date` field.
 ///    three: date;
 /// }
-#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]
+#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Default, Serialize, Deserialize)]
 pub struct SpecialTypes {
     one: uuid::Uuid,
     two: String,
@@ -29,7 +29,12 @@ impl SpecialTypes {
     //! Construction
 
     /// Creates a new `SpecialTypes`.
-    pub fn new<F0, F1, F2>(one: F0, two: F1, three: F2) -> Self
+    pub fn new(one: uuid::Uuid, two: String, three: chrono::NaiveDate) -> Self {
+        Self { one, two, three }
+    }
+
+    /// Creates a new `SpecialTypes`.
+    pub fn from<F0, F1, F2>(one: F0, two: F1, three: F2) -> Self
     where
         F0: Into<uuid::Uuid>,
         F1: Into<String>,

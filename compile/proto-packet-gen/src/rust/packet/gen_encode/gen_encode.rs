@@ -46,6 +46,10 @@ impl GenRust {
     //! Gen Encode: Source
 
     pub(in crate::rust) fn gen_encode_struct_source(&self, s: &Struct, op: EncodeOp) -> Source {
+        if s.fields().is_empty() {
+            return Source::default().with_literal("Ok(0)");
+        }
+
         let mut source: Source = Source::default();
         source.add_semi("use proto_packet::io::Encoder");
         source.add_statement(EmptyLine::default());

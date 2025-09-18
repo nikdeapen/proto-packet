@@ -1,7 +1,7 @@
 use file_storage::{FilePath, FolderPath};
 use std::collections::HashMap;
 
-/// Represents generated source code.
+/// Represents generated code.
 #[derive(Debug)]
 pub struct GeneratedCode {
     target: FolderPath,
@@ -18,7 +18,7 @@ impl From<FolderPath> for GeneratedCode {
 }
 
 impl GeneratedCode {
-    //! Target Folder
+    //! Target
 
     /// Gets the target folder.
     pub fn target(&self) -> &FolderPath {

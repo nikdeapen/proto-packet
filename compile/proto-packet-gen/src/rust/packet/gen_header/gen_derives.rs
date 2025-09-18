@@ -1,7 +1,7 @@
 use crate::rust::GenRust;
 use code_gen::rust::WithDerives;
 use proto_packet::PacketType;
-use proto_packet::PacketType::{Enum, Message};
+use proto_packet::PacketType::Enum;
 
 impl GenRust {
     //! Gen Derives
@@ -11,6 +11,7 @@ impl GenRust {
     where
         T: WithDerives,
     {
+        // todo -- some structs can be copy
         if packet_type == Enum {
             element.add_derive("Copy");
         }
@@ -21,9 +22,7 @@ impl GenRust {
         element.add_derive("PartialEq");
         element.add_derive("Hash");
         element.add_derive("Debug");
-        if packet_type == Message {
-            element.add_derive("Default");
-        }
+        element.add_derive("Default");
         element.add_derive("Serialize");
         element.add_derive("Deserialize");
     }

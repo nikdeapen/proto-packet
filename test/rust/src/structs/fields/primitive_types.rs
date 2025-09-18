@@ -42,7 +42,7 @@ use std::io::{Read, Write};
 ///    // A `bool` field.
 ///    eleven: bool;
 /// }
-#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]
+#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Default, Serialize, Deserialize)]
 pub struct PrimitiveTypes {
     one: u8,
     two: u16,
@@ -61,7 +61,36 @@ impl PrimitiveTypes {
     //! Construction
 
     /// Creates a new `PrimitiveTypes`.
-    pub fn new<F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10>(
+    pub fn new(
+        one: u8,
+        two: u16,
+        three: u32,
+        four: u64,
+        five: u128,
+        six: i8,
+        seven: i16,
+        eight: i32,
+        nine: i64,
+        ten: i128,
+        eleven: bool,
+    ) -> Self {
+        Self {
+            one,
+            two,
+            three,
+            four,
+            five,
+            six,
+            seven,
+            eight,
+            nine,
+            ten,
+            eleven,
+        }
+    }
+
+    /// Creates a new `PrimitiveTypes`.
+    pub fn from<F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10>(
         one: F0,
         two: F1,
         three: F2,
