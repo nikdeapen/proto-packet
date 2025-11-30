@@ -1,0 +1,22 @@
+use crate::naming::validate_name::validate_name;
+use custom_string::custom_string;
+
+custom_string!(
+    #[doc = "The name of a module."],
+    ModName,
+    ModNameRef,
+    WithModName,
+    mod_name,
+    |s| validate_mod_name(s)
+);
+
+/// Validates the `mod_name`.
+pub fn validate_mod_name(mod_name: &str) -> Result<(), &'static str> {
+    validate_name(mod_name)?;
+
+    if !mod_name.as_bytes()[0].is_ascii_lowercase() {
+        Err("mod names must start with a lowercase letter")
+    } else {
+        Ok(())
+    }
+}
