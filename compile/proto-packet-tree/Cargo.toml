@@ -8,3 +8,6 @@ homepage = "https://github.com/nikdeapen/proto-packet/compile/proto-packet-tree"
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+custom-string = { workspace = true }

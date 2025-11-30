@@ -3,3 +3,6 @@ resolver = "2"
 members = [
     "proto-packet-tree",
 ]
+
+[workspace.dependencies]
+custom-string = "0.7.0-rc.1"
