@@ -1,0 +1,10 @@
+[package]
+name = "proto-packet-tree"
+version = "0.0.0"
+description = "This library provides the ProtoPacket semantic schema tree."
+readme = "README.md"
+repository = "https://github.com/nikdeapen/proto-packet"
+homepage = "https://github.com/nikdeapen/proto-packet/compile/proto-packet-tree"
+authors = ["Nik Deapen <nik@deapen.com>"]
+edition = "2021"
+license = "MIT"
