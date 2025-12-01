@@ -8,3 +8,9 @@ homepage = "https://github.com/nikdeapen/proto-packet/compile/proto-packet-gen"
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+proto-packet-tree = { workspace = true }
+
+code-gen = { workspace = true }
+clerr = { workspace = true }
