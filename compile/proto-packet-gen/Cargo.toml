@@ -14,3 +14,6 @@ proto-packet-tree = { workspace = true }
 
 code-gen = { workspace = true }
 clerr = { workspace = true }
+
+[features]
+rust = ["code-gen/rust"]
