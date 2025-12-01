@@ -1,5 +1,5 @@
 use clerr::{Code, Properties, Report};
-use proto_packet_tree::TypeName;
+use proto_packet_tree::{QualifiedName, TypeName};
 use std::fmt::{Display, Formatter};
 
 /// An error generating rust code.
@@ -7,6 +7,9 @@ use std::fmt::{Display, Formatter};
 pub enum Error {
     /// There was an error converting the `type_name` to a `ModName`.
     TypeNameToModName { type_name: TypeName, error: String },
+
+    /// The `qualified_name` generated a duplicate mod name.
+    DuplicateModName { qualified_name: QualifiedName },
 }
 
 impl Error {
@@ -26,6 +29,16 @@ impl Error {
                         ("type_name".to_string(), type_name.to_string()),
                         ("error".to_string(), error),
                     ],
+                }
+                .entry(),
+            ),
+            Self::DuplicateModName { qualified_name } => Report::new(Code::error(
+                "G_RUST_DUPLICATE_MOD_NAME",
+                "the qualified name caused a mod name collision",
+            ))
+            .with_entry(
+                Properties {
+                    properties: vec![("qualified name".to_string(), qualified_name.to_string())],
                 }
                 .entry(),
             ),
