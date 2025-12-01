@@ -1,0 +1,10 @@
+[package]
+name = "proto-packet-cli"
+version = "0.0.0"
+description = "This crate provides the ProtoPacket command-line interface."
+readme = "README.md"
+repository = "https://github.com/nikdeapen/proto-packet"
+homepage = "https://github.com/nikdeapen/proto-packet/compile/proto-packet-cli"
+authors = ["Nik Deapen <nik@deapen.com>"]
+edition = "2021"
+license = "MIT"
