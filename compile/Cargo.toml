@@ -8,5 +8,6 @@ members = [
 [workspace.dependencies]
 proto-packet-tree = { path = "proto-packet-tree" } # todo -- path dependency
 
+clerr = "0.8.0-rc.1"
 custom-string = "0.7.0-rc.1"
 lex = "0.13.0-rc.1"
