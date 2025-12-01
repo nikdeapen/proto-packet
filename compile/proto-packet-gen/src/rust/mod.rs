@@ -7,3 +7,5 @@ mod gen_rust;
 mod util;
 
 mod gen_files;
+mod gen_packet;
+mod gen_util;
