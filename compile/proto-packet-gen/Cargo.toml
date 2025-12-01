@@ -1,0 +1,10 @@
+[package]
+name = "proto-packet-gen"
+version = "0.0.0"
+description = "This library aids in generating code from ProtoPacket schemas."
+readme = "README.md"
+repository = "https://github.com/nikdeapen/proto-packet"
+homepage = "https://github.com/nikdeapen/proto-packet/compile/proto-packet-gen"
+authors = ["Nik Deapen <nik@deapen.com>"]
+edition = "2021"
+license = "MIT"
