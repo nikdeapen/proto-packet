@@ -8,3 +8,9 @@ homepage = "https://github.com/nikdeapen/proto-packet/compile/proto-packet-valid
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+clerr = { workspace = true }
+lex = { workspace = true }
+
+colored = { workspace = true }
