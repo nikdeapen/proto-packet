@@ -66,3 +66,17 @@ impl QualifiedName {
         unsafe { Self::mod_path_and_type_name(self.value.as_str()).1 }
     }
 }
+
+impl<'a> QualifiedNameRef<'a> {
+    //! Properties
+
+    /// Gets the optional mod path.
+    pub fn mod_path(&self) -> Option<ModPathRef<'_>> {
+        unsafe { QualifiedName::mod_path_and_type_name(self.value).0 }
+    }
+
+    /// Gets the type name.
+    pub fn type_name(&self) -> TypeNameRef<'_> {
+        unsafe { QualifiedName::mod_path_and_type_name(self.value).1 }
+    }
+}

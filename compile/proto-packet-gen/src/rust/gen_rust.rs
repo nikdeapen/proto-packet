@@ -1,5 +1,5 @@
 use crate::config::GenConfig;
-use crate::rust::{ModTree, Naming};
+use crate::rust::{ModTree, Naming, Typing};
 use crate::{Generator, Reader, Writer};
 use clerr::Report;
 
@@ -7,6 +7,7 @@ use clerr::Report;
 pub struct GenRust {
     pub(in crate::rust) config: GenConfig,
     pub(in crate::rust) naming: Naming,
+    pub(in crate::rust) typing: Typing,
 }
 
 impl From<GenConfig> for GenRust {
@@ -14,6 +15,7 @@ impl From<GenConfig> for GenRust {
         Self {
             config,
             naming: Naming::default(),
+            typing: Typing::default(),
         }
     }
 }
