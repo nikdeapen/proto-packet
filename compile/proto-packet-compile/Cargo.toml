@@ -8,3 +8,9 @@ homepage = "https://github.com/nikdeapen/proto-packet/compile/proto-packet-compi
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+clerr = { workspace = true }
+file-storage = { workspace = true }
+
+serde_json = { workspace = true }

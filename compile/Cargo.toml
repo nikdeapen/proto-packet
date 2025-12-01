@@ -16,6 +16,8 @@ proto-packet-tree = { path = "proto-packet-tree" } # todo -- path dependency
 clerr = "0.8.0-rc.1"
 code-gen = "0.8.0-rc.2"
 custom-string = "0.7.0-rc.1"
+file-storage = "0.6.0-rc.1"
 lex = "0.13.0-rc.1"
 
 colored = "3.0.0"
+serde_json = "1.0.145"
