@@ -27,7 +27,7 @@ impl GenRust {
         W: Writer,
     {
         if !tree.is_empty() {
-            let file_name: &str = todo!("config");
+            let file_name: &str = self.config.rust.mods.file_name(is_root);
             target.push_str(file_name);
             let source: Source = self.gen_mod_file_source(tree)?;
             writer.write(&source, target.as_str())?;

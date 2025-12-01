@@ -1,11 +1,21 @@
-use crate::rust::Naming;
+use crate::config::GenConfig;
+use crate::rust::{ModTree, Naming};
 use crate::{Generator, Reader, Writer};
 use clerr::Report;
 
 /// Responsible for generating rust code.
-#[derive(Default)]
 pub struct GenRust {
+    pub(in crate::rust) config: GenConfig,
     pub(in crate::rust) naming: Naming,
+}
+
+impl From<GenConfig> for GenRust {
+    fn from(config: GenConfig) -> Self {
+        Self {
+            config,
+            naming: Naming::default(),
+        }
+    }
 }
 
 impl Generator for GenRust {
@@ -14,6 +24,7 @@ impl Generator for GenRust {
         R: Reader,
         W: Writer,
     {
-        todo!()
+        let tree: ModTree = self.gen_type_dec_files(schemas, writer)?;
+        self.gen_mod_files(&tree, writer)
     }
 }
