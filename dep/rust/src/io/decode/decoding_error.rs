@@ -16,6 +16,9 @@ pub enum DecodingError {
 
     /// The decoded length-prefix was out of range of `usize`.
     LengthPrefixOutOfRange,
+
+    /// An error decoding a packet.
+    PacketDecoding(enc::Error),
 }
 
 impl DecodingError {
