@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "proto-packet-parse",
     "proto-packet-tree",
+    "proto-packet-validate",
 ]
 
 [workspace.dependencies]

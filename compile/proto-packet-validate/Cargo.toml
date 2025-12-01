@@ -1,0 +1,10 @@
+[package]
+name = "proto-packet-validate"
+version = "0.0.0"
+description = "This library aids in validating parsed ProtoPacket schema files."
+readme = "README.md"
+repository = "https://github.com/nikdeapen/proto-packet"
+homepage = "https://github.com/nikdeapen/proto-packet/compile/proto-packet-validate"
+authors = ["Nik Deapen <nik@deapen.com>"]
+edition = "2021"
+license = "MIT"
