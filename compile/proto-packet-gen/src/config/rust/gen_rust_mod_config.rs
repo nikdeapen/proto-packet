@@ -1,5 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 /// A Rust mod file config.
-#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
+#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]
 pub struct RustModConfig {
     pub use_lib_root: bool,
     pub lib_file_name: String,
