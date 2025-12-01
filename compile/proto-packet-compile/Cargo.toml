@@ -1,0 +1,10 @@
+[package]
+name = "proto-packet-compile"
+version = "0.0.0"
+description = "This library aids in compiling ProtoPacket projects."
+readme = "README.md"
+repository = "https://github.com/nikdeapen/proto-packet"
+homepage = "https://github.com/nikdeapen/proto-packet/compile/proto-packet-compile"
+authors = ["Nik Deapen <nik@deapen.com>"]
+edition = "2021"
+license = "MIT"
