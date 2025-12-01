@@ -8,3 +8,7 @@ homepage = "https://github.com/nikdeapen/proto-packet/test/rust"
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+serde = { version = "1.0.228", features = ["derive"] }
+uuid = { version = "1.18.1", features = ["serde"] }
