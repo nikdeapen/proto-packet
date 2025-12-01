@@ -8,3 +8,9 @@ homepage = "https://github.com/nikdeapen/proto-packet/dep/rust"
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+enc = { version = "0.17.0-rc.2", features = ["var-int"] }
+
+[dev-dependencies]
+enc = { version = "0.17.0-rc.2", features = ["test"] }
