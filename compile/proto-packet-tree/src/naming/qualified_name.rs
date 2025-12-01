@@ -20,3 +20,18 @@ pub fn validate_qualified_name(qualified_name: &str) -> Result<(), &'static str>
     }
     Ok(())
 }
+
+impl QualifiedName {
+    //! Properties
+
+    /// Checks if `b` is a valid byte in a qualified name.
+    pub fn is_valid_byte(b: u8) -> bool {
+        b.is_ascii_alphanumeric() || b == b'_' || b == b'.'
+    }
+
+    /// Checks if `c` is a valid char in a qualified name.
+    pub fn is_valid_char(c: char) -> bool {
+        let c: u32 = c as u32;
+        c <= 0xFF && Self::is_valid_byte(c as u8)
+    }
+}
