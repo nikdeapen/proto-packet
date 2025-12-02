@@ -1,6 +1,7 @@
 pub use common::*;
 pub use config::*;
 pub use error::*;
+pub use message::*;
 pub use r#struct::*;
 pub use schema::*;
 pub use var::*;
@@ -8,6 +9,7 @@ pub use var::*;
 mod common;
 mod config;
 mod error;
+mod message;
 mod schema;
 mod r#struct;
 mod var;
