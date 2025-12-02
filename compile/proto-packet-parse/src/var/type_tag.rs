@@ -23,14 +23,12 @@ pub enum TypeTagTree<'a> {
 #[derive(Debug)]
 pub enum ParseTypeTagError {
     UnrecognizedType,
-    ExpectedSliceClosingBracket,
 }
 
 impl<'a> Error for ParseTypeTagError {
     fn info(&self, token: &str) -> ErrorInfo {
         let expected: &'static str = match self {
             UnrecognizedType => "a recognized type",
-            ExpectedSliceClosingBracket => "a slice closing bracket ']'",
         };
         P_TYPE_TAG.expected_got_instead(expected, token)
     }
@@ -38,7 +36,7 @@ impl<'a> Error for ParseTypeTagError {
 
 /// Parses a type tag tree.
 ///
-/// Returns `Ok(type_tag_tree, after_type_tag_tree)`.
+/// Returns `Ok(type_tag, after_type_tag)`.
 pub fn parse_type_tag(c: Context) -> ParseResult<TypeTagTree, ParseTypeTagError> {
     let (_white, c) = c.whitespace();
     if let (Some(primitive), after_primitive) = parse_primitive_type(c)? {

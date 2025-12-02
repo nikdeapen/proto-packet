@@ -32,7 +32,7 @@ impl Error for ParseTypeDecError {
     }
 }
 
-/// Parses an optional type dec tree.
+/// Parses an optional type dec.
 ///
 /// Returns `(Some(type_dec), after_type_dec)`.
 /// Returns `(None, c)` if the next non-white token does not start a valid type dec.

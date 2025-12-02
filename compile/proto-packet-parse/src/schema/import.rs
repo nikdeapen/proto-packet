@@ -32,10 +32,10 @@ impl Error for ParseImportError {
     }
 }
 
-/// Parses an optional schema statement.
+/// Parses an optional impor declaration.
 ///
-/// Returns `Ok(Some(schema), after_semicolon)`.
-/// Returns `Ok(None)` when the next token is not `schema`.
+/// Returns `Ok(Some(import), after_semicolon)`.
+/// Returns `Ok(None)` when the next token is not `import`.
 pub fn parse_import(c: Context) -> ParseResult<Option<ImportTree>, ParseImportError> {
     let (_white, c) = c.white_line_comments();
     if let (Some(_import), after_import) = c.exact_symbol("schema") {
