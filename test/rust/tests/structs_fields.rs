@@ -1,5 +1,5 @@
 use enc::test;
-use proto_packet_test::structs::fields::{Primitives, Specials};
+use proto_packet_test::structs::fields::{Named, Primitives, Specials};
 use uuid::Uuid;
 
 #[test]
@@ -20,4 +20,12 @@ fn specials() {
         b' ', b'W', b'o', b'r', b'l', b'd', b'!',
     ];
     test::test_io(&specials, expected, true);
+}
+
+#[test]
+fn named() {
+    let primitives: Primitives = Primitives::new(1, 2, 3, 4, 5);
+    let named: Named = Named::new(primitives);
+    let expected: &[u8] = &[5, 1, 2, 3, 4, 5];
+    test::test_io(&named, &expected, true);
 }
