@@ -1,7 +1,8 @@
 use crate::{Error, Resolver};
 use proto_packet_tree::TypeDec::*;
 use proto_packet_tree::{
-    Struct, StructField, TypeDec, TypeTag, WithComments, WithFieldName, WithTypeName, WithTypeTag,
+    Message, MessageField, Struct, StructField, TypeDec, TypeTag, WithComments, WithFieldName,
+    WithTagNumber, WithTypeName, WithTypeTag,
 };
 
 /// Responsible for linking types.
@@ -23,7 +24,7 @@ impl<'a> TypeLinker<'a> {
     pub fn link(&self, type_dec: &TypeDec) -> Result<TypeDec, Error> {
         Ok(match type_dec {
             StructDec(s) => StructDec(self.link_struct(s)?),
-            MessageDec(_) => todo!(),
+            MessageDec(m) => MessageDec(self.link_message(m)?),
         })
     }
 }
@@ -49,6 +50,35 @@ impl<'a> TypeLinker<'a> {
     fn link_struct_field(&self, field: &StructField) -> Result<StructField, Error> {
         let type_tag: TypeTag = self.link_type_tag(field.type_tag())?;
         let mut linked: StructField = StructField::new(field.field_name(), type_tag);
+        for comment in field.comments() {
+            linked.add_comment(comment);
+        }
+        Ok(linked)
+    }
+}
+
+impl<'a> TypeLinker<'a> {
+    //! Messages
+
+    /// Links the `message`.
+    fn link_message(&self, message: &Message) -> Result<Message, Error> {
+        let mut linked: Message = message.type_name().into();
+        for comment in message.comments() {
+            linked.add_comment(comment);
+        }
+        for field in message.fields() {
+            let linked_field: MessageField = self.link_message_field(field)?;
+            debug_assert!(linked.can_add_field(&linked_field));
+            unsafe { linked.add_field(linked_field) };
+        }
+        Ok(linked)
+    }
+
+    /// Links the message `field`.
+    fn link_message_field(&self, field: &MessageField) -> Result<MessageField, Error> {
+        let type_tag: TypeTag = self.link_type_tag(field.type_tag())?;
+        let mut linked: MessageField =
+            MessageField::new(field.field_name(), type_tag, field.tag_number());
         for comment in field.comments() {
             linked.add_comment(comment);
         }
