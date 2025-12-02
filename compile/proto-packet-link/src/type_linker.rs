@@ -23,6 +23,7 @@ impl<'a> TypeLinker<'a> {
     pub fn link(&self, type_dec: &TypeDec) -> Result<TypeDec, Error> {
         Ok(match type_dec {
             StructDec(s) => StructDec(self.link_struct(s)?),
+            MessageDec(_) => todo!(),
         })
     }
 }

@@ -1,9 +1,10 @@
-use crate::{Struct, TypeNameRef, WithTypeName};
+use crate::{Message, Struct, TypeNameRef, WithTypeName};
 
 /// A type declaration.
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub enum TypeDec {
     StructDec(Struct),
+    MessageDec(Message),
 }
 
 impl From<Struct> for TypeDec {
@@ -16,6 +17,7 @@ impl WithTypeName for TypeDec {
     fn type_name(&self) -> TypeNameRef<'_> {
         match self {
             Self::StructDec(structure) => structure.type_name(),
+            Self::MessageDec(message) => message.type_name(),
         }
     }
 }
