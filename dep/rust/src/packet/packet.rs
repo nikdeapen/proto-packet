@@ -1,4 +1,4 @@
-use crate::WireType;
+use crate::io::WireType;
 use enc::{DecodeFromRead, DecodeFromReadPrefix, EncodeToSlice, EncodeToWrite, EncodedLen};
 use std::fmt::Debug;
 use std::hash::Hash;

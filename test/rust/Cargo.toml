@@ -10,5 +10,10 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+proto-packet = { path = "../../dep/rust" }
+enc = { version = "0.17.0-rc.2", features = ["var-int"] }
+
 serde = { version = "1.0.228", features = ["derive"] }
-uuid = { version = "1.18.1", features = ["serde"] }
+
+[dev-dependencies]
+enc = { version = "0.17.0-rc.2", features = ["test"] }

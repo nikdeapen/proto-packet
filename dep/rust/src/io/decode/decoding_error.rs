@@ -47,6 +47,17 @@ impl From<std::io::Error> for DecodingError {
     }
 }
 
+impl From<DecodingError> for enc::Error {
+    fn from(error: DecodingError) -> Self {
+        match error {
+            DecodingError::Stream(error) => error.into(),
+            _ => enc::Error::InvalidEncodedData {
+                reason: Some(Box::new(error)),
+            },
+        }
+    }
+}
+
 impl Display for DecodingError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self)

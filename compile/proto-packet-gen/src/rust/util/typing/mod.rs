@@ -5,3 +5,4 @@ mod typing;
 mod is_copy;
 mod mapping;
 mod rust_name;
+mod wire_type;

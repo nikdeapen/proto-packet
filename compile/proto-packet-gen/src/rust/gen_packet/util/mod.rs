@@ -1,0 +1,12 @@
+mod gen_comments;
+mod gen_decode_impls;
+mod gen_decode_value;
+mod gen_derives;
+mod gen_encode;
+mod gen_encode_impls;
+mod gen_encode_value;
+mod gen_field_builder;
+mod gen_field_getter;
+mod gen_field_impl_block;
+mod gen_field_setter;
+mod gen_packet_impl;

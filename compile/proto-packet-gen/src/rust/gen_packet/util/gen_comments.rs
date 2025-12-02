@@ -1,6 +1,6 @@
 use crate::rust::GenRust;
 use code_gen::rust::WithComments as RustWithComments;
-use proto_packet::TagNumber;
+use proto_packet::io::TagNumber;
 use proto_packet_tree::{TypeTag, WithComments, WithTypeName};
 
 impl GenRust {

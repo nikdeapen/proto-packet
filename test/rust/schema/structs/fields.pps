@@ -16,13 +16,3 @@ struct Primitives {
     // A 'u128' field.
     five: u128;
 }
-
-// A struct with special types.
-struct Specials {
-
-    // A 'uuid' field.
-    one: uuid;
-
-    // A 'string' field.
-    two: string;
-}
