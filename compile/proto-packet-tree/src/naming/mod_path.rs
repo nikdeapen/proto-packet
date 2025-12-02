@@ -2,7 +2,7 @@ use crate::{ModName, ModNameRef, QualifiedName, TypeNameRef};
 use custom_string::custom_string;
 
 custom_string!(
-    #[doc = "The mod path. (ex: the.mod.path)"],
+    #[doc = "A module path. (ex: the.mod.path)"],
     ModPath,
     ModPathRef,
     WithModPath,
@@ -23,7 +23,7 @@ impl ModPath {
 
     /// Gets the mod names.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `mod_path` must be valid.
     unsafe fn mod_names_internal(mod_path: &str) -> impl Iterator<Item = ModNameRef<'_>> {
         mod_path.split(".").map(|s| ModNameRef::new_unchecked(s))

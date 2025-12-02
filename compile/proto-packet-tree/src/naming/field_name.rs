@@ -2,7 +2,7 @@ use crate::naming::validate_name::validate_name;
 use custom_string::custom_string;
 
 custom_string!(
-    #[doc = "The name of an struct or message field."],
+    #[doc = "The name of a struct or message field."],
     FieldName,
     FieldNameRef,
     WithFieldName,

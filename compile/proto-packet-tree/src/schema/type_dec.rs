@@ -3,7 +3,6 @@ use crate::{Struct, TypeNameRef, WithTypeName};
 /// A type declaration.
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub enum TypeDec {
-    /// A struct declaration.
     StructDec(Struct),
 }
 

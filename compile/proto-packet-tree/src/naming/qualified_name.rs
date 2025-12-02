@@ -2,7 +2,7 @@ use crate::{ModPath, ModPathRef, TypeName, TypeNameRef};
 use custom_string::custom_string;
 
 custom_string!(
-    #[doc = "The mod path. (ex: the.mod.path)"],
+    #[doc = "A qualified name. (ex: TypeName or the.mod.path.TypeName)"],
     QualifiedName,
     QualifiedNameRef,
     WithQualifiedName,
@@ -37,7 +37,7 @@ impl QualifiedName {
 
     /// Get the mod path and the type name from the `qualified_name`.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `qualified_name` must be valid.
     unsafe fn mod_path_and_type_name(
         qualified_name: &str,

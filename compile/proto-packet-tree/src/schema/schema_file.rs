@@ -5,7 +5,7 @@ use crate::{Import, TypeDec, WithTypeName};
 /// # Invariant
 /// 1. No two imports can have the same effective name.
 /// 2. No two type declarations can have the same type name.
-/// 3. No schema can have the same effective name as a type declaration's type name.
+/// 3. No import can have the same effective name as a type declaration's type name.
 #[derive(Clone, Debug, Default)]
 pub struct SchemaFile {
     imports: Vec<Import>,
@@ -20,7 +20,7 @@ impl SchemaFile {
         self.imports.as_slice()
     }
 
-    /// Gets the optional schema by the `effective_name`.
+    /// Gets the optional import by the `effective_name`.
     pub fn import_by_effective_name<S>(&self, effective_name: S) -> Option<&Import>
     where
         S: AsRef<str>,
@@ -31,7 +31,7 @@ impl SchemaFile {
             .next()
     }
 
-    /// Checks if the `schema` can be added.
+    /// Checks if the `import` can be added.
     pub fn can_add_import(&self, import: &Import) -> bool {
         self.import_by_effective_name(import.effective_name())
             .is_none()
@@ -40,10 +40,10 @@ impl SchemaFile {
                 .is_none()
     }
 
-    /// Adds the `schema`.
+    /// Adds the `import`.
     ///
-    /// # Unsafe
-    /// The `schema` must be able to be added.
+    /// # Safety
+    /// The `import` must be able to be added.
     pub unsafe fn add_import<I>(&mut self, import: I)
     where
         I: Into<Import>,
@@ -55,10 +55,10 @@ impl SchemaFile {
         self.imports.push(import);
     }
 
-    /// Adds the `schema`.
+    /// Adds the `import`.
     ///
-    /// # Unsafe
-    /// The `schema` must be able to be added.
+    /// # Safety
+    /// The `import` must be able to be added.
     pub unsafe fn with_import<I>(mut self, import: I) -> Self
     where
         I: Into<Import>,
@@ -96,7 +96,7 @@ impl SchemaFile {
 
     /// Adds the `type_dec`.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `type_dec` must be able to be added.
     pub unsafe fn add_type_dec<D>(&mut self, type_dec: D)
     where
@@ -111,7 +111,7 @@ impl SchemaFile {
 
     /// Adds the `type_dec`.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `type_dec` must be able to be added.
     pub unsafe fn with_type_dec<D>(mut self, type_dec: D) -> Self
     where

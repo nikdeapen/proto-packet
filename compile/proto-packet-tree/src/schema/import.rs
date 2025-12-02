@@ -1,6 +1,6 @@
 use crate::{QualifiedName, QualifiedNameRef, TypeName, TypeNameRef};
 
-/// An schema.
+/// An import declaration.
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub struct Import {
     name: QualifiedName,

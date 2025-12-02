@@ -12,7 +12,7 @@ impl<'a> SchemaLinker<'a> {
 
     /// Creates a new schema linker.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `mod_path` must not be empty.
     pub unsafe fn new_unchecked(mod_path: ModPathRef<'a>) -> Self {
         debug_assert!(!mod_path.is_empty());

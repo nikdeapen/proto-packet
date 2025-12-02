@@ -70,7 +70,7 @@ impl Struct {
 
     /// Adds the `field`.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `field` must be able to be added.
     pub unsafe fn add_field<F>(&mut self, field: F)
     where
@@ -85,7 +85,7 @@ impl Struct {
 
     /// Adds the `field`.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `field` must be able to be added.
     pub unsafe fn with_field<F>(mut self, field: F) -> Self
     where
