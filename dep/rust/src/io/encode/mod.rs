@@ -4,3 +4,4 @@ mod encode;
 
 mod packet;
 mod primitive;
+mod special;

@@ -11,6 +11,7 @@ license = "MIT"
 
 [dependencies]
 enc = { version = "0.17.0-rc.2", features = ["var-int"] }
+uuid = "1.19.0"
 
 [dev-dependencies]
 enc = { version = "0.17.0-rc.2", features = ["test"] }
