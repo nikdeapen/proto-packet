@@ -13,6 +13,12 @@ impl From<Struct> for TypeDec {
     }
 }
 
+impl From<Message> for TypeDec {
+    fn from(message: Message) -> Self {
+        Self::MessageDec(message)
+    }
+}
+
 impl WithTypeName for TypeDec {
     fn type_name(&self) -> TypeNameRef<'_> {
         match self {

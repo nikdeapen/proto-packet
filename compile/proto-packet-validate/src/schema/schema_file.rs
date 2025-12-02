@@ -4,6 +4,7 @@ use crate::{
     V_SCHEMA_FILE,
 };
 use clerr::{Code, Report};
+use colored::ColoredString;
 use lex::{Context, Token};
 use proto_packet_parse::SchemaFileTree;
 use proto_packet_tree::{Import, SchemaFile, TypeDec, WithTypeName};
@@ -33,8 +34,9 @@ impl<'a> InvalidSchemaFileError<'a> {
     /// Creates the error report.
     pub fn to_report(&self, file_name: &str, context: Context) -> Report {
         let info: ErrorInfo = self.info(file_name, context);
-        let (code, header, info) = (info.code, info.header, info.entries);
+        let (code, header, mut info) = (info.code, info.header, info.entries);
         let code: Code = Code::error(code, header);
+        let info: Vec<ColoredString> = info.iter_mut().flat_map(|e| e.drain(..)).collect();
         Report::new(code).with_entry(info)
     }
 }

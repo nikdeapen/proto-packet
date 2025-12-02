@@ -5,17 +5,17 @@ use lex::{Context, Token};
 /// The info for a validation error.
 #[derive(Debug)]
 pub struct ErrorInfo {
-    pub code: &'static str,          // The report error code.
-    pub header: String,              // The report error code message.
-    pub entries: Vec<ColoredString>, // The error entry.
+    pub code: &'static str,               // The report error code.
+    pub header: String,                   // The report error code message.
+    pub entries: Vec<Vec<ColoredString>>, // The report entries.
 }
 
 impl ErrorInfo {
     //! Mutations
 
     /// Adds the `entry`.
-    pub fn with_entry(mut self, mut entry: Vec<ColoredString>) -> Self {
-        entry.drain(..).for_each(|s| self.entries.push(s));
+    pub fn with_entry(mut self, entry: Vec<ColoredString>) -> Self {
+        self.entries.push(entry);
         self
     }
 

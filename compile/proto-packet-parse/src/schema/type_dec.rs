@@ -1,11 +1,15 @@
 use crate::ParseTypeDecError::*;
 use crate::TypeDecTree::*;
-use crate::{parse_struct, Error, ErrorInfo, ParseStructError, StructTree};
+use crate::{
+    parse_message, parse_struct, Error, ErrorInfo, MessageTree, ParseMessageError,
+    ParseStructError, StructTree,
+};
 use lex::{Context, ParseResult, Token};
 
 #[derive(Debug)]
 pub enum TypeDecTree<'a> {
     StructDec(StructTree<'a>),
+    MessageDec(MessageTree<'a>),
 }
 
 impl<'a> TypeDecTree<'a> {
@@ -15,6 +19,7 @@ impl<'a> TypeDecTree<'a> {
     pub fn type_name_token(&self) -> Token<'_> {
         match self {
             StructDec(s) => s.struct_name,
+            MessageDec(m) => m.message_name,
         }
     }
 }
@@ -22,12 +27,14 @@ impl<'a> TypeDecTree<'a> {
 #[derive(Debug)]
 pub enum ParseTypeDecError {
     InvalidStruct(ParseStructError),
+    InvalidMessage(ParseMessageError),
 }
 
 impl Error for ParseTypeDecError {
     fn info(&self, token: &str) -> ErrorInfo {
         match self {
             InvalidStruct(e) => e.info(token),
+            InvalidMessage(e) => e.info(token),
         }
     }
 }
@@ -45,6 +52,15 @@ pub fn parse_type_dec(c: Context) -> ParseResult<Option<TypeDecTree>, ParseTypeD
             return Ok((Some(StructDec(structure)), after_struct));
         }
         Err(e) => return Err(e.map(|e| InvalidStruct(e))),
+        _ => {}
+    }
+
+    match parse_message(after_white) {
+        Ok((Some(mut message), after_message)) => {
+            message.comments = comments;
+            return Ok((Some(MessageDec(message)), after_message));
+        }
+        Err(e) => return Err(e.map(|e| InvalidMessage(e))),
         _ => {}
     }
 
