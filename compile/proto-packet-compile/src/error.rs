@@ -40,6 +40,9 @@ pub enum Error {
 
     /// An error generating source code.
     Gen(Report),
+
+    /// A linking error.
+    Link(proto_packet_link::Error),
 }
 
 impl Error {
@@ -48,17 +51,18 @@ impl Error {
     /// Converts the error to an error report.
     pub fn to_report(self) -> Report {
         match self {
-            Error::ReadSchema(_) => todo!(),
-            Error::WriteSource(_) => todo!(),
-            Error::ReadConfig(_) => todo!(),
-            Error::ParseConfig(_) => todo!(),
-            Error::ReadProject(_) => todo!(),
-            Error::Parse(report) => report,
-            Error::Validate(report) => report,
-            Error::InvalidModPath(_) => todo!(),
-            Error::InvalidModName { .. } => todo!(),
-            Error::InvalidSourceFileName { .. } => todo!(),
-            Error::Gen(report) => report,
+            Self::ReadSchema(_) => todo!(),
+            Self::WriteSource(_) => todo!(),
+            Self::ReadConfig(_) => todo!(),
+            Self::ParseConfig(_) => todo!(),
+            Self::ReadProject(_) => todo!(),
+            Self::Parse(report) => report,
+            Self::Validate(report) => report,
+            Self::InvalidModPath(_) => todo!(),
+            Self::InvalidModName { .. } => todo!(),
+            Self::InvalidSourceFileName { .. } => todo!(),
+            Self::Gen(report) => report,
+            Self::Link(_) => todo!(),
         }
     }
 }
@@ -66,6 +70,12 @@ impl Error {
 impl From<Error> for Report {
     fn from(error: Error) -> Self {
         error.to_report()
+    }
+}
+
+impl From<proto_packet_link::Error> for Error {
+    fn from(error: proto_packet_link::Error) -> Self {
+        Self::Link(error)
     }
 }
 

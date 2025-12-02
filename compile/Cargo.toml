@@ -14,6 +14,7 @@ members = [
 proto-packet = { path = "../dep/rust" }                         # todo -- path dependency
 proto-packet-compile = { path = "proto-packet-compile" }        # todo -- path dependency
 proto-packet-gen = { path = "proto-packet-gen" }                # todo -- path dependency
+proto-packet-link = { path = "proto-packet-link" }              # todo -- path dependency
 proto-packet-parse = { path = "proto-packet-parse" }            # todo -- path dependency
 proto-packet-tree = { path = "proto-packet-tree" }              # todo -- path dependency
 proto-packet-validate = { path = "proto-packet-validate" }      # todo -- path dependency

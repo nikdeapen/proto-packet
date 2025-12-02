@@ -4,6 +4,7 @@ use clerr::Report;
 use file_storage::FilePath;
 use lex::{Context, Token};
 use proto_packet_gen::Reader;
+use proto_packet_link::SchemaLinker;
 use proto_packet_parse::{parse_schema_file, SchemaFileTree};
 use proto_packet_tree::{ModPath, ModPathRef, SchemaFile};
 use proto_packet_validate::validate_schema_file;
@@ -48,7 +49,9 @@ impl SchemaReader {
         })?;
         let validated: SchemaFile = validate_schema_file(&parsed)
             .map_err(|e| Validate(e.to_report(self.schema_file.as_str(), context)))?;
-        Ok(validated)
+        let linked: SchemaFile =
+            unsafe { SchemaLinker::new_unchecked(self.mod_path.to_ref()).link(&validated) }?;
+        Ok(linked)
     }
 }
 
