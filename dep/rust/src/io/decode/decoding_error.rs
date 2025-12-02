@@ -1,6 +1,7 @@
 use crate::io::DecodingError::*;
 use crate::io::WireType;
 use std::fmt::{Display, Formatter};
+use std::string::FromUtf8Error;
 
 /// A decoding error.
 #[derive(Debug)]
@@ -19,6 +20,9 @@ pub enum DecodingError {
 
     /// An error decoding a packet.
     PacketDecoding(enc::Error),
+
+    /// The string was not valid UTF-8.
+    InvalidString(FromUtf8Error),
 }
 
 impl DecodingError {
