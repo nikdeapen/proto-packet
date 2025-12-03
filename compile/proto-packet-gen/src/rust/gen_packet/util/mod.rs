@@ -3,6 +3,7 @@ mod gen_decode_impls;
 mod gen_decode_value;
 mod gen_derives;
 mod gen_encode;
+mod gen_encode_field;
 mod gen_encode_impls;
 mod gen_encode_value;
 mod gen_field_builder;
