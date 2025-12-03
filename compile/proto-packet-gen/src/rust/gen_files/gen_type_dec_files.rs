@@ -23,6 +23,7 @@ impl GenRust {
                 let source: Source = match type_dec {
                     TypeDec::StructDec(s) => self.gen_struct(schema.mod_path(), &s),
                     TypeDec::MessageDec(m) => self.gen_message(schema.mod_path(), &m),
+                    TypeDec::EnumDec(_) => todo!(),
                 };
                 let mod_path: ModPath = schema.mod_path().with_appended(
                     self.naming
