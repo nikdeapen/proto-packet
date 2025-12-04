@@ -26,6 +26,7 @@ impl<'a> TypeLinker<'a> {
             StructDec(s) => StructDec(self.link_struct(s)?),
             MessageDec(m) => MessageDec(self.link_message(m)?),
             EnumDec(e) => EnumDec(e.clone()),
+            VariantDec(_) => todo!(),
         })
     }
 }

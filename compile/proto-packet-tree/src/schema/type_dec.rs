@@ -1,4 +1,4 @@
-use crate::{Enum, Message, Struct, TypeNameRef, WithTypeName};
+use crate::{Enum, Message, Struct, TypeNameRef, Variant, WithTypeName};
 
 /// A type declaration.
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
@@ -6,6 +6,7 @@ pub enum TypeDec {
     StructDec(Struct),
     MessageDec(Message),
     EnumDec(Enum),
+    VariantDec(Variant),
 }
 
 impl From<Struct> for TypeDec {
@@ -26,12 +27,19 @@ impl From<Enum> for TypeDec {
     }
 }
 
+impl From<Variant> for TypeDec {
+    fn from(enumeration: Variant) -> Self {
+        Self::VariantDec(enumeration)
+    }
+}
+
 impl WithTypeName for TypeDec {
     fn type_name(&self) -> TypeNameRef<'_> {
         match self {
             Self::StructDec(structure) => structure.type_name(),
             Self::MessageDec(message) => message.type_name(),
             Self::EnumDec(enumeration) => enumeration.type_name(),
+            Self::VariantDec(variant) => variant.type_name(),
         }
     }
 }
