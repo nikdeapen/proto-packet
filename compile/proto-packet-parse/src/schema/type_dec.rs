@@ -1,8 +1,9 @@
 use crate::ParseTypeDecError::*;
 use crate::TypeDecTree::*;
 use crate::{
-    parse_enum, parse_message, parse_struct, EnumTree, Error, ErrorInfo, MessageTree,
-    ParseEnumError, ParseMessageError, ParseStructError, StructTree,
+    parse_enum, parse_message, parse_struct, parse_variant, EnumTree, Error, ErrorInfo,
+    MessageTree, ParseEnumError, ParseMessageError, ParseStructError, ParseVariantError,
+    StructTree, VariantTree,
 };
 use lex::{Context, ParseResult, Token};
 
@@ -11,6 +12,7 @@ pub enum TypeDecTree<'a> {
     StructDec(StructTree<'a>),
     MessageDec(MessageTree<'a>),
     EnumDec(EnumTree<'a>),
+    VariantDec(VariantTree<'a>),
 }
 
 impl<'a> TypeDecTree<'a> {
@@ -22,6 +24,7 @@ impl<'a> TypeDecTree<'a> {
             StructDec(s) => s.struct_name,
             MessageDec(m) => m.message_name,
             EnumDec(e) => e.enum_name,
+            VariantDec(v) => v.variant_name,
         }
     }
 }
@@ -31,6 +34,7 @@ pub enum ParseTypeDecError {
     InvalidStruct(ParseStructError),
     InvalidMessage(ParseMessageError),
     InvalidEnum(ParseEnumError),
+    InvalidVariant(ParseVariantError),
 }
 
 impl Error for ParseTypeDecError {
@@ -39,6 +43,7 @@ impl Error for ParseTypeDecError {
             InvalidStruct(e) => e.info(token),
             InvalidMessage(e) => e.info(token),
             InvalidEnum(e) => e.info(token),
+            InvalidVariant(e) => e.info(token),
         }
     }
 }
@@ -74,6 +79,15 @@ pub fn parse_type_dec(c: Context) -> ParseResult<Option<TypeDecTree>, ParseTypeD
             return Ok((Some(EnumDec(enumeration)), after_enumeration));
         }
         Err(e) => return Err(e.map(|e| InvalidEnum(e))),
+        _ => {}
+    }
+
+    match parse_variant(after_white) {
+        Ok((Some(mut variant), after_variant)) => {
+            variant.comments = comments;
+            return Ok((Some(VariantDec(variant)), after_variant));
+        }
+        Err(e) => return Err(e.map(|e| InvalidVariant(e))),
         _ => {}
     }
 

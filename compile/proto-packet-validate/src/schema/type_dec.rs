@@ -51,5 +51,6 @@ pub fn validate_type_dec<'a>(
         StructDec(structure) => Ok(validate_struct(structure)?.into()),
         MessageDec(message) => Ok(validate_message(message)?.into()),
         EnumDec(enumeration) => Ok(validate_enum(enumeration)?.into()),
+        VariantDec(_) => todo!(),
     }
 }
