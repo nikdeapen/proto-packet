@@ -23,6 +23,9 @@ pub enum DecodingError {
 
     /// The string was not valid UTF-8.
     InvalidString(FromUtf8Error),
+
+    /// The tag number was invalid.
+    InvalidTagNumber(u32),
 }
 
 impl DecodingError {

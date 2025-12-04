@@ -17,7 +17,7 @@ impl Naming {
     //! Case Names
 
     /// Gets the rust case name for the `element`.
-    pub fn case_name<N>(&self, element: N) -> String
+    pub fn case_name<N>(&self, element: &N) -> String
     where
         N: WithCaseName,
     {

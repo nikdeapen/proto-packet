@@ -13,3 +13,10 @@ impl Default for Naming {
         }
     }
 }
+
+impl Naming {
+    //! Constants
+
+    /// The unrecognized enum case name.
+    pub const UNRECOGNIZED_ENUM_CASE_NAME: &'static str = "Unrecognized";
+}
