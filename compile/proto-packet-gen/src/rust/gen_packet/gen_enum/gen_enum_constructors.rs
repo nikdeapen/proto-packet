@@ -24,9 +24,9 @@ impl GenRust {
         }
         match_statement.add_match_case(MatchCase::from("_").with_literal(format!(
             "Self::{}({}{} {{ tag }} )",
-            Naming::UNRECOGNIZED_ENUM_CASE_NAME,
+            Naming::UNRECOGNIZED_CASE_NAME,
             self.naming.type_name(e),
-            Naming::UNRECOGNIZED_ENUM_CASE_NAME,
+            Naming::UNRECOGNIZED_CASE_NAME,
         )));
 
         Source::default().with_empty_line().with_statement(

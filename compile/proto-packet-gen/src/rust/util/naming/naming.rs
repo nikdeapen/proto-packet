@@ -17,6 +17,13 @@ impl Default for Naming {
 impl Naming {
     //! Constants
 
-    /// The unrecognized enum case name.
-    pub const UNRECOGNIZED_ENUM_CASE_NAME: &'static str = "Unrecognized";
+    /// The unrecognized enum or variant case name.
+    pub const UNRECOGNIZED_CASE_NAME: &'static str = "Unrecognized";
+}
+
+impl Naming {
+    //! Type Names
+
+    /// The `FieldHeader` type name.
+    pub const FIELD_HEADER: &'static str = "proto_packet::io::FieldHeader";
 }

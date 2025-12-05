@@ -19,14 +19,14 @@ impl GenRust {
         result.set_access(Access::Public);
 
         result.add_case(
-            RustEnumCase::from(Naming::UNRECOGNIZED_ENUM_CASE_NAME).with_fields(
-                EnumFields::Unnamed(vec![format!(
+            RustEnumCase::from(Naming::UNRECOGNIZED_CASE_NAME).with_fields(EnumFields::Unnamed(
+                vec![format!(
                     "{}{}",
                     self.naming.type_name(e),
-                    Naming::UNRECOGNIZED_ENUM_CASE_NAME
+                    Naming::UNRECOGNIZED_CASE_NAME
                 )
-                .into()]),
-            ),
+                .into()],
+            )),
         );
         for case in e.cases() {
             let mut r: RustEnumCase = RustEnumCase::from(self.naming.case_name(case));

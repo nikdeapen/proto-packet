@@ -16,7 +16,7 @@ impl GenRust {
         Struct::from(format!(
             "{}{}",
             self.naming.type_name(e),
-            Naming::UNRECOGNIZED_ENUM_CASE_NAME
+            Naming::UNRECOGNIZED_CASE_NAME
         ))
         .with_comment(format!(
             " An unrecognized `{}` case.",

@@ -5,3 +5,4 @@ mod naming;
 mod case;
 mod files;
 mod names;
+mod unrecognized;
