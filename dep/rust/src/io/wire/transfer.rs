@@ -1,5 +1,5 @@
-use crate::io::WireType;
 use crate::io::WireType::*;
+use crate::io::{ListHeader, WireType};
 use enc::var_int::VarIntSize;
 use enc::{read_single_byte, DecodeFromReadPrefix, EncodeToWrite};
 use std::io::{Error, Read, Take, Write};
@@ -63,7 +63,13 @@ impl WireType {
                 let mut r: Take<&mut R> = r.take(prefix.value() as u64); // todo -- cast
                 std::io::copy(&mut r, w)?;
             }
-            List => todo!("list headers"),
+            List => {
+                let header: ListHeader =
+                    ListHeader::decode_from_read_prefix_with_first_byte(r, first)?;
+                header.encode_to_write(w)?;
+                let mut r: Take<&mut R> = r.take(header.size() as u64); // todo -- cast
+                std::io::copy(&mut r, w)?;
+            }
         }
         Ok(())
     }
