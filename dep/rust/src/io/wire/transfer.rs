@@ -60,14 +60,16 @@ impl WireType {
                 let prefix: VarIntSize =
                     VarIntSize::decode_from_read_prefix_with_first_byte(r, first)?;
                 prefix.encode_to_write(w)?;
-                let mut r: Take<&mut R> = r.take(prefix.value() as u64); // todo -- cast
+                const _: () = assert!(usize::BITS <= 64);
+                let mut r: Take<&mut R> = r.take(prefix.value() as u64);
                 std::io::copy(&mut r, w)?;
             }
             List => {
                 let header: ListHeader =
                     ListHeader::decode_from_read_prefix_with_first_byte(r, first)?;
                 header.encode_to_write(w)?;
-                let mut r: Take<&mut R> = r.take(header.size() as u64); // todo -- cast
+                const _: () = assert!(usize::BITS <= 64);
+                let mut r: Take<&mut R> = r.take(header.size() as u64);
                 std::io::copy(&mut r, w)?;
             }
         }

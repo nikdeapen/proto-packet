@@ -4,7 +4,7 @@ use std::fmt::{Debug, Display, Formatter};
 /// A tag number.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct TagNumber {
-    value: u32,
+    tag: u32,
 }
 
 impl TagNumber {
@@ -13,9 +13,9 @@ impl TagNumber {
     /// The maximum valid tag number. (2^31-1 = 2_147_483_647)
     pub const MAX_TAG_NUMBER: u32 = 0x7FFF_FFFF;
 
-    /// Checks if the `value` is valid.
-    pub const fn is_valid(value: u32) -> bool {
-        value > 0 && value <= Self::MAX_TAG_NUMBER
+    /// Checks if the `tag` is valid.
+    pub const fn is_valid(tag: u32) -> bool {
+        tag > 0 && tag <= Self::MAX_TAG_NUMBER
     }
 }
 
@@ -24,10 +24,10 @@ impl TagNumber {
 
     /// Creates a new tag number.
     ///
-    /// Returns `None` if the `value` is invalid.
-    pub const fn new(value: u32) -> Option<Self> {
-        if Self::is_valid(value) {
-            Some(Self { value })
+    /// Returns `None` if the `tag` is invalid.
+    pub const fn new(tag: u32) -> Option<Self> {
+        if Self::is_valid(tag) {
+            Some(Self { tag })
         } else {
             None
         }
@@ -36,20 +36,20 @@ impl TagNumber {
     /// Creates a new tag number.
     ///
     /// # Unsafe
-    /// The `value` must be valid.
-    pub const unsafe fn new_unchecked(value: u32) -> Self {
-        debug_assert!(Self::is_valid(value));
+    /// The `tag` must be valid.
+    pub const unsafe fn new_unchecked(tag: u32) -> Self {
+        debug_assert!(Self::is_valid(tag));
 
-        Self { value }
+        Self { tag: tag }
     }
 }
 
 impl TagNumber {
     //! Properties
 
-    /// Gets the value.
-    pub const fn value(&self) -> u32 {
-        self.value
+    /// Gets the tag number.
+    pub const fn tag(&self) -> u32 {
+        self.tag
     }
 }
 
@@ -61,6 +61,6 @@ impl Debug for TagNumber {
 
 impl Display for TagNumber {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.value)
+        write!(f, "{}", self.tag)
     }
 }

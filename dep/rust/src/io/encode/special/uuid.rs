@@ -3,16 +3,23 @@ use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
 use std::io::Write;
 use uuid::Uuid;
 
+impl Encoder<'_, Uuid> {
+    //! Constants
+
+    /// The fixed encoded length.
+    pub const FIXED_ENCODED_LEN: usize = 16;
+}
+
 impl EncodedLen for Encoder<'_, Uuid> {
     fn encoded_len(&self) -> Result<usize, Error> {
-        Ok(16)
+        Ok(Self::FIXED_ENCODED_LEN)
     }
 }
 
 impl EncodeToSlice for Encoder<'_, Uuid> {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
-        (&mut target[..16]).copy_from_slice(self.value.as_bytes());
-        Ok(16)
+        (&mut target[..Self::FIXED_ENCODED_LEN]).copy_from_slice(self.value.as_bytes());
+        Ok(Self::FIXED_ENCODED_LEN)
     }
 }
 
@@ -22,7 +29,7 @@ impl EncodeToWrite for Encoder<'_, Uuid> {
         W: Write,
     {
         w.write_all(self.value.as_bytes())?;
-        Ok(16)
+        Ok(Self::FIXED_ENCODED_LEN)
     }
 }
 

@@ -1,6 +1,6 @@
+use crate::io::DecodingError::InvalidTagNumber;
 use crate::io::{TagNumber, WireType};
 use enc::var_int::VarInt32;
-use enc::Error::IntegerOverflow;
 use enc::{impl_encode_to_write_stack_buf, DecodeFromReadPrefix, EncodeToSlice, EncodedLen, Error};
 use std::io::Read;
 
@@ -49,15 +49,15 @@ impl FieldHeader {
     /// The `tag` must be greater than `MAX_SINGLE_BYTE_TAG_NUMBER`.
     #[inline(always)]
     unsafe fn extra(&self) -> u32 {
-        debug_assert!(self.tag.value() > Self::MAX_SINGLE_BYTE_TAG_NUMBER);
+        debug_assert!(self.tag.tag() > Self::MAX_SINGLE_BYTE_TAG_NUMBER);
 
-        self.tag.value() - Self::MAX_SINGLE_BYTE_TAG_NUMBER - 1
+        self.tag.tag() - Self::MAX_SINGLE_BYTE_TAG_NUMBER - 1
     }
 }
 
 impl EncodedLen for FieldHeader {
     fn encoded_len(&self) -> Result<usize, Error> {
-        Ok(if self.tag.value() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
+        Ok(if self.tag.tag() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
             1
         } else {
             1 + VarInt32::from(unsafe { self.extra() }).encoded_len()?
@@ -67,8 +67,8 @@ impl EncodedLen for FieldHeader {
 
 impl EncodeToSlice for FieldHeader {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
-        Ok(if self.tag.value() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
-            let first: u8 = self.wire.to_high_3_bits() | (self.tag.value() as u8);
+        Ok(if self.tag.tag() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
+            let first: u8 = self.wire.to_high_3_bits() | (self.tag.tag() as u8);
             *target.get_unchecked_mut(0) = first;
             1
         } else {
@@ -90,17 +90,22 @@ impl DecodeFromReadPrefix for FieldHeader {
         let wire: WireType = WireType::from_high_3_bits(first);
         let tag: u32 = (first & 0x1F) as u32;
         let tag: u32 = if tag == 0 {
-            let extra: u32 = VarInt32::decode_from_read_prefix(r)?.value();
+            let extra: u32 = VarInt32::decode_from_read_prefix(r)
+                .map_err(|e| match e {
+                    Error::Stream(e) => Error::Stream(e),
+                    _ => InvalidTagNumber.into(),
+                })?
+                .value();
             extra
                 .checked_add(1 + Self::MAX_SINGLE_BYTE_TAG_NUMBER)
-                .ok_or(IntegerOverflow)? // todo -- error handling
+                .ok_or(InvalidTagNumber)?
         } else {
             tag
         };
         if let Some(tag) = TagNumber::new(tag) {
             Ok(Self::new(wire, tag))
         } else {
-            todo!("invalid field tag number") // todo -- error handling
+            Err(InvalidTagNumber.into())
         }
     }
 }
@@ -109,6 +114,7 @@ impl DecodeFromReadPrefix for FieldHeader {
 mod test {
     use crate::io::WireType::*;
     use crate::io::{FieldHeader, TagNumber, WireType};
+    use enc::test;
     use std::error::Error;
 
     #[test]
@@ -130,8 +136,8 @@ mod test {
 
         for (wire, tag, expected) in test_cases {
             let header: FieldHeader = FieldHeader::new(*wire, TagNumber::new(*tag).unwrap());
-            enc::test::test_encode(&header, *expected);
-            enc::test::test_decode_from_read_prefix(*expected, &header, false);
+            test::test_encode(&header, *expected);
+            test::test_decode_from_read_prefix(*expected, &header, false);
         }
 
         Ok(())

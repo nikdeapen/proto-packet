@@ -110,6 +110,7 @@ mod tests {
 
         Ok(())
     }
+
     #[test]
     fn decode_length_prefixed_bytes() -> Result<(), DecodingError> {
         let mut source: Cursor<Vec<u8>> = Cursor::new(vec![1, 2, 3, 4]);

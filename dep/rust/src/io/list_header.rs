@@ -1,3 +1,4 @@
+use crate::io::DecodingError::InvalidListHeader;
 use crate::io::WireType;
 use enc::var_int::VarIntSize;
 use enc::{impl_encode_to_write_stack_buf, DecodeFromReadPrefix, EncodeToSlice, EncodedLen, Error};
@@ -32,7 +33,7 @@ impl ListHeader {
 impl ListHeader {
     //! Properties
 
-    /// Gets the wire type. (of the list elements)
+    /// Gets the wire type. (of the values in the list)
     pub fn wire(&self) -> WireType {
         self.wire
     }
@@ -81,7 +82,12 @@ impl DecodeFromReadPrefix for ListHeader {
         let wire: WireType = WireType::from_high_3_bits(first);
         let size: usize = (first & 0x1F) as usize;
         let size: usize = if size == 0x1F {
-            let extra: usize = VarIntSize::decode_from_read_prefix(r)?.value();
+            let extra: usize = VarIntSize::decode_from_read_prefix(r)
+                .map_err(|e| match e {
+                    Error::Stream(e) => Error::Stream(e),
+                    _ => InvalidListHeader.into(),
+                })?
+                .value();
             extra + Self::MAX_SINGLE_BYTE_LIST_SIZE
         } else {
             size
@@ -94,6 +100,7 @@ impl DecodeFromReadPrefix for ListHeader {
 mod test {
     use crate::io::WireType::*;
     use crate::io::{ListHeader, WireType};
+    use enc::test;
 
     #[test]
     fn io() {
@@ -109,8 +116,8 @@ mod test {
         ];
         for (wire, len, expected) in test_cases {
             let header: ListHeader = ListHeader::new(*wire, *len);
-            enc::test::test_encode(&header, *expected);
-            enc::test::test_decode_from_read_prefix(*expected, &header, false);
+            test::test_encode(&header, *expected);
+            test::test_decode_from_read_prefix(*expected, &header, false);
         }
     }
 }

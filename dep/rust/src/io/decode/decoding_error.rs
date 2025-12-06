@@ -25,7 +25,10 @@ pub enum DecodingError {
     InvalidString(FromUtf8Error),
 
     /// The tag number was invalid.
-    InvalidTagNumber(u32),
+    InvalidTagNumber,
+
+    /// The list header was invalid.
+    InvalidListHeader,
 }
 
 impl DecodingError {

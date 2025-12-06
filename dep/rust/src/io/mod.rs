@@ -8,8 +8,8 @@ pub use wire::*;
 mod decode;
 mod encode;
 mod field_header;
+mod list_header;
 mod tag;
 mod wire;
 
 mod impls;
-mod list_header;

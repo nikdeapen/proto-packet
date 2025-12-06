@@ -14,16 +14,13 @@ macro_rules! impl_decode_enum {
                 use enc::var_int::VarInt32;
                 use enc::DecodeFromReadPrefix;
 
-                let tag_number: VarInt32 =
-                    VarInt32::decode_from_read_prefix_with_first_byte(r, first)?;
-                let tag_number: u32 = tag_number.value();
-                if let Some(tag_number) = $crate::io::TagNumber::new(tag_number) {
-                    Ok(Self::from(tag_number))
+                let tag: VarInt32 = VarInt32::decode_from_read_prefix_with_first_byte(r, first)?;
+                let tag: u32 = tag.value();
+                if let Some(tag) = $crate::io::TagNumber::new(tag) {
+                    Ok(Self::from(tag))
                 } else {
                     Err(enc::Error::InvalidEncodedData {
-                        reason: Some(Box::new($crate::io::DecodingError::InvalidTagNumber(
-                            tag_number,
-                        ))),
+                        reason: Some(Box::new($crate::io::DecodingError::InvalidTagNumber(tag))),
                     })
                 }
             }
