@@ -19,7 +19,7 @@ impl Decoder {
         match wire {
             LengthPrefixed => {
                 let value: Vec<u8> = WireType::decode_length_prefixed_bytes(r, first)?;
-                let value: String = String::from_utf8(value).map_err(|e| InvalidString(e))?;
+                let value: String = String::from_utf8(value).map_err(InvalidString)?;
                 Ok(value)
             }
             _ => Err(DecodingError::InvalidWireType(wire)),

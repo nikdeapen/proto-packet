@@ -116,8 +116,8 @@ mod test {
         ];
         for (wire, len, expected) in test_cases {
             let header: ListHeader = ListHeader::new(*wire, *len);
-            test::test_encode(&header, *expected);
-            test::test_decode_from_read_prefix(*expected, &header, false);
+            test::test_encode(&header, expected);
+            test::test_decode_from_read_prefix(expected, &header, false);
         }
     }
 }

@@ -6,7 +6,7 @@ use uuid::Uuid;
 impl Encoder<'_, Uuid> {
     //! Constants
 
-    /// The fixed encoded length.
+    /// The fixed encoded length. (16)
     pub const FIXED_ENCODED_LEN: usize = 16;
 }
 
@@ -18,7 +18,7 @@ impl EncodedLen for Encoder<'_, Uuid> {
 
 impl EncodeToSlice for Encoder<'_, Uuid> {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
-        (&mut target[..Self::FIXED_ENCODED_LEN]).copy_from_slice(self.value.as_bytes());
+        target[..Self::FIXED_ENCODED_LEN].copy_from_slice(self.value.as_bytes());
         Ok(Self::FIXED_ENCODED_LEN)
     }
 }
@@ -48,7 +48,7 @@ mod tests {
 
         for (value, fixed, expected) in test_cases {
             let encoder: Encoder<'_, Uuid> = Encoder::new(value, *fixed);
-            enc::test::test_encode(&encoder, *expected);
+            enc::test::test_encode(&encoder, expected);
         }
     }
 }

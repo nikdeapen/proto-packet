@@ -13,7 +13,8 @@ impl EncodedLen for Encoder<'_, String> {
 impl EncodeToSlice for Encoder<'_, String> {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
         let prefix: usize = VarIntSize::from(self.value.len()).encode_to_slice_unchecked(target)?;
-        (&mut target[prefix..(prefix + self.value.len())]).copy_from_slice(self.value.as_bytes());
+        let target: &mut [u8] = &mut target[prefix..];
+        target[..self.value.len()].copy_from_slice(self.value.as_bytes());
         Ok(prefix + self.value.len())
     }
 }
@@ -45,7 +46,7 @@ mod tests {
 
         for (value, fixed, expected) in test_cases {
             let encoder: Encoder<'_, String> = Encoder::new(value, *fixed);
-            enc::test::test_encode(&encoder, *expected);
+            enc::test::test_encode(&encoder, expected);
         }
     }
 }

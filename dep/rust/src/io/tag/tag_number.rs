@@ -35,12 +35,12 @@ impl TagNumber {
 
     /// Creates a new tag number.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `tag` must be valid.
     pub const unsafe fn new_unchecked(tag: u32) -> Self {
         debug_assert!(Self::is_valid(tag));
 
-        Self { tag: tag }
+        Self { tag }
     }
 }
 

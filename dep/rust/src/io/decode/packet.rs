@@ -23,13 +23,12 @@ impl Decoder {
         if wire == P::wire_type() {
             if wire == LengthPrefixed {
                 let prefix: usize = VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
-                    .map_err(|e| DecodingError::from_var_int_error(e))?
+                    .map_err(DecodingError::from_var_int_error)?
                     .value();
                 let mut r: Take<&mut R> = r.take(prefix as u64); // todo cast
-                P::decode_from_read(&mut r).map_err(|e| PacketDecoding(e))
+                P::decode_from_read(&mut r).map_err(PacketDecoding)
             } else {
-                Ok(P::decode_from_read_prefix_with_first_byte(r, first)
-                    .map_err(|e| PacketDecoding(e))?)
+                Ok(P::decode_from_read_prefix_with_first_byte(r, first).map_err(PacketDecoding)?)
             }
         } else {
             Err(InvalidWireType(wire))

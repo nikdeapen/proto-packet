@@ -17,7 +17,7 @@ impl FieldHeader {
     /// The maximum tag number for a field header encoded within a single byte. (31)
     pub const MAX_SINGLE_BYTE_TAG_NUMBER: u32 = 0x1F;
 
-    /// The maximum encoded length of a field header. (5)
+    /// The maximum encoded length of a field header. (6)
     pub const MAX_ENCODED_LEN: usize = 1 + VarInt32::MAX_ENCODED_LEN;
 }
 
@@ -136,8 +136,8 @@ mod test {
 
         for (wire, tag, expected) in test_cases {
             let header: FieldHeader = FieldHeader::new(*wire, TagNumber::new(*tag).unwrap());
-            test::test_encode(&header, *expected);
-            test::test_decode_from_read_prefix(*expected, &header, false);
+            test::test_encode(&header, expected);
+            test::test_decode_from_read_prefix(expected, &header, false);
         }
 
         Ok(())

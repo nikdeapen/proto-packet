@@ -19,7 +19,7 @@ impl Decoder {
             Fixed4Byte => self.decode_u32(wire, r, first)? as u64,
             Fixed8Byte => {
                 let mut value: [u8; 8] = [first, 0, 0, 0, 0, 0, 0, 0];
-                r.read_exact(&mut value[1..]).map_err(|e| Stream(e))?;
+                r.read_exact(&mut value[1..]).map_err(Stream)?;
                 u64::from_le_bytes(value)
             }
             Fixed16Byte => {
@@ -30,7 +30,7 @@ impl Decoder {
                 value as u64
             }
             VarInt => VarInt64::decode_from_read_prefix_with_first_byte(r, first)
-                .map_err(|e| DecodingError::from_var_int_error(e))?
+                .map_err(DecodingError::from_var_int_error)?
                 .value(),
             _ => return Err(InvalidWireType(wire)),
         })

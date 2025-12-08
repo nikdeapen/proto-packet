@@ -26,11 +26,11 @@ impl Decoder {
             Fixed16Byte => {
                 let mut value: [u8; 16] = [0u8; 16];
                 value[0] = first;
-                r.read_exact(&mut value[1..]).map_err(|e| Stream(e))?;
+                r.read_exact(&mut value[1..]).map_err(Stream)?;
                 u128::from_le_bytes(value)
             }
             VarInt => VarInt128::decode_from_read_prefix_with_first_byte(r, first)
-                .map_err(|e| DecodingError::from_var_int_error(e))?
+                .map_err(DecodingError::from_var_int_error)?
                 .value(),
             _ => return Err(InvalidWireType(wire)),
         })

@@ -32,7 +32,7 @@ impl Decoder {
                 value as i32
             }
             VarInt => VarInt32::decode_from_read_prefix_with_first_byte(r, first)
-                .map_err(|e| DecodingError::from_var_int_error(e))?
+                .map_err(DecodingError::from_var_int_error)?
                 .to_zig_zag(),
             _ => return Err(InvalidWireType(wire)),
         })

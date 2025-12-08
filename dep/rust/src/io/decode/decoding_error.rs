@@ -21,7 +21,7 @@ pub enum DecodingError {
     /// An error decoding a packet.
     PacketDecoding(enc::Error),
 
-    /// The string was not valid UTF-8.
+    /// The string was not properly UTF-8 encoded.
     InvalidString(FromUtf8Error),
 
     /// The tag number was invalid.

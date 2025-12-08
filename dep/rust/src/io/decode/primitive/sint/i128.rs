@@ -25,7 +25,7 @@ impl Decoder {
             Fixed8Byte => self.decode_i64(wire, r, first)? as i128,
             Fixed16Byte => i128::from_le_bytes(WireType::decode_fixed_16_byte(r, first)?),
             VarInt => VarInt128::decode_from_read_prefix_with_first_byte(r, first)
-                .map_err(|e| DecodingError::from_var_int_error(e))?
+                .map_err(DecodingError::from_var_int_error)?
                 .to_zig_zag(),
             _ => return Err(InvalidWireType(wire)),
         })

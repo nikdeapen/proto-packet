@@ -72,7 +72,7 @@ mod tests {
 
         for (value, fixed, expected) in test_cases {
             let encoder: Encoder<'_, u16> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, *expected);
+            test::test_encode(&encoder, expected);
         }
     }
 
@@ -91,7 +91,7 @@ mod tests {
 
         for (value, fixed, expected) in test_cases {
             let encoder: Encoder<'_, u32> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, *expected);
+            test::test_encode(&encoder, expected);
         }
     }
 
@@ -118,7 +118,7 @@ mod tests {
 
         for (value, fixed, expected) in test_cases {
             let encoder: Encoder<'_, u64> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, *expected);
+            test::test_encode(&encoder, expected);
         }
     }
 
@@ -159,7 +159,7 @@ mod tests {
 
         for (value, fixed, expected) in test_cases {
             let encoder: Encoder<'_, u128> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, *expected);
+            test::test_encode(&encoder, expected);
         }
     }
 
@@ -180,7 +180,7 @@ mod tests {
 
         for (value, fixed, expected) in test_cases {
             let encoder: Encoder<'_, i16> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, *expected);
+            test::test_encode(&encoder, expected);
         }
     }
 

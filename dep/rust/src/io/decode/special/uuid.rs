@@ -21,7 +21,7 @@ impl Decoder {
             Fixed16Byte => {
                 let mut buffer: [u8; 16] = [0; 16];
                 buffer[0] = first;
-                r.read_exact(&mut buffer[1..]).map_err(|e| Stream(e))?;
+                r.read_exact(&mut buffer[1..]).map_err(Stream)?;
                 Ok(Uuid::from_bytes(buffer))
             }
             _ => Err(DecodingError::InvalidWireType(wire)),

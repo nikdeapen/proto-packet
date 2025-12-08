@@ -51,7 +51,7 @@ mod tests {
 
         for (value, fixed, expected) in test_cases {
             let encoder: Encoder<'_, u8> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, *expected);
+            test::test_encode(&encoder, expected);
         }
     }
 
@@ -70,7 +70,7 @@ mod tests {
 
         for (value, fixed, expected) in test_cases {
             let encoder: Encoder<'_, i8> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, *expected);
+            test::test_encode(&encoder, expected);
         }
     }
 }
