@@ -7,7 +7,7 @@ custom_string!(
     TypeNameRef,
     WithTypeName,
     type_name,
-    |s| validate_type_name(s)
+    validate_type_name
 );
 
 /// Validates the `type_name`.

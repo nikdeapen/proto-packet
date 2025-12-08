@@ -7,7 +7,7 @@ custom_string!(
     ModPathRef,
     WithModPath,
     mod_path,
-    |s| validate_mod_path(s)
+    validate_mod_path
 );
 
 /// Validates the `mod_path`.

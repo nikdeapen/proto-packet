@@ -16,7 +16,7 @@ pub enum InvalidEnumReason<'a> {
     InvalidName { error: &'static str },
     InvalidCase(InvalidEnumCaseError<'a>),
     DuplicateCaseName { case_names: Vec<Token<'a>> },
-    DuplicateCaseNumber { tag_numbers: Vec<Token<'a>> },
+    DuplicateCaseNumber { tags: Vec<Token<'a>> },
 }
 
 impl<'a> Error for InvalidEnumError<'a> {
@@ -29,8 +29,8 @@ impl<'a> Error for InvalidEnumError<'a> {
             DuplicateCaseName { case_names } => {
                 V_ENUM.duplicate_decs(file_name, context, "enum names", case_names)
             }
-            DuplicateCaseNumber { tag_numbers } => {
-                V_ENUM.duplicate_decs(file_name, context, "case numbers", tag_numbers)
+            DuplicateCaseNumber { tags } => {
+                V_ENUM.duplicate_decs(file_name, context, "case numbers", tags)
             }
         }
     }
@@ -63,11 +63,11 @@ pub fn validate_enum<'a>(tree: &'a EnumTree<'a>) -> Result<Enum, InvalidEnumErro
             });
         }
 
-        if enom.case_with_tag_number(case.tag_number()).is_some() {
+        if enom.case_with_tag(case.tag()).is_some() {
             return Err(InvalidEnumError {
                 enum_name: tree.enum_name,
                 reason: DuplicateCaseNumber {
-                    tag_numbers: tree.tag_number_tokens(case.tag_number(), &IntParser::default()),
+                    tags: tree.tag_number_tokens(case.tag(), &IntParser::default()),
                 },
             });
         }

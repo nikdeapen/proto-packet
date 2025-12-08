@@ -27,8 +27,7 @@ impl SchemaFile {
     {
         self.imports
             .iter()
-            .filter(|i| i.effective_name() == effective_name.as_ref())
-            .next()
+            .find(|i| i.effective_name() == effective_name.as_ref())
     }
 
     /// Checks if the `import` can be added.
@@ -83,8 +82,7 @@ impl SchemaFile {
     {
         self.type_decs
             .iter()
-            .filter(|d| d.type_name() == type_name.as_ref())
-            .next()
+            .find(|d| d.type_name() == type_name.as_ref())
     }
 
     /// Checks if the `type_dec` can be added.

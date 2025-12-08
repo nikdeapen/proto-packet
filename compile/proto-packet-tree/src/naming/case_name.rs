@@ -7,7 +7,7 @@ custom_string!(
     CaseNameRef,
     WithCaseName,
     case_name,
-    |s| validate_case_name(s)
+    validate_case_name
 );
 
 /// Validates the `case_name`.

@@ -7,7 +7,7 @@ custom_string!(
     ModNameRef,
     WithModName,
     mod_name,
-    |s| validate_mod_name(s)
+    validate_mod_name
 );
 
 /// Validates the `mod_name`.

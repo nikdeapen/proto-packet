@@ -54,16 +54,12 @@ impl Struct {
     where
         S: AsRef<str>,
     {
-        self.fields
-            .iter()
-            .filter(|f| f.field_name() == field_name)
-            .next()
+        self.fields.iter().find(|f| f.field_name() == field_name)
     }
 
     /// Checks if the `field` can be added.
     ///
-    /// Returns `true` if:
-    ///     1. The field name is not yet present.
+    /// Returns `true` if the field name is not yet present.
     pub fn can_add_field(&self, field: &StructField) -> bool {
         self.field_with_name(field.field_name()).is_none()
     }
@@ -80,7 +76,7 @@ impl Struct {
 
         debug_assert!(self.can_add_field(&field));
 
-        self.fields.push(field.into());
+        self.fields.push(field);
     }
 
     /// Adds the `field`.

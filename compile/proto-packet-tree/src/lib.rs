@@ -1,3 +1,5 @@
+#![allow(clippy::module_inception)]
+
 pub use common::*;
 pub use message::*;
 pub use naming::*;

@@ -46,7 +46,7 @@ impl GenRust {
         for case in e.cases() {
             match_statement.add_match_case(
                 MatchCase::from(format!("Self::{}(_)", self.naming.case_name(case)))
-                    .with_literal(case.tag_number().to_string()),
+                    .with_literal(case.tag().to_string()),
             )
         }
 

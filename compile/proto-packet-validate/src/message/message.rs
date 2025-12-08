@@ -72,11 +72,11 @@ pub fn validate_message<'a>(tree: &'a MessageTree<'a>) -> Result<Message, Invali
             });
         }
 
-        if message.field_with_tag_number(field.tag_number()).is_some() {
+        if message.field_with_tag(field.tag()).is_some() {
             return Err(InvalidMessageError {
                 message_name: tree.message_name,
                 reason: DuplicateFieldNumber {
-                    tag_numbers: tree.tag_number_tokens(field.tag_number(), &IntParser::default()),
+                    tag_numbers: tree.tag_number_tokens(field.tag(), &IntParser::default()),
                 },
             });
         }

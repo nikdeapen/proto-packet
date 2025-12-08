@@ -58,18 +58,12 @@ impl Message {
     where
         S: AsRef<str>,
     {
-        self.fields
-            .iter()
-            .filter(|f| f.field_name() == field_name)
-            .next()
+        self.fields.iter().find(|f| f.field_name() == field_name)
     }
 
-    /// Gets the optional field with the given `tag_number`.
-    pub fn field_with_tag_number(&self, tag_number: TagNumber) -> Option<&MessageField> {
-        self.fields
-            .iter()
-            .filter(|f| f.tag_number() == tag_number)
-            .next()
+    /// Gets the optional field with the given `tag`.
+    pub fn field_with_tag(&self, tag: TagNumber) -> Option<&MessageField> {
+        self.fields.iter().find(|f| f.tag() == tag)
     }
 
     /// Checks if the `field` can be added.
@@ -79,12 +73,12 @@ impl Message {
     ///     2. The tag number is not yet present.
     pub fn can_add_field(&self, field: &MessageField) -> bool {
         self.field_with_name(field.field_name()).is_none()
-            && self.field_with_tag_number(field.tag_number()).is_none()
+            && self.field_with_tag(field.tag()).is_none()
     }
 
     /// Adds the `field`.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `field` must be able to be added.
     pub unsafe fn add_field<F>(&mut self, field: F)
     where
@@ -94,12 +88,12 @@ impl Message {
 
         debug_assert!(self.can_add_field(&field));
 
-        self.fields.push(field.into());
+        self.fields.push(field);
     }
 
     /// Adds the `field`.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `field` must be able to be added.
     pub unsafe fn with_field<F>(mut self, field: F) -> Self
     where

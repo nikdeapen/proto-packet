@@ -79,8 +79,7 @@ impl<'a> TypeLinker<'a> {
     /// Links the message `field`.
     fn link_message_field(&self, field: &MessageField) -> Result<MessageField, Error> {
         let type_tag: TypeTag = self.link_type_tag(field.type_tag())?;
-        let mut linked: MessageField =
-            MessageField::new(field.field_name(), type_tag, field.tag_number());
+        let mut linked: MessageField = MessageField::new(field.field_name(), type_tag, field.tag());
         for comment in field.comments() {
             linked.add_comment(comment);
         }
@@ -108,8 +107,7 @@ impl<'a> TypeLinker<'a> {
     /// Links the variant `case`.
     fn link_variant_case(&self, case: &VariantCase) -> Result<VariantCase, Error> {
         let type_tag: TypeTag = self.link_type_tag(case.type_tag())?;
-        let mut linked: VariantCase =
-            VariantCase::new(case.case_name(), type_tag, case.tag_number());
+        let mut linked: VariantCase = VariantCase::new(case.case_name(), type_tag, case.tag());
         for comment in case.comments() {
             linked.add_comment(comment);
         }

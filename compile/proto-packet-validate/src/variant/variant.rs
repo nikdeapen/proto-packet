@@ -66,11 +66,11 @@ pub fn validate_variant<'a>(tree: &'a VariantTree<'a>) -> Result<Variant, Invali
             });
         }
 
-        if variant.case_with_number(case.tag_number()).is_some() {
+        if variant.case_with_tag(case.tag()).is_some() {
             return Err(InvalidVariantError {
                 variant_name: tree.variant_name,
                 reason: DuplicateCaseNumber {
-                    tag_numbers: tree.tag_number_tokens(case.tag_number(), &IntParser::default()),
+                    tag_numbers: tree.tag_number_tokens(case.tag(), &IntParser::default()),
                 },
             });
         }

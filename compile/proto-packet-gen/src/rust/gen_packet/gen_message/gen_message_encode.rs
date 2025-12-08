@@ -39,7 +39,7 @@ impl GenRust {
                     "value",
                     field.type_tag(),
                     false, // todo -- fixed
-                    field.tag_number(),
+                    field.tag(),
                     op,
                 )),
             );

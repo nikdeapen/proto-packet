@@ -7,7 +7,7 @@ custom_string!(
     QualifiedNameRef,
     WithQualifiedName,
     qualified_name,
-    |s| validate_qualified_name(s)
+    validate_qualified_name
 );
 
 /// Validates the `qualified_name`.

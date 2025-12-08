@@ -20,7 +20,7 @@ impl GenRust {
 
     /// Generates the `field` impl block for the message `m`.
     fn gen_message_fields_impl_block(&self, m: &Message, field: &MessageField) -> ImplBlock {
-        self.gen_field_impl_block(m, field, Some(field.tag_number()))
+        self.gen_field_impl_block(m, field, Some(field.tag()))
             .with_function(self.gen_field_getter(field, true))
             .with_function(self.gen_field_setter(field, true))
             .with_function(self.gen_field_builder(field, true))

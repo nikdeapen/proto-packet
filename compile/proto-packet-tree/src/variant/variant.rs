@@ -58,18 +58,12 @@ impl Variant {
     where
         S: AsRef<str>,
     {
-        self.cases
-            .iter()
-            .filter(|f| f.case_name() == case_name)
-            .next()
+        self.cases.iter().find(|f| f.case_name() == case_name)
     }
 
-    /// Gets the optional case with the given `tag_number`.
-    pub fn case_with_number(&self, tag_number: TagNumber) -> Option<&VariantCase> {
-        self.cases
-            .iter()
-            .filter(|f| f.tag_number() == tag_number)
-            .next()
+    /// Gets the optional case with the given `tag`.
+    pub fn case_with_tag(&self, tag: TagNumber) -> Option<&VariantCase> {
+        self.cases.iter().find(|f| f.tag() == tag)
     }
 
     /// Checks if the `case` can be added.
@@ -78,13 +72,12 @@ impl Variant {
     ///     1. The case name is not yet present.
     ///     2. The tag number is not yet present.
     pub fn can_add_case(&self, case: &VariantCase) -> bool {
-        self.case_with_name(case.case_name()).is_none()
-            && self.case_with_number(case.tag_number()).is_none()
+        self.case_with_name(case.case_name()).is_none() && self.case_with_tag(case.tag()).is_none()
     }
 
     /// Adds the `case`.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `case` must be able to be added.
     pub unsafe fn add_case<F>(&mut self, case: F)
     where
@@ -94,12 +87,12 @@ impl Variant {
 
         debug_assert!(self.can_add_case(&case));
 
-        self.cases.push(case.into());
+        self.cases.push(case);
     }
 
     /// Adds the `case`.
     ///
-    /// # Unsafe
+    /// # Safety
     /// The `case` must be able to be added.
     pub unsafe fn with_case<F>(mut self, case: F) -> Self
     where

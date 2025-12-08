@@ -18,7 +18,7 @@ impl GenRust {
         let mut match_statement: MatchStatement = MatchStatement::from("tag.value()");
         for case in e.cases() {
             match_statement.add_match_case(
-                MatchCase::from(case.tag_number().to_string())
+                MatchCase::from(case.tag().to_string())
                     .with_literal(format!("Self::{}", self.naming.case_name(case))),
             );
         }

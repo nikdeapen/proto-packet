@@ -44,13 +44,13 @@ impl GenRust {
         let mut match_statement: MatchStatement = MatchStatement::from("header.tag().value()");
         for case in v.cases() {
             match_statement.add_match_case(
-                MatchCase::from(case.tag_number().to_string())
+                MatchCase::from(case.tag().to_string())
                     .with_statement(self.gen_decode_value(
                         "value",
                         case.case_name(),
                         case.type_tag(),
                         false,
-                        Some(case.tag_number()),
+                        Some(case.tag()),
                     ))
                     .with_literal(format!("Ok(Self::{}(value))", self.naming.case_name(case))),
             )

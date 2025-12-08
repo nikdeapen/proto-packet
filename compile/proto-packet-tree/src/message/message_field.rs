@@ -9,14 +9,14 @@ pub struct MessageField {
     comments: Vec<String>,
     field_name: FieldName,
     type_tag: TypeTag,
-    tag_number: TagNumber,
+    tag: TagNumber,
 }
 
 impl MessageField {
     //! Construction
 
     /// Creates a new message field.
-    pub fn new<N, T>(field_name: N, type_tag: T, tag_number: TagNumber) -> Self
+    pub fn new<N, T>(field_name: N, type_tag: T, tag: TagNumber) -> Self
     where
         N: Into<FieldName>,
         T: Into<TypeTag>,
@@ -27,7 +27,7 @@ impl MessageField {
             comments: Vec::default(),
             field_name,
             type_tag,
-            tag_number,
+            tag,
         }
     }
 }
@@ -58,11 +58,11 @@ impl WithTypeTag for MessageField {
 }
 
 impl WithTagNumber for MessageField {
-    fn tag_number(&self) -> TagNumber {
-        self.tag_number
+    fn tag(&self) -> TagNumber {
+        self.tag
     }
 
-    fn set_tag_number(&mut self, tag_number: TagNumber) {
-        self.tag_number = tag_number;
+    fn set_tag(&mut self, tag: TagNumber) {
+        self.tag = tag;
     }
 }

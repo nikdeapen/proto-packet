@@ -9,14 +9,14 @@ pub struct VariantCase {
     comments: Vec<String>,
     case_name: CaseName,
     type_tag: TypeTag,
-    tag_number: TagNumber,
+    tag: TagNumber,
 }
 
 impl VariantCase {
     //! Construction
 
     /// Creates a new variant case.
-    pub fn new<N, T>(case_name: N, type_tag: T, tag_number: TagNumber) -> Self
+    pub fn new<N, T>(case_name: N, type_tag: T, tag: TagNumber) -> Self
     where
         N: Into<CaseName>,
         T: Into<TypeTag>,
@@ -27,7 +27,7 @@ impl VariantCase {
             comments: Vec::default(),
             case_name,
             type_tag,
-            tag_number,
+            tag,
         }
     }
 }
@@ -58,11 +58,11 @@ impl WithTypeTag for VariantCase {
 }
 
 impl WithTagNumber for VariantCase {
-    fn tag_number(&self) -> TagNumber {
-        self.tag_number
+    fn tag(&self) -> TagNumber {
+        self.tag
     }
 
-    fn set_tag_number(&mut self, tag_number: TagNumber) {
-        self.tag_number = tag_number;
+    fn set_tag(&mut self, tag: TagNumber) {
+        self.tag = tag;
     }
 }

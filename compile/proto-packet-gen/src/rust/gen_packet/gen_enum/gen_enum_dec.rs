@@ -33,7 +33,7 @@ impl GenRust {
             for comment in case.comments() {
                 r.add_comment(format!(" //{}", comment));
             }
-            r.add_comment(format!(" {} = {};", case.case_name(), case.tag_number()));
+            r.add_comment(format!(" {} = {};", case.case_name(), case.tag()));
             result.add_case(r)
         }
 

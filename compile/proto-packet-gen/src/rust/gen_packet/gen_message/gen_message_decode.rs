@@ -53,13 +53,13 @@ impl GenRust {
         ));
         let mut match_statement: MatchStatement = MatchStatement::from("header.tag().value()");
         for field in m.fields() {
-            let match_case: MatchCase = MatchCase::from(field.tag_number().to_string())
+            let match_case: MatchCase = MatchCase::from(field.tag().to_string())
                 .with_statement(self.gen_decode_value(
                     "value",
                     field.field_name(),
                     field.type_tag(),
                     false,
-                    Some(field.tag_number()),
+                    Some(field.tag()),
                 ))
                 .with_semi(format!(
                     "result.set_{}(value)",

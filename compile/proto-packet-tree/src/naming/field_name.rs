@@ -7,7 +7,7 @@ custom_string!(
     FieldNameRef,
     WithFieldName,
     field_name,
-    |s| validate_field_name(s)
+    validate_field_name
 );
 
 /// Validates the `field_name`.

@@ -48,7 +48,7 @@ impl GenRust {
                         "value",
                         case.type_tag(),
                         false,
-                        case.tag_number(),
+                        case.tag(),
                         op,
                     )),
             )
