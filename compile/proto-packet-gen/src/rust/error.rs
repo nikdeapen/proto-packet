@@ -24,23 +24,19 @@ impl Error {
                 "the type name could not be converted to a mod name",
             ))
             .with_entry(
-                Properties {
-                    properties: vec![
-                        ("type_name".to_string(), type_name.to_string()),
-                        ("error".to_string(), error),
-                    ],
-                }
-                .entry(),
+                Properties::default()
+                    .with("type_name", type_name)
+                    .with("error", error)
+                    .entry(),
             ),
             Self::DuplicateModName { qualified_name } => Report::new(Code::error(
                 "G_RUST_DUPLICATE_MOD_NAME",
                 "the qualified name caused a mod name collision",
             ))
             .with_entry(
-                Properties {
-                    properties: vec![("qualified name".to_string(), qualified_name.to_string())],
-                }
-                .entry(),
+                Properties::default()
+                    .with("qualified-name", qualified_name)
+                    .entry(),
             ),
         }
     }
