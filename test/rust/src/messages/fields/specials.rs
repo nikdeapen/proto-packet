@@ -198,7 +198,7 @@ impl enc::DecodeFromRead for Specials {
         while let Some(first) = enc::read_optional_byte(r)? {
             let header: FieldHeader =
                 FieldHeader::decode_from_read_prefix_with_first_byte(r, first)?;
-            match header.tag().tag() {
+            match header.tag().value() {
                 1 => {
                     let value: uuid::Uuid = {
                         let decoder: Decoder = Decoder::default();

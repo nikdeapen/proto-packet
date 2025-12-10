@@ -51,7 +51,7 @@ impl GenRust {
             "let header: FieldHeader = FieldHeader::{}(r, first)?",
             "decode_from_read_prefix_with_first_byte"
         ));
-        let mut match_statement: MatchStatement = MatchStatement::from("header.tag().tag()");
+        let mut match_statement: MatchStatement = MatchStatement::from("header.tag().value()");
         for field in m.fields() {
             let match_case: MatchCase = MatchCase::from(field.tag().to_string())
                 .with_statement(self.gen_decode_value(

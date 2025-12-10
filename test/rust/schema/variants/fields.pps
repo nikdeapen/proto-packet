@@ -1,0 +1,35 @@
+// A variant with primitive types.
+variant Primitives {
+
+    // A 'u8' case.
+    One: u8 = 1;
+
+    // A 'u16' case.
+    Two: u16 = 2;
+
+    // A 'u32' case.
+    Three: u32 = 3;
+
+    // A 'u64' case.
+    Four: u64 = 4;
+
+    // A 'u128' case.
+    Five: u128 = 5;
+}
+
+// A variant with special types.
+variant Specials {
+
+    // A 'uuid' case.
+    One: uuid = 1;
+
+    // A 'string' case.
+    Two: string = 2;
+}
+
+// A variant with named types.
+variant Named {
+
+    // A 'Primitives' case.
+    One: Primitives = 1;
+}

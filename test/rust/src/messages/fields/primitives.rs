@@ -404,7 +404,7 @@ impl enc::DecodeFromRead for Primitives {
         while let Some(first) = enc::read_optional_byte(r)? {
             let header: FieldHeader =
                 FieldHeader::decode_from_read_prefix_with_first_byte(r, first)?;
-            match header.tag().tag() {
+            match header.tag().value() {
                 1 => {
                     let value: u8 = {
                         let decoder: Decoder = Decoder::default();

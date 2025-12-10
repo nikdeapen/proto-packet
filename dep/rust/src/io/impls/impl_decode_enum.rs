@@ -20,7 +20,7 @@ macro_rules! impl_decode_enum {
                     Ok(Self::from(tag))
                 } else {
                     Err(enc::Error::InvalidEncodedData {
-                        reason: Some(Box::new($crate::io::DecodingError::InvalidTagNumber(tag))),
+                        reason: Some(Box::new($crate::io::DecodingError::InvalidTagNumber)),
                     })
                 }
             }

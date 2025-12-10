@@ -28,7 +28,7 @@ impl GenRust {
             MatchStatement::from("self").with_assignment(("tag", RustPrimitive::UnsignedInt32));
         match_statement.add_match_case(
             MatchCase::from(format!("Self::{}(u)", Naming::UNRECOGNIZED_CASE_NAME))
-                .with_literal("u.tag.tag()"),
+                .with_literal("u.tag.value()"),
         );
         for case in e.cases() {
             match_statement.add_match_case(

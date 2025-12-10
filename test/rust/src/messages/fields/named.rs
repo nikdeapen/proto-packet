@@ -143,7 +143,7 @@ impl enc::DecodeFromRead for Named {
         while let Some(first) = enc::read_optional_byte(r)? {
             let header: FieldHeader =
                 FieldHeader::decode_from_read_prefix_with_first_byte(r, first)?;
-            match header.tag().tag() {
+            match header.tag().value() {
                 1 => {
                     let value: crate::messages::fields::Primitives = {
                         let decoder: Decoder = Decoder::default();

@@ -49,15 +49,15 @@ impl FieldHeader {
     /// The `tag` must be greater than `MAX_SINGLE_BYTE_TAG_NUMBER`.
     #[inline(always)]
     unsafe fn extra(&self) -> u32 {
-        debug_assert!(self.tag.tag() > Self::MAX_SINGLE_BYTE_TAG_NUMBER);
+        debug_assert!(self.tag.value() > Self::MAX_SINGLE_BYTE_TAG_NUMBER);
 
-        self.tag.tag() - Self::MAX_SINGLE_BYTE_TAG_NUMBER - 1
+        self.tag.value() - Self::MAX_SINGLE_BYTE_TAG_NUMBER - 1
     }
 }
 
 impl EncodedLen for FieldHeader {
     fn encoded_len(&self) -> Result<usize, Error> {
-        Ok(if self.tag.tag() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
+        Ok(if self.tag.value() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
             1
         } else {
             1 + VarInt32::from(unsafe { self.extra() }).encoded_len()?
@@ -67,8 +67,8 @@ impl EncodedLen for FieldHeader {
 
 impl EncodeToSlice for FieldHeader {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
-        Ok(if self.tag.tag() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
-            let first: u8 = self.wire.to_high_3_bits() | (self.tag.tag() as u8);
+        Ok(if self.tag.value() <= Self::MAX_SINGLE_BYTE_TAG_NUMBER {
+            let first: u8 = self.wire.to_high_3_bits() | (self.tag.value() as u8);
             *target.get_unchecked_mut(0) = first;
             1
         } else {

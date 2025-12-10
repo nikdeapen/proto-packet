@@ -41,7 +41,7 @@ impl GenRust {
                     Naming::FIELD_HEADER,
                     "\"'serial' must start with a valid field header\""
                 ))
-                .with_literal("header.tag().tag()"),
+                .with_literal("header.tag().value()"),
         );
         for case in e.cases() {
             match_statement.add_match_case(
@@ -59,7 +59,7 @@ impl GenRust {
                         .with_result("proto_packet::io::TagNumber"),
                 )
                 .with_statement(match_statement)
-                .with_literal("unsafe { proto_packet::io::TagNumber::new_unchecked(tag_number) }"),
+                .with_literal("unsafe { proto_packet::io::TagNumber::new_unchecked(tag) }"),
             )
     }
 }

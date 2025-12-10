@@ -1,0 +1,22 @@
+// An empty enum.
+enum EmptyEnum {}
+
+// An enum with a single case.
+enum SingleCase {
+
+    // The first case.
+    One = 1;
+}
+
+// An enum with multiple cases.
+enum MultipleCases {
+
+    // The first case.
+    One = 1;
+
+    // The second case.
+    Two = 2;
+
+    // The third case.
+    Three = 3;
+}

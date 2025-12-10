@@ -41,7 +41,7 @@ impl GenRust {
             Naming::FIELD_HEADER,
             Naming::FIELD_HEADER
         ));
-        let mut match_statement: MatchStatement = MatchStatement::from("header.tag().tag()");
+        let mut match_statement: MatchStatement = MatchStatement::from("header.tag().value()");
         for case in v.cases() {
             match_statement.add_match_case(
                 MatchCase::from(case.tag().to_string())
