@@ -1,10 +1,10 @@
 use crate::rust::GenRust;
 use code_gen::rust::Access::Public;
 use code_gen::rust::{RustType, Struct, StructField, WithAccess, WithComments, WithStructFields};
-use proto_packet_tree::{Message, MessageField, WithFieldName, WithTypeTag};
+use proto_packet_tree::{Message, MessageField, WithFieldName, WithTagNumber, WithTypeTag};
 
 impl GenRust {
-    //! Gen Message: Type Dec
+    //! Gen Message: Declaration
 
     /// Generates the struct declaration for the message `m`.
     pub(in crate::rust::gen_packet::gen_message) fn gen_message_type_dec(
@@ -28,7 +28,13 @@ impl GenRust {
     fn gen_message_type_dec_comments(&self, result: &mut Struct, m: &Message) {
         self.gen_comments_type_dec(result, m, "struct");
         for field in m.fields() {
-            self.gen_comments_field(result, field, field.field_name(), field.type_tag(), None);
+            self.gen_comments_field(
+                result,
+                field,
+                field.field_name(),
+                field.type_tag(),
+                Some(field.tag()),
+            );
         }
         result.add_comment(" }");
     }

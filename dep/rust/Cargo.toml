@@ -10,10 +10,10 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
-enc = { version = "0.17.0-rc.3", features = ["var-int"] }
+enc = { version = "0.17.0-rc.5", features = ["var-int"] }
 
 uuid = "1.19.0"
 serde = { version = "1.0.228", features = ["derive"] }
 
 [dev-dependencies]
-enc = { version = "0.17.0-rc.3", features = ["test"] }
+enc = { version = "0.17.0-rc.5", features = ["test"] }

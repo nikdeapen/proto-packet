@@ -26,13 +26,13 @@ impl GenRust {
     ) -> Source {
         Source::default()
             .with_semi(format!(
-                "let tag_number: proto_packet::io::TagNumber = unsafe {{ proto_packet::io::TagNumber::new_unchecked({}) }}",
+                "let tag: proto_packet::io::TagNumber = unsafe {{ proto_packet::io::TagNumber::new_unchecked({}) }}",
                 tag_number
             ))
             .with_semi(format!(
                 "let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new({}, {})",
                 self.gen_wire_type_exp(type_tag, fixed),
-                "tag_number"
+                "tag"
             ))
             .with_semi(format!("encoded_len += header.{}?", op.encode_call()))
             .with_statement(self.gen_encode_value(value_exp, type_tag, fixed, op))

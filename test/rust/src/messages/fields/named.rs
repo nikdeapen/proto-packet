@@ -2,7 +2,7 @@
 /// struct Named {
 ///    
 ///    // A 'Primitives' field.
-///    one: messages.fields.Primitives;
+///    one: messages.fields.Primitives = 1;
 /// }
 #[derive(
     Clone,
@@ -64,11 +64,11 @@ impl enc::EncodedLen for Named {
         let mut encoded_len: usize = 0;
 
         if let Some(value) = &self.one {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
             let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
                 crate::messages::fields::Primitives::wire_type(),
-                tag_number,
+                tag,
             );
             encoded_len += header.encoded_len()?;
             let encoder: proto_packet::io::Encoder<crate::messages::fields::Primitives> =
@@ -87,11 +87,11 @@ impl enc::EncodeToSlice for Named {
         let mut encoded_len: usize = 0;
 
         if let Some(value) = &self.one {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
             let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
                 crate::messages::fields::Primitives::wire_type(),
-                tag_number,
+                tag,
             );
             encoded_len += header.encode_to_slice_unchecked(&mut target[encoded_len..])?;
             let encoder: proto_packet::io::Encoder<crate::messages::fields::Primitives> =
@@ -113,11 +113,11 @@ impl enc::EncodeToWrite for Named {
         let mut encoded_len: usize = 0;
 
         if let Some(value) = &self.one {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
             let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
                 crate::messages::fields::Primitives::wire_type(),
-                tag_number,
+                tag,
             );
             encoded_len += header.encode_to_write(w)?;
             let encoder: proto_packet::io::Encoder<crate::messages::fields::Primitives> =
@@ -143,7 +143,7 @@ impl enc::DecodeFromRead for Named {
         while let Some(first) = enc::read_optional_byte(r)? {
             let header: FieldHeader =
                 FieldHeader::decode_from_read_prefix_with_first_byte(r, first)?;
-            match header.tag().value() {
+            match header.tag().tag() {
                 1 => {
                     let value: crate::messages::fields::Primitives = {
                         let decoder: Decoder = Decoder::default();

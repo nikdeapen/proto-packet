@@ -2,19 +2,19 @@
 /// struct Primitives {
 ///    
 ///    // A 'u8' field.
-///    one: u8;
+///    one: u8 = 1;
 ///    
 ///    // A 'u16' field.
-///    two: u16;
+///    two: u16 = 2;
 ///    
 ///    // A 'u32' field.
-///    three: u32;
+///    three: u32 = 3;
 ///    
 ///    // A 'u64' field.
-///    four: u64;
+///    four: u64 = 4;
 ///    
 ///    // A 'u128' field.
-///    five: u128;
+///    five: u128 = 5;
 /// }
 #[derive(
     Clone,
@@ -204,12 +204,10 @@ impl enc::EncodedLen for Primitives {
         let mut encoded_len: usize = 0;
 
         if let Some(value) = &self.one {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-            let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                proto_packet::io::WireType::Fixed1Byte,
-                tag_number,
-            );
+            let header: proto_packet::io::FieldHeader =
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::Fixed1Byte, tag);
             encoded_len += header.encoded_len()?;
             let encoder: proto_packet::io::Encoder<u8> =
                 proto_packet::io::Encoder::new(value, false);
@@ -217,10 +215,10 @@ impl enc::EncodedLen for Primitives {
         }
 
         if let Some(value) = &self.two {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encoded_len()?;
             let encoder: proto_packet::io::Encoder<u16> =
                 proto_packet::io::Encoder::new(value, false);
@@ -228,10 +226,10 @@ impl enc::EncodedLen for Primitives {
         }
 
         if let Some(value) = &self.three {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(3) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encoded_len()?;
             let encoder: proto_packet::io::Encoder<u32> =
                 proto_packet::io::Encoder::new(value, false);
@@ -239,10 +237,10 @@ impl enc::EncodedLen for Primitives {
         }
 
         if let Some(value) = &self.four {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(4) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encoded_len()?;
             let encoder: proto_packet::io::Encoder<u64> =
                 proto_packet::io::Encoder::new(value, false);
@@ -250,10 +248,10 @@ impl enc::EncodedLen for Primitives {
         }
 
         if let Some(value) = &self.five {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(5) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encoded_len()?;
             let encoder: proto_packet::io::Encoder<u128> =
                 proto_packet::io::Encoder::new(value, false);
@@ -269,12 +267,10 @@ impl enc::EncodeToSlice for Primitives {
         let mut encoded_len: usize = 0;
 
         if let Some(value) = &self.one {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-            let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                proto_packet::io::WireType::Fixed1Byte,
-                tag_number,
-            );
+            let header: proto_packet::io::FieldHeader =
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::Fixed1Byte, tag);
             encoded_len += header.encode_to_slice_unchecked(&mut target[encoded_len..])?;
             let encoder: proto_packet::io::Encoder<u8> =
                 proto_packet::io::Encoder::new(value, false);
@@ -282,10 +278,10 @@ impl enc::EncodeToSlice for Primitives {
         }
 
         if let Some(value) = &self.two {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encode_to_slice_unchecked(&mut target[encoded_len..])?;
             let encoder: proto_packet::io::Encoder<u16> =
                 proto_packet::io::Encoder::new(value, false);
@@ -293,10 +289,10 @@ impl enc::EncodeToSlice for Primitives {
         }
 
         if let Some(value) = &self.three {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(3) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encode_to_slice_unchecked(&mut target[encoded_len..])?;
             let encoder: proto_packet::io::Encoder<u32> =
                 proto_packet::io::Encoder::new(value, false);
@@ -304,10 +300,10 @@ impl enc::EncodeToSlice for Primitives {
         }
 
         if let Some(value) = &self.four {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(4) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encode_to_slice_unchecked(&mut target[encoded_len..])?;
             let encoder: proto_packet::io::Encoder<u64> =
                 proto_packet::io::Encoder::new(value, false);
@@ -315,10 +311,10 @@ impl enc::EncodeToSlice for Primitives {
         }
 
         if let Some(value) = &self.five {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(5) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encode_to_slice_unchecked(&mut target[encoded_len..])?;
             let encoder: proto_packet::io::Encoder<u128> =
                 proto_packet::io::Encoder::new(value, false);
@@ -337,12 +333,10 @@ impl enc::EncodeToWrite for Primitives {
         let mut encoded_len: usize = 0;
 
         if let Some(value) = &self.one {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-            let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                proto_packet::io::WireType::Fixed1Byte,
-                tag_number,
-            );
+            let header: proto_packet::io::FieldHeader =
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::Fixed1Byte, tag);
             encoded_len += header.encode_to_write(w)?;
             let encoder: proto_packet::io::Encoder<u8> =
                 proto_packet::io::Encoder::new(value, false);
@@ -350,10 +344,10 @@ impl enc::EncodeToWrite for Primitives {
         }
 
         if let Some(value) = &self.two {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encode_to_write(w)?;
             let encoder: proto_packet::io::Encoder<u16> =
                 proto_packet::io::Encoder::new(value, false);
@@ -361,10 +355,10 @@ impl enc::EncodeToWrite for Primitives {
         }
 
         if let Some(value) = &self.three {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(3) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encode_to_write(w)?;
             let encoder: proto_packet::io::Encoder<u32> =
                 proto_packet::io::Encoder::new(value, false);
@@ -372,10 +366,10 @@ impl enc::EncodeToWrite for Primitives {
         }
 
         if let Some(value) = &self.four {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(4) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encode_to_write(w)?;
             let encoder: proto_packet::io::Encoder<u64> =
                 proto_packet::io::Encoder::new(value, false);
@@ -383,10 +377,10 @@ impl enc::EncodeToWrite for Primitives {
         }
 
         if let Some(value) = &self.five {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(5) };
             let header: proto_packet::io::FieldHeader =
-                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag_number);
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::VarInt, tag);
             encoded_len += header.encode_to_write(w)?;
             let encoder: proto_packet::io::Encoder<u128> =
                 proto_packet::io::Encoder::new(value, false);
@@ -410,7 +404,7 @@ impl enc::DecodeFromRead for Primitives {
         while let Some(first) = enc::read_optional_byte(r)? {
             let header: FieldHeader =
                 FieldHeader::decode_from_read_prefix_with_first_byte(r, first)?;
-            match header.tag().value() {
+            match header.tag().tag() {
                 1 => {
                     let value: u8 = {
                         let decoder: Decoder = Decoder::default();

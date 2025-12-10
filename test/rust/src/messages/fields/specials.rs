@@ -2,10 +2,10 @@
 /// struct Specials {
 ///    
 ///    // A 'uuid' field.
-///    one: uuid;
+///    one: uuid = 1;
 ///    
 ///    // A 'string' field.
-///    two: string;
+///    two: string = 2;
 /// }
 #[derive(
     Clone,
@@ -97,12 +97,10 @@ impl enc::EncodedLen for Specials {
         let mut encoded_len: usize = 0;
 
         if let Some(value) = &self.one {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-            let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                proto_packet::io::WireType::Fixed16Byte,
-                tag_number,
-            );
+            let header: proto_packet::io::FieldHeader =
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::Fixed16Byte, tag);
             encoded_len += header.encoded_len()?;
             let encoder: proto_packet::io::Encoder<uuid::Uuid> =
                 proto_packet::io::Encoder::new(value, false);
@@ -110,12 +108,10 @@ impl enc::EncodedLen for Specials {
         }
 
         if let Some(value) = &self.two {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
-            let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                proto_packet::io::WireType::LengthPrefixed,
-                tag_number,
-            );
+            let header: proto_packet::io::FieldHeader =
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::LengthPrefixed, tag);
             encoded_len += header.encoded_len()?;
             let encoder: proto_packet::io::Encoder<String> =
                 proto_packet::io::Encoder::new(value, false);
@@ -131,12 +127,10 @@ impl enc::EncodeToSlice for Specials {
         let mut encoded_len: usize = 0;
 
         if let Some(value) = &self.one {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-            let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                proto_packet::io::WireType::Fixed16Byte,
-                tag_number,
-            );
+            let header: proto_packet::io::FieldHeader =
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::Fixed16Byte, tag);
             encoded_len += header.encode_to_slice_unchecked(&mut target[encoded_len..])?;
             let encoder: proto_packet::io::Encoder<uuid::Uuid> =
                 proto_packet::io::Encoder::new(value, false);
@@ -144,12 +138,10 @@ impl enc::EncodeToSlice for Specials {
         }
 
         if let Some(value) = &self.two {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
-            let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                proto_packet::io::WireType::LengthPrefixed,
-                tag_number,
-            );
+            let header: proto_packet::io::FieldHeader =
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::LengthPrefixed, tag);
             encoded_len += header.encode_to_slice_unchecked(&mut target[encoded_len..])?;
             let encoder: proto_packet::io::Encoder<String> =
                 proto_packet::io::Encoder::new(value, false);
@@ -168,12 +160,10 @@ impl enc::EncodeToWrite for Specials {
         let mut encoded_len: usize = 0;
 
         if let Some(value) = &self.one {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(1) };
-            let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                proto_packet::io::WireType::Fixed16Byte,
-                tag_number,
-            );
+            let header: proto_packet::io::FieldHeader =
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::Fixed16Byte, tag);
             encoded_len += header.encode_to_write(w)?;
             let encoder: proto_packet::io::Encoder<uuid::Uuid> =
                 proto_packet::io::Encoder::new(value, false);
@@ -181,12 +171,10 @@ impl enc::EncodeToWrite for Specials {
         }
 
         if let Some(value) = &self.two {
-            let tag_number: proto_packet::io::TagNumber =
+            let tag: proto_packet::io::TagNumber =
                 unsafe { proto_packet::io::TagNumber::new_unchecked(2) };
-            let header: proto_packet::io::FieldHeader = proto_packet::io::FieldHeader::new(
-                proto_packet::io::WireType::LengthPrefixed,
-                tag_number,
-            );
+            let header: proto_packet::io::FieldHeader =
+                proto_packet::io::FieldHeader::new(proto_packet::io::WireType::LengthPrefixed, tag);
             encoded_len += header.encode_to_write(w)?;
             let encoder: proto_packet::io::Encoder<String> =
                 proto_packet::io::Encoder::new(value, false);
@@ -210,7 +198,7 @@ impl enc::DecodeFromRead for Specials {
         while let Some(first) = enc::read_optional_byte(r)? {
             let header: FieldHeader =
                 FieldHeader::decode_from_read_prefix_with_first_byte(r, first)?;
-            match header.tag().value() {
+            match header.tag().tag() {
                 1 => {
                     let value: uuid::Uuid = {
                         let decoder: Decoder = Decoder::default();

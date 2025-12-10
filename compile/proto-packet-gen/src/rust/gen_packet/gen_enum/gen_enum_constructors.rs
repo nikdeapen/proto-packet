@@ -15,7 +15,7 @@ impl GenRust {
     }
 
     fn gen_enum_from_tag_number(&self, e: &Enum) -> Source {
-        let mut match_statement: MatchStatement = MatchStatement::from("tag.value()");
+        let mut match_statement: MatchStatement = MatchStatement::from("tag.tag()");
         for case in e.cases() {
             match_statement.add_match_case(
                 MatchCase::from(case.tag().to_string())

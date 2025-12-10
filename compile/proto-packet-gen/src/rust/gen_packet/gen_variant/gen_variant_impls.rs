@@ -28,8 +28,8 @@ impl GenRust {
     }
 
     fn gen_variant_impl_with_tag_number(&self, e: &Variant) -> ImplBlock {
-        let mut match_statement: MatchStatement = MatchStatement::from("self")
-            .with_assignment(("tag_number", RustPrimitive::UnsignedInt32));
+        let mut match_statement: MatchStatement =
+            MatchStatement::from("self").with_assignment(("tag", RustPrimitive::UnsignedInt32));
         match_statement.add_match_case(
             MatchCase::from(format!("Self::{}(u)", Naming::UNRECOGNIZED_CASE_NAME))
                 .with_semi("use enc::DecodeFromReadPrefix")
@@ -41,7 +41,7 @@ impl GenRust {
                     Naming::FIELD_HEADER,
                     "\"'serial' must start with a valid field header\""
                 ))
-                .with_literal("header.tag().value()"),
+                .with_literal("header.tag().tag()"),
         );
         for case in e.cases() {
             match_statement.add_match_case(
@@ -54,7 +54,7 @@ impl GenRust {
             .with_for_trait("proto_packet::io::WithTagNumber")
             .with_function(
                 Function::from(
-                    Signature::from("tag_number")
+                    Signature::from("tag")
                         .with_receiver(Receiver::Borrowed)
                         .with_result("proto_packet::io::TagNumber"),
                 )

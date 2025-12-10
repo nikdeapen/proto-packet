@@ -20,7 +20,7 @@ proto-packet-tree = { path = "proto-packet-tree" }              # todo -- path d
 proto-packet-validate = { path = "proto-packet-validate" }      # todo -- path dependency
 
 clerr = "0.8.0-rc.2"
-code-gen = "0.8.0-rc.2"
+code-gen = "0.8.0-rc.3"
 custom-string = "0.7.0-rc.2"
 file-storage = "0.6.0-rc.2"
 lex = "0.13.0-rc.3"
