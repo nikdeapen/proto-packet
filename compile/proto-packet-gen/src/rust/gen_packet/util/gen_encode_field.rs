@@ -78,6 +78,7 @@ impl GenRust {
             TypeTag::Named(name) => {
                 return format!("{}::wire_type()", self.typing.rust_name(name.to_ref()))
             }
+            TypeTag::List(_) => todo!(),
         };
         format!("proto_packet::io::WireType::{}", wire_type)
     }

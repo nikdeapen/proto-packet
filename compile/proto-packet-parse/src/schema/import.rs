@@ -38,7 +38,7 @@ impl Error for ParseImportError {
 /// Returns `Ok(None)` when the next token is not `import`.
 pub fn parse_import(c: Context) -> ParseResult<Option<ImportTree>, ParseImportError> {
     let (_white, c) = c.white_line_comments();
-    if let (Some(_import), after_import) = c.exact_symbol("schema") {
+    if let (Some(_import), after_import) = c.exact_symbol("import") {
         let (white, after_white) = after_import.whitespace();
         if white.is_none() {
             return Err(after_import.to_error(ExpectedWhitespace));

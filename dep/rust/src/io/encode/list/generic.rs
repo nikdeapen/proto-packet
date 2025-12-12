@@ -1,4 +1,4 @@
-use crate::io::WireType::List;
+use crate::io::WireType::*;
 use crate::io::{Encoder, ListHeader};
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
 use std::io::Write;
@@ -47,11 +47,11 @@ macro_rules! util {
 }
 
 macro_rules! encoded_len {
-    ($target_type:ty) => {
+    ($target_type:ty, $list_wire:ident) => {
         impl EncodedLen for Encoder<'_, Vec<$target_type>> {
             fn encoded_len(&self) -> Result<usize, Error> {
                 let size: usize = self.list_encoded_len()?;
-                let header: usize = ListHeader::new(List, size).encoded_len()?;
+                let header: usize = ListHeader::new($list_wire, size).encoded_len()?;
                 Ok(header + size)
             }
         }
@@ -59,12 +59,12 @@ macro_rules! encoded_len {
 }
 
 macro_rules! encode_to_slice {
-    ($target_type:ty) => {
+    ($target_type:ty, $list_wire:ident) => {
         impl EncodeToSlice for Encoder<'_, Vec<$target_type>> {
             unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
                 let size: usize = self.list_encoded_len()?;
                 let header: usize =
-                    ListHeader::new(List, size).encode_to_slice_unchecked(target)?;
+                    ListHeader::new($list_wire, size).encode_to_slice_unchecked(target)?;
                 let also_size: usize =
                     self.list_encode_to_slice_unchecked(&mut target[header..])?;
                 debug_assert_eq!(size, also_size);
@@ -75,14 +75,14 @@ macro_rules! encode_to_slice {
 }
 
 macro_rules! encode_to_write {
-    ($target_type:ty) => {
+    ($target_type:ty, $list_wire:ident) => {
         impl EncodeToWrite for Encoder<'_, Vec<$target_type>> {
             fn encode_to_write<W>(&self, w: &mut W) -> Result<usize, Error>
             where
                 W: Write,
             {
                 let size: usize = self.list_encoded_len()?;
-                let header: usize = ListHeader::new(List, size).encode_to_write(w)?;
+                let header: usize = ListHeader::new($list_wire, size).encode_to_write(w)?;
                 let also_size: usize = self.list_encode_to_write(w)?;
                 debug_assert_eq!(size, also_size);
                 Ok(header + size)
@@ -92,18 +92,18 @@ macro_rules! encode_to_write {
 }
 
 macro_rules! encode {
-    ($target_type:ty) => {
+    ($target_type:ty, $list_wire:ident) => {
         util!($target_type);
-        encoded_len!($target_type);
-        encode_to_slice!($target_type);
-        encode_to_write!($target_type);
+        encoded_len!($target_type, $list_wire);
+        encode_to_slice!($target_type, $list_wire);
+        encode_to_write!($target_type, $list_wire);
     };
 }
 
-encode!(u16);
-encode!(u32);
-encode!(u64);
-encode!(u128);
+encode!(u16, VarInt);
+encode!(u32, VarInt);
+encode!(u64, VarInt);
+encode!(u128, VarInt);
 
-encode!(Uuid);
-encode!(String);
+encode!(Uuid, Fixed16Byte);
+encode!(String, LengthPrefixed);

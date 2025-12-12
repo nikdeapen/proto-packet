@@ -12,6 +12,9 @@ pub enum TypeTag {
 
     /// A named type.
     Named(QualifiedName),
+
+    /// A list type.
+    List(Box<TypeTag>),
 }
 
 impl From<PrimitiveType> for TypeTag {
@@ -32,6 +35,15 @@ impl From<QualifiedName> for TypeTag {
     }
 }
 
+impl TypeTag {
+    //! Lists
+
+    /// Converts the type tag to a list of itself.
+    pub fn to_list(self) -> Self {
+        Self::List(Box::new(self))
+    }
+}
+
 impl Debug for TypeTag {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self)
@@ -44,6 +56,7 @@ impl Display for TypeTag {
             Self::Primitive(primitive) => write!(f, "{}", primitive),
             Self::Special(special) => write!(f, "{}", special),
             Self::Named(name) => write!(f, "{}", name),
+            Self::List(base) => write!(f, "[]{}", base),
         }
     }
 }

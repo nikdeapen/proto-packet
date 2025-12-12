@@ -1,4 +1,3 @@
-use crate::io::WireType::List;
 use crate::io::{Encoder, ListHeader};
 use crate::Packet;
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
@@ -42,7 +41,7 @@ impl<P: Packet> Encoder<'_, Vec<P>> {
 impl<P: Packet> EncodedLen for Encoder<'_, Vec<P>> {
     fn encoded_len(&self) -> Result<usize, Error> {
         let size: usize = self.list_encoded_len()?;
-        let header: usize = ListHeader::new(List, size).encoded_len()?;
+        let header: usize = ListHeader::new(P::wire_type(), size).encoded_len()?;
         Ok(header + size)
     }
 }
@@ -50,7 +49,8 @@ impl<P: Packet> EncodedLen for Encoder<'_, Vec<P>> {
 impl<P: Packet> EncodeToSlice for Encoder<'_, Vec<P>> {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
         let size: usize = self.list_encoded_len()?;
-        let header: usize = ListHeader::new(List, size).encode_to_slice_unchecked(target)?;
+        let header: usize =
+            ListHeader::new(P::wire_type(), size).encode_to_slice_unchecked(target)?;
         let also_size: usize = self.list_encode_to_slice_unchecked(&mut target[header..])?;
         debug_assert_eq!(size, also_size);
         Ok(header + size)
@@ -63,7 +63,7 @@ impl<P: Packet> EncodeToWrite for Encoder<'_, Vec<P>> {
         W: Write,
     {
         let size: usize = self.list_encoded_len()?;
-        let header: usize = ListHeader::new(List, size).encode_to_write(w)?;
+        let header: usize = ListHeader::new(P::wire_type(), size).encode_to_write(w)?;
         let also_size: usize = self.list_encode_to_write(w)?;
         debug_assert_eq!(size, also_size);
         Ok(header + size)
