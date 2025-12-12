@@ -12,6 +12,9 @@ pub enum DecodingError {
     /// The wire type was invalid for the semantic type.
     InvalidWireType(WireType),
 
+    /// The wire type for the list values was invalid.
+    InvalidListWireType(WireType),
+
     /// The decoded value was out of range for the semantic type.
     ValueOutOfRange,
 
@@ -47,6 +50,13 @@ impl DecodingError {
         match error {
             enc::Error::Stream(error) => Stream(error),
             _ => LengthPrefixOutOfRange,
+        }
+    }
+
+    pub fn from_list_header_error(error: enc::Error) -> Self {
+        match error {
+            enc::Error::Stream(error) => Stream(error),
+            _ => InvalidListHeader,
         }
     }
 }
