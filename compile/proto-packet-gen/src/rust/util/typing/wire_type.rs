@@ -14,6 +14,16 @@ impl Typing {
             format!("proto_packet::io::WireType::{}", wire_type)
         } else if let TypeTag::Named(name) = declared {
             format!("{}::wire_type()", self.rust_name(name.to_ref()))
+        } else if let TypeTag::List(base) = declared {
+            match base.as_ref() {
+                TypeTag::Primitive(base) => match base {
+                    PrimitiveType::UnsignedInt8 => {
+                        "proto_packet::io::WireType::LengthPrefixed".to_string()
+                    }
+                    _ => "proto_packet::io::WireType::List".to_string(),
+                },
+                _ => "proto_packet::io::WireType::List".to_string(),
+            }
         } else {
             unreachable!()
         }
@@ -60,6 +70,7 @@ impl Typing {
                 SpecialType::String => LengthPrefixed,
             },
             TypeTag::Named(_) => return None,
+            TypeTag::List(_) => return None,
         })
     }
 }

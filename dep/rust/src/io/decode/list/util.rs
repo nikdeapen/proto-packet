@@ -1,6 +1,6 @@
 use crate::io::{DecodingError, ListHeader, WireType};
 use std::cmp::max;
-use std::io::Read;
+use std::io::{Read, Take};
 
 /// Decodes a generic list from the `Read` prefix with the `header`.
 pub(in crate::io::decode::list) fn decode_generic_list<R, T, F>(
@@ -10,11 +10,13 @@ pub(in crate::io::decode::list) fn decode_generic_list<R, T, F>(
 ) -> Result<Vec<T>, DecodingError>
 where
     R: Read,
-    F: Fn(WireType, &mut R, u8) -> Result<T, DecodingError>,
+    F: Fn(WireType, &mut Take<&mut R>, u8) -> Result<T, DecodingError>,
 {
+    const _: () = assert!(usize::BITS <= u64::BITS);
+    let mut r: Take<&mut R> = r.take(header.size() as u64);
     let mut list: Vec<T> = Vec::with_capacity(list_capacity(header));
-    while let Some(first) = enc::read_optional_byte(r)? {
-        let value: T = decode_fn(header.wire(), r, first)?;
+    while let Some(first) = enc::read_optional_byte(&mut r)? {
+        let value: T = decode_fn(header.wire(), &mut r, first)?;
         list.push(value);
     }
     Ok(list)

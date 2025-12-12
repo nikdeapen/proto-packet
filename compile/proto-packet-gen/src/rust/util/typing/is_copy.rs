@@ -13,6 +13,7 @@ impl Typing {
                 SpecialType::String => false,
             },
             TypeTag::Named(_) => false,
+            TypeTag::List(_) => false,
         }
     }
 }

@@ -12,6 +12,7 @@ impl Typing {
             TypeTag::Primitive(primitive) => self.owned_primitive(primitive),
             TypeTag::Special(special) => self.owned_special(special),
             TypeTag::Named(name) => RustType::from(self.rust_name(name.to_ref())),
+            TypeTag::List(base) => RustType::from("Vec").with_generic(self.owned(base)),
         }
     }
 
@@ -50,6 +51,7 @@ impl Typing {
             TypeTag::Named(name) => {
                 RustType::from(self.rust_name(name.to_ref())).to_ref(Reference::default())
             }
+            TypeTag::List(base) => self.owned(base).to_slice().to_ref(Reference::default()),
         }
     }
 
@@ -76,6 +78,7 @@ impl Typing {
                 SpecialType::String => BorrowMethod::Deref,
             },
             TypeTag::Named(_) => BorrowMethod::Ref,
+            TypeTag::List(_) => BorrowMethod::Deref,
         }
     }
 }

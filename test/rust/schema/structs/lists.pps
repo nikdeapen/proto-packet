@@ -1,0 +1,35 @@
+// A struct with primitive type slices.
+struct Primitives {
+
+    // A 'u8' field.
+    one: []u8;
+
+    // A 'u16' field.
+    two: []u16;
+
+    // A 'u32' field.
+    three: []u32;
+
+    // A 'u64' field.
+    four: []u64;
+
+    // A 'u128' field.
+    five: []u128;
+}
+
+// A struct with special type slices.
+struct Specials {
+
+    // A 'uuid' field.
+    one: []uuid;
+
+    // A 'string' field.
+    two: []string;
+}
+
+// A struct with named type slices.
+struct Named {
+
+    // A 'Primitives' field.
+    one: []Primitives;
+}

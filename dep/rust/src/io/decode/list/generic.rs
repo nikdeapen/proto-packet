@@ -1,5 +1,6 @@
 use crate::io::decode::list::util::decode_generic_list;
-use crate::io::{Decoder, DecodingError, ListHeader};
+use crate::io::DecodingError::InvalidWireType;
+use crate::io::{Decoder, DecodingError, ListHeader, WireType};
 use enc::DecodeFromReadPrefix;
 use std::io::Read;
 use uuid::Uuid;
@@ -12,18 +13,23 @@ macro_rules! decode {
             // todo -- docs`
             pub fn $fn_name<R>(
                 &self,
+                wire: WireType,
                 r: &mut R,
                 first: u8,
             ) -> Result<Vec<$target_type>, DecodingError>
             where
                 R: Read,
             {
-                let header: ListHeader =
-                    ListHeader::decode_from_read_prefix_with_first_byte(r, first)
-                        .map_err(DecodingError::from_list_header_error)?;
-                decode_generic_list(r, header, |wire, r, first| {
-                    self.$base_fn_name(wire, r, first)
-                })
+                if wire == WireType::List {
+                    let header: ListHeader =
+                        ListHeader::decode_from_read_prefix_with_first_byte(r, first)
+                            .map_err(DecodingError::from_list_header_error)?;
+                    decode_generic_list(r, header, |wire, r, first| {
+                        self.$base_fn_name(wire, r, first)
+                    })
+                } else {
+                    Err(InvalidWireType(wire))
+                }
             }
         }
     };

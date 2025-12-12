@@ -23,12 +23,9 @@ impl Decoder {
                 let header: ListHeader =
                     ListHeader::decode_from_read_prefix_with_first_byte(r, first)
                         .map_err(DecodingError::from_list_header_error)?;
-                match header.wire() {
-                    WireType::List => decode_generic_list(r, header, |wire, r, first| {
-                        self.decode_packet(wire, r, first)
-                    }),
-                    _ => Err(DecodingError::InvalidListWireType(header.wire())),
-                }
+                decode_generic_list(r, header, |wire, r, first| {
+                    self.decode_packet(wire, r, first)
+                })
             }
             _ => Err(DecodingError::InvalidWireType(wire)),
         }

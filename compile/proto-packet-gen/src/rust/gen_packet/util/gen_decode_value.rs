@@ -38,6 +38,12 @@ impl GenRust {
             TypeTag::Primitive(primitive) => primitive.as_ref().to_string(),
             TypeTag::Special(special) => special.as_ref().to_string(),
             TypeTag::Named(_) => "packet".to_string(),
+            TypeTag::List(base) => match base.as_ref() {
+                TypeTag::Primitive(base) => format!("{}_list", base.to_string()),
+                TypeTag::Special(base) => format!("{}_list", base.to_string()),
+                TypeTag::Named(_) => "packet_list".to_string(),
+                TypeTag::List(_) => return None,
+            },
         };
         Some(format!("decode_{}", tag))
     }
