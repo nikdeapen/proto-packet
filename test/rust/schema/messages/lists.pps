@@ -1,0 +1,35 @@
+// A message with primitive type slices.
+message Primitives {
+
+    // A 'u8' field.
+    one: []u8 = 1;
+
+    // A 'u16' field.
+    two: []u16 = 2;
+
+    // A 'u32' field.
+    three: []u32 = 3;
+
+    // A 'u64' field.
+    four: []u64 = 4;
+
+    // A 'u128' field.
+    five: []u128 = 5;
+}
+
+// A message with special type slices.
+message Specials {
+
+    // A 'uuid' field.
+    one: []uuid = 1;
+
+    // A 'string' field.
+    two: []string = 2;
+}
+
+// A message with named type slices.
+message Named {
+
+    // A 'Primitives' field.
+    one: []Primitives = 1;
+}

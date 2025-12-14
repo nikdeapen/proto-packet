@@ -2,7 +2,7 @@ use crate::rust::util::EncodeOp;
 use crate::rust::GenRust;
 use code_gen::{Source, WithStatements};
 use proto_packet::io::WireType::{
-    Fixed16Byte, Fixed1Byte, Fixed2Byte, Fixed4Byte, Fixed8Byte, LengthPrefixed, VarInt,
+    Fixed16Byte, Fixed1Byte, Fixed2Byte, Fixed4Byte, Fixed8Byte, LengthPrefixed, List, VarInt,
 };
 use proto_packet::io::{TagNumber, WireType};
 use proto_packet_tree::{PrimitiveType, SpecialType, TypeTag};
@@ -78,7 +78,13 @@ impl GenRust {
             TypeTag::Named(name) => {
                 return format!("{}::wire_type()", self.typing.rust_name(name.to_ref()))
             }
-            TypeTag::List(_) => todo!(),
+            TypeTag::List(base) => match base.as_ref() {
+                TypeTag::Primitive(primitive) => match primitive {
+                    PrimitiveType::UnsignedInt8 => LengthPrefixed,
+                    _ => List,
+                },
+                _ => List,
+            },
         };
         format!("proto_packet::io::WireType::{}", wire_type)
     }
