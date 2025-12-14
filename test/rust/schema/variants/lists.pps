@@ -1,0 +1,35 @@
+// A variant with primitive type slices.
+variant Primitives {
+
+    // A 'u8' field.
+    One: []u8 = 1;
+
+    // A 'u16' field.
+    Two: []u16 = 2;
+
+    // A 'u32' field.
+    Three: []u32 = 3;
+
+    // A 'u64' field.
+    Four: []u64 = 4;
+
+    // A 'u128' field.
+    Five: []u128 = 5;
+}
+
+// A variant with special type slices.
+variant Specials {
+
+    // A 'uuid' field.
+    Pne: []uuid = 6;
+
+    // A 'string' field.
+    Two: []string = 7;
+}
+
+// A variant with named type slices.
+variant Named {
+
+    // A 'Primitives' field.
+    One: []Primitives = 8;
+}
