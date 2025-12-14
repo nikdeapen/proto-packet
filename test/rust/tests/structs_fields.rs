@@ -4,8 +4,8 @@ use uuid::Uuid;
 
 #[test]
 fn primitives() {
-    let primitives: Primitives = Primitives::new(1, 2, 3, 4, 5);
-    let expected: &[u8] = &[1, 2, 3, 4, 5];
+    let primitives: Primitives = Primitives::new(1, 2, 3, 4, 5, -1, -2, -3, -4, -5);
+    let expected: &[u8] = &[1, 2, 3, 4, 5, 0xFF, 3, 5, 7, 9];
     test::test_io(&primitives, &expected, true);
 }
 
@@ -24,8 +24,8 @@ fn specials() {
 
 #[test]
 fn named() {
-    let primitives: Primitives = Primitives::new(1, 2, 3, 4, 5);
+    let primitives: Primitives = Primitives::new(1, 2, 3, 4, 5, -1, -2, -3, -4, -5);
     let named: Named = Named::new(primitives);
-    let expected: &[u8] = &[5, 1, 2, 3, 4, 5];
+    let expected: &[u8] = &[10, 1, 2, 3, 4, 5, 0xFF, 3, 5, 7, 9];
     test::test_io(&named, &expected, true);
 }

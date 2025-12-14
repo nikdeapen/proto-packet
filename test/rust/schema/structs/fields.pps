@@ -15,6 +15,21 @@ struct Primitives {
 
     // A 'u128' field.
     five: u128;
+
+    // An 'i8' field.
+    six: i8;
+
+    // An 'i16' field.
+    seven: i16;
+
+    // An 'i32' field.
+    eight: i32;
+
+    // An 'i64' field.
+    nine: i64;
+
+    // An 'i128' field.
+    ten: i128;
 }
 
 // A struct with special types.

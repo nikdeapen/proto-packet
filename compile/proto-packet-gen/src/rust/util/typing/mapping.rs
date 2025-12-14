@@ -24,6 +24,11 @@ impl Typing {
             PrimitiveType::UnsignedInt32 => RustPrimitive::UnsignedInt32,
             PrimitiveType::UnsignedInt64 => RustPrimitive::UnsignedInt64,
             PrimitiveType::UnsignedInt128 => RustPrimitive::UnsignedInt128,
+            PrimitiveType::SignedInt8 => RustPrimitive::SignedInt8,
+            PrimitiveType::SignedInt16 => RustPrimitive::SignedInt16,
+            PrimitiveType::SignedInt32 => RustPrimitive::SignedInt32,
+            PrimitiveType::SignedInt64 => RustPrimitive::SignedInt64,
+            PrimitiveType::SignedInt128 => RustPrimitive::SignedInt128,
         }
         .to_type_tag()
     }
