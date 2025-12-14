@@ -70,6 +70,35 @@ impl GenRust {
                         VarInt
                     }
                 }
+                PrimitiveType::SignedInt8 => Fixed1Byte,
+                PrimitiveType::SignedInt16 => {
+                    if fixed {
+                        Fixed2Byte
+                    } else {
+                        VarInt
+                    }
+                }
+                PrimitiveType::SignedInt32 => {
+                    if fixed {
+                        Fixed4Byte
+                    } else {
+                        VarInt
+                    }
+                }
+                PrimitiveType::SignedInt64 => {
+                    if fixed {
+                        Fixed8Byte
+                    } else {
+                        VarInt
+                    }
+                }
+                PrimitiveType::SignedInt128 => {
+                    if fixed {
+                        Fixed16Byte
+                    } else {
+                        VarInt
+                    }
+                }
             },
             TypeTag::Special(special) => match special {
                 SpecialType::Uuid => Fixed16Byte,
