@@ -13,6 +13,9 @@ pub enum DecodingError {
     /// The value was out of range.
     ValueOutOfRange,
 
+    /// The length prefix is out of range.
+    LengthPrefixOutOfRange,
+
     /// An error decoding a packet.
     InvalidPacket(enc::Error),
 
@@ -28,6 +31,14 @@ impl DecodingError {
         match error {
             enc::Error::Stream(error) => Self::Stream(error),
             _ => Self::ValueOutOfRange,
+        }
+    }
+
+    /// Creates a decoding error from the var-int length-prefix decoding `error`.
+    pub fn from_length_prefix_error(error: enc::Error) -> Self {
+        match error {
+            enc::Error::Stream(error) => Self::Stream(error),
+            _ => Self::LengthPrefixOutOfRange,
         }
     }
 
