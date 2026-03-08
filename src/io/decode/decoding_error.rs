@@ -15,6 +15,9 @@ pub enum DecodingError {
 
     /// An error decoding a packet.
     InvalidPacket(enc::Error),
+
+    /// The encoded boolean value was invalid. (must be 0 or 1)
+    InvalidBool(u8),
 }
 
 impl DecodingError {
