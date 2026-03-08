@@ -24,7 +24,7 @@ pub enum WireType {
     /// A variable-length encoded integer `n` followed by `n` bytes.
     LengthPrefixed,
 
-    /// A wire-type `w` dual-encoded with a var-int `n`, followed by `n` bytes. The `n` bytes are
+    /// A wire-type `w` dual-encoded with a var-primitive `n`, followed by `n` bytes. The `n` bytes are
     /// `x` sequential instances of `w` where `x` is unknown (until the list is decoded).
     List,
 }

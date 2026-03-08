@@ -13,3 +13,6 @@ license = "MIT"
 enc = { version = "0.19.0-rc.2", features = ["var-int"] }
 
 serde = { version = "1.0.228", features = ["derive"] }
+
+[dev-dependencies]
+enc = { version = "0.19.0-rc.2", features = ["dev"] }
