@@ -1,5 +1,6 @@
 use crate::io::WireType;
 use std::fmt::{Display, Formatter};
+use std::string::FromUtf8Error;
 
 /// A decoding error.
 #[derive(Debug)]
@@ -21,6 +22,9 @@ pub enum DecodingError {
 
     /// The encoded boolean value was invalid. (must be 0 or 1)
     InvalidBool(u8),
+
+    /// The encoded string was invalid.
+    InvalidString(FromUtf8Error),
 }
 
 impl DecodingError {
