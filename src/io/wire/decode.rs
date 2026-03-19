@@ -55,7 +55,6 @@ impl WireType {
         let prefix: usize = VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
             .map_err(DecodingError::from_length_prefix_error)?
             .value();
-        // todo -- may improve performance with `unsafe`
         let mut result: Vec<u8> = vec![0; prefix];
         r.read_exact(&mut result)?;
         Ok(result)

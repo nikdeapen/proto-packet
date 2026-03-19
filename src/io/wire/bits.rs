@@ -25,7 +25,7 @@ impl WireType {
     }
 
     /// Converts the wire type to the low 3-bits of a `u8`.
-    pub fn to_low_3_bits(&self) -> u8 {
+    pub fn to_low_3_bits(self) -> u8 {
         match self {
             Fixed1Byte => 0,
             Fixed2Byte => 1,
@@ -39,7 +39,7 @@ impl WireType {
     }
 
     /// Converts the wire type to the high 3-bits of a `u8`.
-    pub fn to_high_3_bits(&self) -> u8 {
+    pub fn to_high_3_bits(self) -> u8 {
         self.to_low_3_bits() << 5
     }
 }

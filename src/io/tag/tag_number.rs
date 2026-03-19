@@ -48,7 +48,7 @@ impl TagNumber {
     //! Properties
 
     /// Gets the tag number.
-    pub const fn value(&self) -> u32 {
+    pub const fn value(self) -> u32 {
         self.value
     }
 }

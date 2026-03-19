@@ -8,7 +8,7 @@ impl Encoder<'_, bool> {
     pub const ENCODED_LEN: usize = 1;
 
     /// Gets the encoded value.
-    pub fn encoded_value(&self) -> u8 {
+    pub fn encoded_value(self) -> u8 {
         if *self.value { 1 } else { 0 }
     }
 }

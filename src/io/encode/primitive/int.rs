@@ -3,7 +3,7 @@ use enc::var_int::{VarInt16, VarInt32, VarInt64, VarInt128};
 use enc::{EncodeToSlice, EncodedLen, Error, impl_encode_to_write_stack_buf};
 
 macro_rules! encode {
-    ($primitive:ident, $var_int:ident) => {
+    ($primitive:ident, $var_int:ident, $convert:ident) => {
         impl Encoder<'_, $primitive> {
             //! Constants
 
@@ -19,7 +19,7 @@ macro_rules! encode {
                 if self.fixed {
                     Ok(Self::FIXED_ENCODED_LEN)
                 } else {
-                    $var_int::from(self.value).encoded_len()
+                    $var_int::$convert(*self.value).encoded_len()
                 }
             }
         }
@@ -31,7 +31,7 @@ macro_rules! encode {
                         .copy_from_slice(&self.value.to_le_bytes());
                     Ok(Self::FIXED_ENCODED_LEN)
                 } else {
-                    unsafe { $var_int::from(self.value).encode_to_slice_unchecked(target) }
+                    unsafe { $var_int::$convert(*self.value).encode_to_slice_unchecked(target) }
                 }
             }
         }
@@ -43,14 +43,14 @@ macro_rules! encode {
     };
 }
 
-encode!(u16, VarInt16);
-encode!(u32, VarInt32);
-encode!(u64, VarInt64);
-encode!(u128, VarInt128);
-encode!(i16, VarInt16);
-encode!(i32, VarInt32);
-encode!(i64, VarInt64);
-encode!(i128, VarInt128);
+encode!(u16, VarInt16, from);
+encode!(u32, VarInt32, from);
+encode!(u64, VarInt64, from);
+encode!(u128, VarInt128, from);
+encode!(i16, VarInt16, from_zigzag);
+encode!(i32, VarInt32, from_zigzag);
+encode!(i64, VarInt64, from_zigzag);
+encode!(i128, VarInt128, from_zigzag);
 
 #[cfg(test)]
 mod tests {
@@ -151,7 +151,7 @@ mod tests {
                 let expected: Vec<u8> = if fixed {
                     value.to_le_bytes().to_vec()
                 } else {
-                    VarInt16::from(value).encode_as_vec().unwrap()
+                    VarInt16::from_zigzag(*value).encode_as_vec().unwrap()
                 };
                 (*value, fixed, expected)
             })
@@ -172,7 +172,7 @@ mod tests {
                 let expected: Vec<u8> = if fixed {
                     value.to_le_bytes().to_vec()
                 } else {
-                    VarInt32::from(value).encode_as_vec().unwrap()
+                    VarInt32::from_zigzag(*value).encode_as_vec().unwrap()
                 };
                 (*value, fixed, expected)
             })
@@ -193,7 +193,7 @@ mod tests {
                 let expected: Vec<u8> = if fixed {
                     value.to_le_bytes().to_vec()
                 } else {
-                    VarInt64::from(value).encode_as_vec().unwrap()
+                    VarInt64::from_zigzag(*value).encode_as_vec().unwrap()
                 };
                 (*value, fixed, expected)
             })
@@ -215,7 +215,7 @@ mod tests {
                     let expected: Vec<u8> = if fixed {
                         value.to_le_bytes().to_vec()
                     } else {
-                        VarInt128::from(value).encode_as_vec().unwrap()
+                        VarInt128::from_zigzag(*value).encode_as_vec().unwrap()
                     };
                     (*value, fixed, expected)
                 })

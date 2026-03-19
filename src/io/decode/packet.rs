@@ -23,7 +23,7 @@ impl Decoder {
         if wire == P::wire() {
             if wire == LengthPrefixed {
                 let prefix: usize = VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
-                    .map_err(DecodingError::from_var_int_error)?
+                    .map_err(DecodingError::from_length_prefix_error)?
                     .value();
                 const _: () = assert!(usize::BITS <= 64);
                 let mut r: Take<&mut R> = r.take(prefix as u64);

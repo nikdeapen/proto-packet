@@ -6,4 +6,4 @@
 
 This library provides the dependencies for generated ProtoPacket code.
 
-    proto-packet = "0.1.0-rc.9"
+    proto-packet = "0.1.0-rc.10"
