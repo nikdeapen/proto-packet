@@ -120,6 +120,9 @@ mod tests {
         let decoder: Decoder = Decoder::default();
         let result: Result<i32, DecodingError> =
             decoder.decode_i32(LengthPrefixed, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(LengthPrefixed))));
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(LengthPrefixed))
+        ));
     }
 }

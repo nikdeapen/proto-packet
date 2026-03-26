@@ -23,9 +23,8 @@ impl Decoder {
             return Err(InvalidWireType(wire));
         }
 
-        let header: ListHeader =
-            ListHeader::decode_from_read_prefix_with_first_byte(r, first)
-                .map_err(DecodingError::from_length_prefix_error)?;
+        let header: ListHeader = ListHeader::decode_from_read_prefix_with_first_byte(r, first)
+            .map_err(DecodingError::from_length_prefix_error)?;
 
         if header.wire() != WireType::Fixed16Byte {
             return Err(InvalidWireType(header.wire()));
@@ -47,8 +46,8 @@ impl Decoder {
 
 #[cfg(test)]
 mod tests {
-    use crate::io::{Decoder, DecodingError};
     use crate::io::WireType::*;
+    use crate::io::{Decoder, DecodingError};
     use uuid::Uuid;
 
     #[test]
@@ -62,16 +61,17 @@ mod tests {
         let result: Vec<Uuid> = decoder
             .decode_uuid_slice(List, &mut data.as_slice(), 0x9F)
             .unwrap();
-        assert_eq!(result, vec![Uuid::from_bytes([1; 16]), Uuid::from_bytes([2; 16])]);
+        assert_eq!(
+            result,
+            vec![Uuid::from_bytes([1; 16]), Uuid::from_bytes([2; 16])]
+        );
     }
 
     #[test]
     fn decode_uuid_slice_empty() {
         let decoder: Decoder = Decoder::default();
         // ListHeader: wire=Fixed16Byte(4), size=0 -> 0x80
-        let result: Vec<Uuid> = decoder
-            .decode_uuid_slice(List, &mut &[][..], 0x80)
-            .unwrap();
+        let result: Vec<Uuid> = decoder.decode_uuid_slice(List, &mut &[][..], 0x80).unwrap();
         assert!(result.is_empty());
     }
 
@@ -80,6 +80,9 @@ mod tests {
         let decoder: Decoder = Decoder::default();
         let result: Result<Vec<Uuid>, DecodingError> =
             decoder.decode_uuid_slice(VarInt, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(VarInt))));
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(VarInt))
+        ));
     }
 }

@@ -49,16 +49,17 @@ mod tests {
     #[test]
     fn decode_invalid_value() {
         let decoder: Decoder = Decoder::default();
-        let result: Result<bool, DecodingError> =
-            decoder.decode_bool(Fixed1Byte, &mut &[][..], 2);
+        let result: Result<bool, DecodingError> = decoder.decode_bool(Fixed1Byte, &mut &[][..], 2);
         assert!(matches!(result, Err(DecodingError::InvalidBool(2))));
     }
 
     #[test]
     fn decode_invalid_wire_type() {
         let decoder: Decoder = Decoder::default();
-        let result: Result<bool, DecodingError> =
-            decoder.decode_bool(VarInt, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(VarInt))));
+        let result: Result<bool, DecodingError> = decoder.decode_bool(VarInt, &mut &[][..], 0);
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(VarInt))
+        ));
     }
 }

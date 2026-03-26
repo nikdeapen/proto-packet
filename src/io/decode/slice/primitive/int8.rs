@@ -23,10 +23,9 @@ macro_rules! decode_int8_slice {
                     return Err(InvalidWireType(wire));
                 }
 
-                let len: usize =
-                    VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
-                        .map_err(DecodingError::from_length_prefix_error)?
-                        .value();
+                let len: usize = VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
+                    .map_err(DecodingError::from_length_prefix_error)?
+                    .value();
 
                 let mut bytes: Vec<u8> = vec![0u8; len];
                 r.read_exact(&mut bytes)?;
@@ -50,8 +49,8 @@ decode_int8_slice!(decode_i8_slice, i8, bytes_to_i8);
 
 #[cfg(test)]
 mod tests {
-    use crate::io::{Decoder, DecodingError};
     use crate::io::WireType::*;
+    use crate::io::{Decoder, DecodingError};
 
     #[test]
     fn decode_u8_slice() {
@@ -85,6 +84,9 @@ mod tests {
         let decoder: Decoder = Decoder::default();
         let result: Result<Vec<u8>, DecodingError> =
             decoder.decode_u8_slice(VarInt, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(VarInt))));
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(VarInt))
+        ));
     }
 }

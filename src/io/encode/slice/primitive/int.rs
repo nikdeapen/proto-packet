@@ -36,19 +36,13 @@ macro_rules! encode_int_slice {
         }
 
         impl EncodeToSlice for Encoder<'_, Vec<$primitive>> {
-            unsafe fn encode_to_slice_unchecked(
-                &self,
-                target: &mut [u8],
-            ) -> Result<usize, Error> {
+            unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
                 let elements: usize = self.elements_len()?;
                 let header: ListHeader = ListHeader::new(self.wire_type(), elements);
-                let mut offset: usize =
-                    unsafe { header.encode_to_slice_unchecked(target)? };
+                let mut offset: usize = unsafe { header.encode_to_slice_unchecked(target)? };
                 for element in self.value.iter() {
                     let encoder: Encoder<'_, $primitive> = Encoder::new(element, self.fixed);
-                    offset += unsafe {
-                        encoder.encode_to_slice_unchecked(&mut target[offset..])?
-                    };
+                    offset += unsafe { encoder.encode_to_slice_unchecked(&mut target[offset..])? };
                 }
                 Ok(offset)
             }

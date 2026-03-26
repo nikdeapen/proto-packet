@@ -118,8 +118,10 @@ mod tests {
     #[test]
     fn decode_invalid_wire_type() {
         let decoder: Decoder = Decoder::default();
-        let result: Result<i8, DecodingError> =
-            decoder.decode_i8(LengthPrefixed, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(LengthPrefixed))));
+        let result: Result<i8, DecodingError> = decoder.decode_i8(LengthPrefixed, &mut &[][..], 0);
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(LengthPrefixed))
+        ));
     }
 }

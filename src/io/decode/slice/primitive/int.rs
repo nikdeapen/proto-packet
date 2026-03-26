@@ -53,8 +53,8 @@ decode_int_slice!(decode_i128_slice, i128, decode_i128);
 
 #[cfg(test)]
 mod tests {
-    use crate::io::{Decoder, DecodingError};
     use crate::io::WireType::*;
+    use crate::io::{Decoder, DecodingError};
 
     #[test]
     fn decode_u32_slice_varint() {
@@ -71,9 +71,7 @@ mod tests {
     fn decode_u32_slice_empty() {
         let decoder: Decoder = Decoder::default();
         // ListHeader: wire=VarInt(5), size=0 -> 0xA0
-        let result: Vec<u32> = decoder
-            .decode_u32_slice(List, &mut &[][..], 0xA0)
-            .unwrap();
+        let result: Vec<u32> = decoder.decode_u32_slice(List, &mut &[][..], 0xA0).unwrap();
         assert!(result.is_empty());
     }
 
@@ -93,6 +91,9 @@ mod tests {
         let decoder: Decoder = Decoder::default();
         let result: Result<Vec<u32>, DecodingError> =
             decoder.decode_u32_slice(VarInt, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(VarInt))));
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(VarInt))
+        ));
     }
 }

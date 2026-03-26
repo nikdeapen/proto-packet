@@ -44,8 +44,8 @@ impl Decoder {
 
 #[cfg(test)]
 mod tests {
-    use crate::io::{Decoder, DecodingError};
     use crate::io::WireType::*;
+    use crate::io::{Decoder, DecodingError};
 
     #[test]
     fn decode_bool_slice() {
@@ -78,6 +78,9 @@ mod tests {
         let decoder: Decoder = Decoder::default();
         let result: Result<Vec<bool>, DecodingError> =
             decoder.decode_bool_slice(VarInt, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(VarInt))));
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(VarInt))
+        ));
     }
 }

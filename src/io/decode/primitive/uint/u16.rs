@@ -107,6 +107,9 @@ mod tests {
         let decoder: Decoder = Decoder::default();
         let result: Result<u16, DecodingError> =
             decoder.decode_u16(LengthPrefixed, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(LengthPrefixed))));
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(LengthPrefixed))
+        ));
     }
 }

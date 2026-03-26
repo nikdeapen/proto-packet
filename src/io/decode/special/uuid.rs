@@ -55,8 +55,10 @@ mod tests {
     #[test]
     fn decode_invalid_wire_type() {
         let decoder: Decoder = Decoder::default();
-        let result: Result<Uuid, DecodingError> =
-            decoder.decode_uuid(VarInt, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(VarInt))));
+        let result: Result<Uuid, DecodingError> = decoder.decode_uuid(VarInt, &mut &[][..], 0);
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(VarInt))
+        ));
     }
 }

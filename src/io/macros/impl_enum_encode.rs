@@ -24,9 +24,6 @@ macro_rules! impl_enum_encode {
             }
         }
 
-        enc::impl_encode_to_write_stack_buf!(
-            $enum_type,
-            enc::var_int::VarInt32::MAX_ENCODED_LEN
-        );
+        enc::impl_encode_to_write_stack_buf!($enum_type, enc::var_int::VarInt32::MAX_ENCODED_LEN);
     };
 }

@@ -22,9 +22,8 @@ impl Decoder {
             return Err(InvalidWireType(wire));
         }
 
-        let header: ListHeader =
-            ListHeader::decode_from_read_prefix_with_first_byte(r, first)
-                .map_err(DecodingError::from_length_prefix_error)?;
+        let header: ListHeader = ListHeader::decode_from_read_prefix_with_first_byte(r, first)
+            .map_err(DecodingError::from_length_prefix_error)?;
 
         if header.wire() != WireType::LengthPrefixed {
             return Err(InvalidWireType(header.wire()));
@@ -46,8 +45,8 @@ impl Decoder {
 
 #[cfg(test)]
 mod tests {
-    use crate::io::{Decoder, DecodingError};
     use crate::io::WireType::*;
+    use crate::io::{Decoder, DecodingError};
 
     #[test]
     fn decode_string_slice() {
@@ -77,6 +76,9 @@ mod tests {
         let decoder: Decoder = Decoder::default();
         let result: Result<Vec<String>, DecodingError> =
             decoder.decode_string_slice(VarInt, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(VarInt))));
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(VarInt))
+        ));
     }
 }

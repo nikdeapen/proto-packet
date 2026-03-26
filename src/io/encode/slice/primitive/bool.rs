@@ -14,8 +14,7 @@ impl EncodedLen for Encoder<'_, Vec<bool>> {
 impl EncodeToSlice for Encoder<'_, Vec<bool>> {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
         let len: usize = self.value.len();
-        let prefix: usize =
-            unsafe { VarIntSize::from(len).encode_to_slice_unchecked(target)? };
+        let prefix: usize = unsafe { VarIntSize::from(len).encode_to_slice_unchecked(target)? };
         for (i, b) in self.value.iter().enumerate() {
             target[prefix + i] = if *b { 1 } else { 0 };
         }

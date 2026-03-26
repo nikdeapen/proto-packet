@@ -75,8 +75,7 @@ mod tests {
     #[test]
     fn decode_fixed_2_byte_out_of_range() {
         let decoder: Decoder = Decoder::default();
-        let result: Result<u8, DecodingError> =
-            decoder.decode_u8(Fixed2Byte, &mut &[1u8][..], 0);
+        let result: Result<u8, DecodingError> = decoder.decode_u8(Fixed2Byte, &mut &[1u8][..], 0);
         assert!(matches!(result, Err(DecodingError::ValueOutOfRange)));
     }
 
@@ -108,16 +107,17 @@ mod tests {
     fn decode_varint_out_of_range() {
         let decoder: Decoder = Decoder::default();
         // varint 256 = [0x80, 0x02]
-        let result: Result<u8, DecodingError> =
-            decoder.decode_u8(VarInt, &mut &[0x02u8][..], 0x80);
+        let result: Result<u8, DecodingError> = decoder.decode_u8(VarInt, &mut &[0x02u8][..], 0x80);
         assert!(matches!(result, Err(DecodingError::ValueOutOfRange)));
     }
 
     #[test]
     fn decode_invalid_wire_type() {
         let decoder: Decoder = Decoder::default();
-        let result: Result<u8, DecodingError> =
-            decoder.decode_u8(LengthPrefixed, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(LengthPrefixed))));
+        let result: Result<u8, DecodingError> = decoder.decode_u8(LengthPrefixed, &mut &[][..], 0);
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(LengthPrefixed))
+        ));
     }
 }

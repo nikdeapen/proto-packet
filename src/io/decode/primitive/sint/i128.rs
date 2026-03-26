@@ -40,9 +40,7 @@ mod tests {
     #[test]
     fn decode_fixed_1_byte() {
         let decoder: Decoder = Decoder::default();
-        let result: i128 = decoder
-            .decode_i128(Fixed1Byte, &mut &[][..], 0xFF)
-            .unwrap();
+        let result: i128 = decoder.decode_i128(Fixed1Byte, &mut &[][..], 0xFF).unwrap();
         assert_eq!(result, -1);
     }
 
@@ -101,6 +99,9 @@ mod tests {
         let decoder: Decoder = Decoder::default();
         let result: Result<i128, DecodingError> =
             decoder.decode_i128(LengthPrefixed, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(LengthPrefixed))));
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(LengthPrefixed))
+        ));
     }
 }

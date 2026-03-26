@@ -14,10 +14,7 @@ macro_rules! encode_single_byte_slice {
         }
 
         impl EncodeToSlice for Encoder<'_, Vec<$primitive>> {
-            unsafe fn encode_to_slice_unchecked(
-                &self,
-                target: &mut [u8],
-            ) -> Result<usize, Error> {
+            unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
                 let len: usize = self.value.len();
                 let prefix: usize =
                     unsafe { VarIntSize::from(len).encode_to_slice_unchecked(target)? };

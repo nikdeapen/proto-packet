@@ -66,6 +66,9 @@ mod tests {
         let decoder: Decoder = Decoder::default();
         let result: Result<String, DecodingError> =
             decoder.decode_string(Fixed1Byte, &mut &[][..], 0);
-        assert!(matches!(result, Err(DecodingError::InvalidWireType(Fixed1Byte))));
+        assert!(matches!(
+            result,
+            Err(DecodingError::InvalidWireType(Fixed1Byte))
+        ));
     }
 }
