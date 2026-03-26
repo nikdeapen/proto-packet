@@ -6,6 +6,17 @@ pub struct ServiceError {
     cause: Box<dyn std::error::Error + Send + Sync>,
 }
 
+impl ServiceError {
+    //! Construction
+
+    /// Creates a new service error.
+    pub fn new<E: std::error::Error + Send + Sync + 'static>(error: E) -> Self {
+        Self {
+            cause: Box::new(error),
+        }
+    }
+}
+
 impl From<Box<dyn std::error::Error + Send + Sync>> for ServiceError {
     fn from(cause: Box<dyn std::error::Error + Send + Sync>) -> Self {
         Self { cause }
