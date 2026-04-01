@@ -1,7 +1,7 @@
 use crate::service::ServiceError;
 use actix_web::web;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 use std::sync::Mutex;
 
 use super::handle_request;

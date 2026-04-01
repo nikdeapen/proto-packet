@@ -1,7 +1,7 @@
 use crate::service::{ServiceDispatchError, ServiceError};
 use actix_web::HttpResponse;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 
 /// Handles an actix-web request by decoding JSON, calling the service, and encoding the response.
 pub fn handle_request<I, O, F>(body: &[u8], service_call: F) -> HttpResponse

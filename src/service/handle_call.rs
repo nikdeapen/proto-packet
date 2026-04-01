@@ -1,6 +1,6 @@
 use crate::service::{ServiceDispatchError, ServiceError};
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 
 /// Handles the `service_call`.
 pub fn handle_call<I, O, F>(
