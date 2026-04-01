@@ -5,13 +5,13 @@ use std::fmt::{Display, Formatter};
 #[derive(Debug)]
 pub enum ServiceDispatchError {
     /// An error decoding the request.
-    Decode(enc::Error),
+    Decode(serde_json::Error),
 
     /// The service call returned an error.
     Service(ServiceError),
 
     /// An error encoding the response.
-    Encode(enc::Error),
+    Encode(serde_json::Error),
 }
 
 impl From<ServiceError> for ServiceDispatchError {

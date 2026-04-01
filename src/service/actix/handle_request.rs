@@ -1,18 +1,18 @@
 use crate::service::{ServiceDispatchError, ServiceError};
 use actix_web::HttpResponse;
-use enc::{DecodeFromRead, EncodeToWrite};
+use serde::de::DeserializeOwned;
+use serde::Serialize;
 
-/// Handles an actix-web request by decoding, calling the service, and encoding the response.
+/// Handles an actix-web request by decoding JSON, calling the service, and encoding the response.
 pub fn handle_request<I, O, F>(body: &[u8], service_call: F) -> HttpResponse
 where
-    I: DecodeFromRead,
-    O: EncodeToWrite,
+    I: DeserializeOwned,
+    O: Serialize,
     F: FnOnce(I) -> Result<O, ServiceError>,
 {
-    let mut response_bytes: Vec<u8> = Vec::new();
-    match crate::service::handle_call(&mut &*body, &mut response_bytes, service_call) {
-        Ok(()) => HttpResponse::Ok()
-            .content_type("application/octet-stream")
+    match crate::service::handle_call(body, service_call) {
+        Ok(response_bytes) => HttpResponse::Ok()
+            .content_type("application/json")
             .body(response_bytes),
         Err(error) => dispatch_error_to_response(error),
     }

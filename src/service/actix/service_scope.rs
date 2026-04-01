@@ -1,6 +1,7 @@
 use crate::service::ServiceError;
 use actix_web::web;
-use enc::{DecodeFromRead, EncodeToWrite};
+use serde::de::DeserializeOwned;
+use serde::Serialize;
 use std::sync::Mutex;
 
 use super::handle_request;
@@ -29,8 +30,8 @@ impl<S: 'static> ServiceScope<S> {
     /// Registers a service call at the given `path`.
     pub fn call<I, O, F>(mut self, path: &str, f: F) -> Self
     where
-        I: DecodeFromRead + 'static,
-        O: EncodeToWrite + 'static,
+        I: DeserializeOwned + 'static,
+        O: Serialize + 'static,
         F: Fn(&mut S, I) -> Result<O, ServiceError> + 'static + Clone,
     {
         let service: web::Data<Mutex<S>> = self.service.clone();

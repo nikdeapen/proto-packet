@@ -6,5 +6,4 @@ mod handle_call;
 mod service_dispatch_error;
 mod service_error;
 
-#[cfg(feature = "actix")]
 pub mod actix;
