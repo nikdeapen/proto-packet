@@ -30,7 +30,7 @@ impl Display for ServiceError {
 }
 
 impl std::error::Error for ServiceError {
-    fn cause(&self) -> Option<&(dyn std::error::Error + 'static)> {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         Some(self.cause.as_ref())
     }
 }

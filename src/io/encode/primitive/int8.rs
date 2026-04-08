@@ -7,7 +7,7 @@ macro_rules! encode {
             //! Constants
 
             /// The fixed encoded length. (1)
-            pub const FIXED_ENCODED_LEN: usize = 1;
+            const FIXED_ENCODED_LEN: usize = 1;
         }
 
         impl EncodedLen for Encoder<'_, $primitive> {
@@ -40,28 +40,26 @@ mod tests {
 
     #[test]
     fn encode_u8() {
-        let test_cases: Vec<(u8, bool, Vec<u8>)> = [0u8, 0x7F, 0xFF]
-            .iter()
-            .flat_map(|value| [(value, true), (value, false)])
-            .map(|(value, fixed)| (*value, fixed, vec![*value]))
-            .collect();
+        let cases: &[(u8, &[u8])] = &[(0, &[0x00]), (0x7F, &[0x7F]), (0xFF, &[0xFF])];
 
-        for (value, fixed, expected) in &test_cases {
-            let encoder: Encoder<'_, u8> = Encoder::new(value, *fixed);
+        for (value, expected) in cases {
+            let encoder: Encoder<'_, u8> = Encoder::new(value, false);
             test::test_encode(&encoder, expected);
         }
     }
 
     #[test]
     fn encode_i8() {
-        let test_cases: Vec<(i8, bool, Vec<u8>)> = [0i8, -1, 1, i8::MIN, i8::MAX]
-            .iter()
-            .flat_map(|value| [(value, true), (value, false)])
-            .map(|(value, fixed)| (*value, fixed, vec![*value as u8]))
-            .collect();
+        let cases: &[(i8, &[u8])] = &[
+            (0, &[0x00]),
+            (-1, &[0xFF]),
+            (1, &[0x01]),
+            (i8::MIN, &[0x80]),
+            (i8::MAX, &[0x7F]),
+        ];
 
-        for (value, fixed, expected) in &test_cases {
-            let encoder: Encoder<'_, i8> = Encoder::new(value, *fixed);
+        for (value, expected) in cases {
+            let encoder: Encoder<'_, i8> = Encoder::new(value, false);
             test::test_encode(&encoder, expected);
         }
     }

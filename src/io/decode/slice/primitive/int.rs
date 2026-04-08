@@ -6,7 +6,7 @@ use enc::{DecodeFromReadPrefix, read_single_byte};
 use std::io::{Read, Take};
 
 macro_rules! decode_int_slice {
-    ($fn_name:ident, $primitive:ty, $decode_fn:ident) => {
+    ($fn_name:ident, $primitive:ty, $decode_fn:ident, $decoding:literal) => {
         impl Decoder {
             /// Decodes a `Vec<$primitive>` from the `Read` prefix with the `first` byte.
             pub fn $fn_name<R>(
@@ -19,7 +19,10 @@ macro_rules! decode_int_slice {
                 R: Read,
             {
                 if wire != List {
-                    return Err(InvalidWireType(wire));
+                    return Err(InvalidWireType {
+                        semantic: $decoding,
+                        wire,
+                    });
                 }
 
                 let header: ListHeader =
@@ -42,14 +45,14 @@ macro_rules! decode_int_slice {
     };
 }
 
-decode_int_slice!(decode_u16_slice, u16, decode_u16);
-decode_int_slice!(decode_u32_slice, u32, decode_u32);
-decode_int_slice!(decode_u64_slice, u64, decode_u64);
-decode_int_slice!(decode_u128_slice, u128, decode_u128);
-decode_int_slice!(decode_i16_slice, i16, decode_i16);
-decode_int_slice!(decode_i32_slice, i32, decode_i32);
-decode_int_slice!(decode_i64_slice, i64, decode_i64);
-decode_int_slice!(decode_i128_slice, i128, decode_i128);
+decode_int_slice!(decode_u16_slice, u16, decode_u16, "Vec<u16>");
+decode_int_slice!(decode_u32_slice, u32, decode_u32, "Vec<u32>");
+decode_int_slice!(decode_u64_slice, u64, decode_u64, "Vec<u64>");
+decode_int_slice!(decode_u128_slice, u128, decode_u128, "Vec<u128>");
+decode_int_slice!(decode_i16_slice, i16, decode_i16, "Vec<i16>");
+decode_int_slice!(decode_i32_slice, i32, decode_i32, "Vec<i32>");
+decode_int_slice!(decode_i64_slice, i64, decode_i64, "Vec<i64>");
+decode_int_slice!(decode_i128_slice, i128, decode_i128, "Vec<i128>");
 
 #[cfg(test)]
 mod tests {
@@ -93,7 +96,10 @@ mod tests {
             decoder.decode_u32_slice(VarInt, &mut &[][..], 0);
         assert!(matches!(
             result,
-            Err(DecodingError::InvalidWireType(VarInt))
+            Err(DecodingError::InvalidWireType {
+                semantic: "Vec<u32>",
+                wire: VarInt
+            })
         ));
     }
 }

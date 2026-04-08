@@ -22,7 +22,10 @@ impl Decoder {
                 let value: String = String::from_utf8(value).map_err(InvalidString)?;
                 Ok(value)
             }
-            _ => Err(DecodingError::InvalidWireType(wire)),
+            _ => Err(DecodingError::InvalidWireType {
+                semantic: "String",
+                wire,
+            }),
         }
     }
 }
@@ -30,45 +33,63 @@ impl Decoder {
 #[cfg(test)]
 mod tests {
     use crate::io::WireType::*;
-    use crate::io::{Decoder, DecodingError};
+    use crate::io::{Decoder, DecodingError, WireType};
+
+    /// A comparable representation of a [Decoder::decode_string] result.
+    #[derive(Debug, PartialEq, Eq)]
+    enum Outcome {
+        Ok(String),
+        InvalidString,
+        InvalidWireType,
+    }
+
+    impl From<Result<String, DecodingError>> for Outcome {
+        fn from(result: Result<String, DecodingError>) -> Self {
+            match result {
+                Ok(value) => Self::Ok(value),
+                Err(DecodingError::InvalidString(_)) => Self::InvalidString,
+                Err(DecodingError::InvalidWireType { .. }) => Self::InvalidWireType,
+                Err(error) => panic!("unexpected error: {:?}", error),
+            }
+        }
+    }
 
     #[test]
     fn decode_string() {
-        let decoder: Decoder = Decoder::default();
-        // length prefix 13, then "Hello, World!"
-        let data: &[u8] = b"Hello, World!";
-        let result: String = decoder
-            .decode_string(LengthPrefixed, &mut &data[..], 13)
-            .unwrap();
-        assert_eq!(result, "Hello, World!");
-    }
+        let cases: &[(WireType, u8, &[u8], Outcome)] = &[
+            // LengthPrefixed
+            (LengthPrefixed, 0, &[], Outcome::Ok(String::new())),
+            (
+                LengthPrefixed,
+                13,
+                b"Hello, World!",
+                Outcome::Ok("Hello, World!".to_string()),
+            ),
+            (
+                LengthPrefixed,
+                5,
+                b"hello",
+                Outcome::Ok("hello".to_string()),
+            ),
+            (LengthPrefixed, 2, &[0xFF, 0xFE], Outcome::InvalidString),
+            // InvalidWireType
+            (Fixed1Byte, 0, &[], Outcome::InvalidWireType),
+            (Fixed2Byte, 0, &[], Outcome::InvalidWireType),
+            (Fixed4Byte, 0, &[], Outcome::InvalidWireType),
+            (Fixed8Byte, 0, &[], Outcome::InvalidWireType),
+            (Fixed16Byte, 0, &[], Outcome::InvalidWireType),
+            (VarInt, 0, &[], Outcome::InvalidWireType),
+            (List, 0, &[], Outcome::InvalidWireType),
+        ];
 
-    #[test]
-    fn decode_empty_string() {
         let decoder: Decoder = Decoder::default();
-        let result: String = decoder
-            .decode_string(LengthPrefixed, &mut &[][..], 0)
-            .unwrap();
-        assert_eq!(result, "");
-    }
-
-    #[test]
-    fn decode_invalid_utf8() {
-        let decoder: Decoder = Decoder::default();
-        let data: &[u8] = &[0xFF, 0xFE];
-        let result: Result<String, DecodingError> =
-            decoder.decode_string(LengthPrefixed, &mut &data[..], 2);
-        assert!(matches!(result, Err(DecodingError::InvalidString(_))));
-    }
-
-    #[test]
-    fn decode_invalid_wire_type() {
-        let decoder: Decoder = Decoder::default();
-        let result: Result<String, DecodingError> =
-            decoder.decode_string(Fixed1Byte, &mut &[][..], 0);
-        assert!(matches!(
-            result,
-            Err(DecodingError::InvalidWireType(Fixed1Byte))
-        ));
+        for (wire, first, rest, expected) in cases {
+            let mut input: &[u8] = rest;
+            let actual: Outcome = decoder.decode_string(*wire, &mut input, *first).into();
+            assert_eq!(
+                actual, *expected,
+                "wire={wire:?} first={first:#x} rest={rest:?}"
+            );
+        }
     }
 }

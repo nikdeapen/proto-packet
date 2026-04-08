@@ -2,12 +2,13 @@ use crate::io::Encoder;
 use enc::{EncodeToSlice, EncodedLen, Error, impl_encode_to_write_stack_buf};
 
 impl Encoder<'_, bool> {
-    //! Utilities
+    //! Constants
 
     /// The encoded length of a boolean value.
-    pub const ENCODED_LEN: usize = 1;
+    const ENCODED_LEN: usize = 1;
 
     /// Gets the encoded value.
+    #[inline(always)]
     pub fn encoded_value(self) -> u8 {
         if *self.value { 1 } else { 0 }
     }
@@ -36,14 +37,12 @@ mod tests {
     use enc::test;
 
     #[test]
-    fn encode_true() {
-        let encoder: Encoder<'_, bool> = Encoder::new(&true, false);
-        test::test_encode(&encoder, &[1]);
-    }
+    fn encode_bool() {
+        let cases: &[(bool, &[u8])] = &[(false, &[0]), (true, &[1])];
 
-    #[test]
-    fn encode_false() {
-        let encoder: Encoder<'_, bool> = Encoder::new(&false, false);
-        test::test_encode(&encoder, &[0]);
+        for (value, expected) in cases {
+            let encoder: Encoder<'_, bool> = Encoder::new(value, false);
+            test::test_encode(&encoder, expected);
+        }
     }
 }

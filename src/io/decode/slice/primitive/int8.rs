@@ -6,46 +6,71 @@ use enc::DecodeFromReadPrefix;
 use enc::var_int::VarIntSize;
 use std::io::Read;
 
-macro_rules! decode_int8_slice {
-    ($fn_name:ident, $primitive:ty, $convert:expr) => {
-        impl Decoder {
-            /// Decodes a `Vec<$primitive>` from the `Read` prefix with the `first` byte.
-            pub fn $fn_name<R>(
-                &self,
-                wire: WireType,
-                r: &mut R,
-                first: u8,
-            ) -> Result<Vec<$primitive>, DecodingError>
-            where
-                R: Read,
-            {
-                if wire != LengthPrefixed {
-                    return Err(InvalidWireType(wire));
-                }
+impl Decoder {
+    //! Decode: `Vec<u8>`
 
-                let len: usize = VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
-                    .map_err(DecodingError::from_length_prefix_error)?
-                    .value();
-
-                let mut bytes: Vec<u8> = vec![0u8; len];
-                r.read_exact(&mut bytes)?;
-
-                Ok($convert(bytes))
-            }
+    /// Decodes a `Vec<u8>` from the `Read` prefix with the `first` byte.
+    pub fn decode_u8_slice<R>(
+        &self,
+        wire: WireType,
+        r: &mut R,
+        first: u8,
+    ) -> Result<Vec<u8>, DecodingError>
+    where
+        R: Read,
+    {
+        if wire != LengthPrefixed {
+            return Err(InvalidWireType {
+                semantic: "Vec<u8>",
+                wire,
+            });
         }
-    };
+
+        let len: usize = VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
+            .map_err(DecodingError::from_length_prefix_error)?
+            .value();
+
+        let mut bytes: Vec<u8> = vec![0u8; len];
+        r.read_exact(&mut bytes)?;
+        Ok(bytes)
+    }
 }
 
-fn bytes_to_u8(bytes: Vec<u8>) -> Vec<u8> {
-    bytes
-}
+impl Decoder {
+    //! Decode: `Vec<i8>`
 
-fn bytes_to_i8(bytes: Vec<u8>) -> Vec<i8> {
-    unsafe { std::mem::transmute::<Vec<u8>, Vec<i8>>(bytes) }
-}
+    /// Decodes a `Vec<i8>` from the `Read` prefix with the `first` byte.
+    pub fn decode_i8_slice<R>(
+        &self,
+        wire: WireType,
+        r: &mut R,
+        first: u8,
+    ) -> Result<Vec<i8>, DecodingError>
+    where
+        R: Read,
+    {
+        if wire != LengthPrefixed {
+            return Err(InvalidWireType {
+                semantic: "Vec<i8>",
+                wire,
+            });
+        }
 
-decode_int8_slice!(decode_u8_slice, u8, bytes_to_u8);
-decode_int8_slice!(decode_i8_slice, i8, bytes_to_i8);
+        let len: usize = VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
+            .map_err(DecodingError::from_length_prefix_error)?
+            .value();
+
+        let mut bytes: Vec<u8> = vec![0u8; len];
+        r.read_exact(&mut bytes)?;
+
+        // Reinterpret the `Vec<u8>` buffer as a `Vec<i8>` without copying. `u8` and `i8` have the
+        // same size and alignment, so the existing allocation can be re-owned by a `Vec<i8>`.
+        let cap: usize = bytes.capacity();
+        let ptr: *mut i8 = bytes.as_mut_ptr() as *mut i8;
+        std::mem::forget(bytes);
+        Ok(unsafe { Vec::from_raw_parts(ptr, len, cap) })
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -86,7 +111,10 @@ mod tests {
             decoder.decode_u8_slice(VarInt, &mut &[][..], 0);
         assert!(matches!(
             result,
-            Err(DecodingError::InvalidWireType(VarInt))
+            Err(DecodingError::InvalidWireType {
+                semantic: "Vec<u8>",
+                wire: VarInt
+            })
         ));
     }
 }

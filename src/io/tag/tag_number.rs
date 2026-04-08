@@ -64,3 +64,57 @@ impl Display for TagNumber {
         write!(f, "{}", self.value)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::io::TagNumber;
+
+    #[test]
+    fn is_valid() {
+        let cases: &[(u32, bool)] = &[
+            (0, false),
+            (1, true),
+            (42, true),
+            (TagNumber::MAX_TAG_NUMBER, true),
+            (TagNumber::MAX_TAG_NUMBER + 1, false),
+            (u32::MAX, false),
+        ];
+        for (value, expected) in cases {
+            assert_eq!(TagNumber::is_valid(*value), *expected, "value={value}");
+        }
+    }
+
+    #[test]
+    fn new() {
+        let cases: &[(u32, Option<u32>)] = &[
+            (0, None),
+            (1, Some(1)),
+            (42, Some(42)),
+            (TagNumber::MAX_TAG_NUMBER, Some(TagNumber::MAX_TAG_NUMBER)),
+            (TagNumber::MAX_TAG_NUMBER + 1, None),
+            (u32::MAX, None),
+        ];
+        for (input, expected) in cases {
+            let actual: Option<u32> = TagNumber::new(*input).map(TagNumber::value);
+            assert_eq!(actual, *expected, "input={input}");
+        }
+    }
+
+    #[test]
+    fn new_unchecked() {
+        let cases: &[u32] = &[1, 42, TagNumber::MAX_TAG_NUMBER];
+        for input in cases {
+            let tag: TagNumber = unsafe { TagNumber::new_unchecked(*input) };
+            assert_eq!(tag.value(), *input, "input={input}");
+        }
+    }
+
+    #[test]
+    fn value() {
+        let cases: &[u32] = &[1, 42, 12345, TagNumber::MAX_TAG_NUMBER];
+        for input in cases {
+            let tag: TagNumber = TagNumber::new(*input).unwrap();
+            assert_eq!(tag.value(), *input, "input={input}");
+        }
+    }
+}

@@ -8,17 +8,27 @@ pub enum DecodingError {
     /// There was an error reading the stream.
     Stream(std::io::Error),
 
-    /// The wire type was invalid.
-    InvalidWireType(WireType),
+    /// The wire type was invalid for the value being decoded.
+    InvalidWireType {
+        semantic: &'static str,
+        wire: WireType,
+    },
 
     /// The value was out of range.
     ValueOutOfRange,
 
-    /// The length prefix is out of range.
+    /// The length prefix was out of range.
     LengthPrefixOutOfRange,
 
-    /// An error decoding a packet.
+    /// There was an error decoding a packet.
     InvalidPacket(enc::Error),
+
+    /// A length-prefixed packet's body was shorter than the declared length prefix.
+    ///
+    /// The `declared` field is the byte length the packet's length prefix announced. The `unread`
+    /// field is the number of bytes left in the bounded reader after [Packet::decode_from_read]
+    /// returned. Indicates a buggy [Packet] implementation that under-read its body.
+    PacketUnderRead { declared: usize, unread: usize },
 
     /// The encoded boolean value was invalid. (must be 0 or 1)
     InvalidBool(u8),
@@ -78,4 +88,17 @@ impl Display for DecodingError {
     }
 }
 
-impl std::error::Error for DecodingError {}
+impl std::error::Error for DecodingError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::Stream(error) => Some(error),
+            Self::InvalidPacket(error) => Some(error),
+            Self::InvalidString(error) => Some(error),
+            Self::InvalidWireType { .. }
+            | Self::ValueOutOfRange
+            | Self::LengthPrefixOutOfRange
+            | Self::PacketUnderRead { .. }
+            | Self::InvalidBool(_) => None,
+        }
+    }
+}

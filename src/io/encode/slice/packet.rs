@@ -25,9 +25,8 @@ impl<P: Packet> Encoder<'_, Vec<P>> {
 
 impl<P: Packet> EncodedLen for Encoder<'_, Vec<P>> {
     fn encoded_len(&self) -> Result<usize, Error> {
-        let elements: usize = self.elements_len()?;
-        let header: ListHeader = ListHeader::new(P::wire(), elements);
-        Ok(header.encoded_len()? + elements)
+        let header: ListHeader = self.list_header()?;
+        Ok(header.encoded_len()? + header.size())
     }
 }
 
@@ -37,7 +36,8 @@ impl<P: Packet> EncodeToSlice for Encoder<'_, Vec<P>> {
         let mut offset: usize = unsafe { header.encode_to_slice_unchecked(target)? };
         for element in self.value.iter() {
             let encoder: Encoder<'_, P> = Encoder::new(element, self.fixed);
-            offset += unsafe { encoder.encode_to_slice_unchecked(&mut target[offset..])? };
+            offset +=
+                unsafe { encoder.encode_to_slice_unchecked(target.get_unchecked_mut(offset..))? };
         }
         Ok(offset)
     }

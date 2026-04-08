@@ -1,5 +1,5 @@
 use crate::Packet;
-use crate::io::DecodingError::{InvalidPacket, InvalidWireType};
+use crate::io::DecodingError::InvalidWireType;
 use crate::io::WireType::LengthPrefixed;
 use crate::io::{Decoder, DecodingError, WireType};
 use enc::DecodeFromReadPrefix;
@@ -27,12 +27,25 @@ impl Decoder {
                     .value();
                 const _: () = assert!(usize::BITS <= 64);
                 let mut r: Take<&mut R> = r.take(prefix as u64);
-                P::decode_from_read(&mut r).map_err(DecodingError::from_packet_error)
+                let result: P =
+                    P::decode_from_read(&mut r).map_err(DecodingError::from_packet_error)?;
+                let unread: u64 = r.limit();
+                if unread != 0 {
+                    return Err(DecodingError::PacketUnderRead {
+                        declared: prefix,
+                        unread: unread as usize,
+                    });
+                }
+                Ok(result)
             } else {
-                Ok(P::decode_from_read_prefix_with_first_byte(r, first).map_err(InvalidPacket)?)
+                P::decode_from_read_prefix_with_first_byte(r, first)
+                    .map_err(DecodingError::from_packet_error)
             }
         } else {
-            Err(InvalidWireType(wire))
+            Err(InvalidWireType {
+                semantic: "Packet",
+                wire,
+            })
         }
     }
 }
