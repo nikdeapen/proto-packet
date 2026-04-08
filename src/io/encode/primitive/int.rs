@@ -14,6 +14,19 @@ macro_rules! encode {
             const MAX_ENCODED_LEN: usize = $var_int::MAX_ENCODED_LEN;
         }
 
+        // The stack buffer used by `impl_encode_to_write_stack_buf!` is sized to
+        // `MAX_ENCODED_LEN`, so it must be at least as large as `FIXED_ENCODED_LEN`
+        // for the fixed encoding to fit.
+        const _: () = assert!(
+            Encoder::<'_, $primitive>::MAX_ENCODED_LEN
+                >= Encoder::<'_, $primitive>::FIXED_ENCODED_LEN,
+            concat!(
+                "Encoder<'_, ",
+                stringify!($primitive),
+                ">: MAX_ENCODED_LEN must be >= FIXED_ENCODED_LEN.",
+            ),
+        );
+
         impl EncodedLen for Encoder<'_, $primitive> {
             fn encoded_len(&self) -> Result<usize, Error> {
                 if self.fixed {
@@ -27,8 +40,12 @@ macro_rules! encode {
         impl EncodeToSlice for Encoder<'_, $primitive> {
             unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
                 if self.fixed {
-                    (&mut target[..Self::FIXED_ENCODED_LEN])
-                        .copy_from_slice(&self.value.to_le_bytes());
+                    unsafe {
+                        target
+                            .as_mut_ptr()
+                            .cast::<$primitive>()
+                            .write_unaligned(self.value.to_le());
+                    }
                     Ok(Self::FIXED_ENCODED_LEN)
                 } else {
                     unsafe { $var_int::$convert(*self.value).encode_to_slice_unchecked(target) }
@@ -60,170 +77,217 @@ mod tests {
 
     #[test]
     fn encode_u16() {
-        let test_cases: Vec<(u16, bool, Vec<u8>)> = [0u16, 0x7F, 0xFF, u16::MAX]
-            .iter()
-            .flat_map(|value| [(value, true), (value, false)])
-            .map(|(value, fixed)| {
-                let expected: Vec<u8> = if fixed {
-                    value.to_le_bytes().to_vec()
-                } else {
-                    VarInt16::from(value).encode_as_vec().unwrap()
-                };
-                (*value, fixed, expected)
-            })
-            .collect();
+        let cases: &[(u16, bool)] = &[
+            (0, true),
+            (0, false),
+            (0x7F, true),
+            (0x7F, false),
+            (0xFF, true),
+            (0xFF, false),
+            (u16::MAX, true),
+            (u16::MAX, false),
+        ];
 
-        for (value, fixed, expected) in &test_cases {
+        for (value, fixed) in cases {
+            let expected: Vec<u8> = if *fixed {
+                value.to_le_bytes().to_vec()
+            } else {
+                VarInt16::from(*value).encode_as_vec().unwrap()
+            };
             let encoder: Encoder<'_, u16> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, expected.as_slice());
+            test::test_encode(&encoder, &expected);
         }
     }
 
     #[test]
     fn encode_u32() {
-        let test_cases: Vec<(u32, bool, Vec<u8>)> = [0u32, 0x7F, 0xFF, u32::MAX]
-            .iter()
-            .flat_map(|value| [(value, true), (value, false)])
-            .map(|(value, fixed)| {
-                let expected: Vec<u8> = if fixed {
-                    value.to_le_bytes().to_vec()
-                } else {
-                    VarInt32::from(value).encode_as_vec().unwrap()
-                };
-                (*value, fixed, expected)
-            })
-            .collect();
+        let cases: &[(u32, bool)] = &[
+            (0, true),
+            (0, false),
+            (0x7F, true),
+            (0x7F, false),
+            (0xFF, true),
+            (0xFF, false),
+            (u32::MAX, true),
+            (u32::MAX, false),
+        ];
 
-        for (value, fixed, expected) in &test_cases {
+        for (value, fixed) in cases {
+            let expected: Vec<u8> = if *fixed {
+                value.to_le_bytes().to_vec()
+            } else {
+                VarInt32::from(*value).encode_as_vec().unwrap()
+            };
             let encoder: Encoder<'_, u32> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, expected.as_slice());
+            test::test_encode(&encoder, &expected);
         }
     }
 
     #[test]
     fn encode_u64() {
-        let test_cases: Vec<(u64, bool, Vec<u8>)> = [0u64, 0x7F, 0xFF, u64::MAX]
-            .iter()
-            .flat_map(|value| [(value, true), (value, false)])
-            .map(|(value, fixed)| {
-                let expected: Vec<u8> = if fixed {
-                    value.to_le_bytes().to_vec()
-                } else {
-                    VarInt64::from(value).encode_as_vec().unwrap()
-                };
-                (*value, fixed, expected)
-            })
-            .collect();
+        let cases: &[(u64, bool)] = &[
+            (0, true),
+            (0, false),
+            (0x7F, true),
+            (0x7F, false),
+            (0xFF, true),
+            (0xFF, false),
+            (u64::MAX, true),
+            (u64::MAX, false),
+        ];
 
-        for (value, fixed, expected) in &test_cases {
+        for (value, fixed) in cases {
+            let expected: Vec<u8> = if *fixed {
+                value.to_le_bytes().to_vec()
+            } else {
+                VarInt64::from(*value).encode_as_vec().unwrap()
+            };
             let encoder: Encoder<'_, u64> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, expected.as_slice());
+            test::test_encode(&encoder, &expected);
         }
     }
 
     #[test]
     fn encode_u128() {
-        let test_cases: Vec<(u128, bool, Vec<u8>)> = [0u128, 0x7F, 0xFF, u128::MAX]
-            .iter()
-            .flat_map(|value| [(value, true), (value, false)])
-            .map(|(value, fixed)| {
-                let expected: Vec<u8> = if fixed {
-                    value.to_le_bytes().to_vec()
-                } else {
-                    VarInt128::from(value).encode_as_vec().unwrap()
-                };
-                (*value, fixed, expected)
-            })
-            .collect();
+        let cases: &[(u128, bool)] = &[
+            (0, true),
+            (0, false),
+            (0x7F, true),
+            (0x7F, false),
+            (0xFF, true),
+            (0xFF, false),
+            (u128::MAX, true),
+            (u128::MAX, false),
+        ];
 
-        for (value, fixed, expected) in &test_cases {
+        for (value, fixed) in cases {
+            let expected: Vec<u8> = if *fixed {
+                value.to_le_bytes().to_vec()
+            } else {
+                VarInt128::from(*value).encode_as_vec().unwrap()
+            };
             let encoder: Encoder<'_, u128> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, expected.as_slice());
+            test::test_encode(&encoder, &expected);
         }
     }
 
     #[test]
     fn encode_i16() {
-        let test_cases: Vec<(i16, bool, Vec<u8>)> = [0i16, -1, 1, 0x7F, 0xFF, i16::MIN, i16::MAX]
-            .iter()
-            .flat_map(|value| [(value, true), (value, false)])
-            .map(|(value, fixed)| {
-                let expected: Vec<u8> = if fixed {
-                    value.to_le_bytes().to_vec()
-                } else {
-                    VarInt16::from_zigzag(*value).encode_as_vec().unwrap()
-                };
-                (*value, fixed, expected)
-            })
-            .collect();
+        let cases: &[(i16, bool)] = &[
+            (0, true),
+            (0, false),
+            (-1, true),
+            (-1, false),
+            (1, true),
+            (1, false),
+            (0x7F, true),
+            (0x7F, false),
+            (0xFF, true),
+            (0xFF, false),
+            (i16::MIN, true),
+            (i16::MIN, false),
+            (i16::MAX, true),
+            (i16::MAX, false),
+        ];
 
-        for (value, fixed, expected) in &test_cases {
+        for (value, fixed) in cases {
+            let expected: Vec<u8> = if *fixed {
+                value.to_le_bytes().to_vec()
+            } else {
+                VarInt16::from_zigzag(*value).encode_as_vec().unwrap()
+            };
             let encoder: Encoder<'_, i16> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, expected.as_slice());
+            test::test_encode(&encoder, &expected);
         }
     }
 
     #[test]
     fn encode_i32() {
-        let test_cases: Vec<(i32, bool, Vec<u8>)> = [0i32, -1, 1, 0x7F, 0xFF, i32::MIN, i32::MAX]
-            .iter()
-            .flat_map(|value| [(value, true), (value, false)])
-            .map(|(value, fixed)| {
-                let expected: Vec<u8> = if fixed {
-                    value.to_le_bytes().to_vec()
-                } else {
-                    VarInt32::from_zigzag(*value).encode_as_vec().unwrap()
-                };
-                (*value, fixed, expected)
-            })
-            .collect();
+        let cases: &[(i32, bool)] = &[
+            (0, true),
+            (0, false),
+            (-1, true),
+            (-1, false),
+            (1, true),
+            (1, false),
+            (0x7F, true),
+            (0x7F, false),
+            (0xFF, true),
+            (0xFF, false),
+            (i32::MIN, true),
+            (i32::MIN, false),
+            (i32::MAX, true),
+            (i32::MAX, false),
+        ];
 
-        for (value, fixed, expected) in &test_cases {
+        for (value, fixed) in cases {
+            let expected: Vec<u8> = if *fixed {
+                value.to_le_bytes().to_vec()
+            } else {
+                VarInt32::from_zigzag(*value).encode_as_vec().unwrap()
+            };
             let encoder: Encoder<'_, i32> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, expected.as_slice());
+            test::test_encode(&encoder, &expected);
         }
     }
 
     #[test]
     fn encode_i64() {
-        let test_cases: Vec<(i64, bool, Vec<u8>)> = [0i64, -1, 1, 0x7F, 0xFF, i64::MIN, i64::MAX]
-            .iter()
-            .flat_map(|value| [(value, true), (value, false)])
-            .map(|(value, fixed)| {
-                let expected: Vec<u8> = if fixed {
-                    value.to_le_bytes().to_vec()
-                } else {
-                    VarInt64::from_zigzag(*value).encode_as_vec().unwrap()
-                };
-                (*value, fixed, expected)
-            })
-            .collect();
+        let cases: &[(i64, bool)] = &[
+            (0, true),
+            (0, false),
+            (-1, true),
+            (-1, false),
+            (1, true),
+            (1, false),
+            (0x7F, true),
+            (0x7F, false),
+            (0xFF, true),
+            (0xFF, false),
+            (i64::MIN, true),
+            (i64::MIN, false),
+            (i64::MAX, true),
+            (i64::MAX, false),
+        ];
 
-        for (value, fixed, expected) in &test_cases {
+        for (value, fixed) in cases {
+            let expected: Vec<u8> = if *fixed {
+                value.to_le_bytes().to_vec()
+            } else {
+                VarInt64::from_zigzag(*value).encode_as_vec().unwrap()
+            };
             let encoder: Encoder<'_, i64> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, expected.as_slice());
+            test::test_encode(&encoder, &expected);
         }
     }
 
     #[test]
     fn encode_i128() {
-        let test_cases: Vec<(i128, bool, Vec<u8>)> =
-            [0i128, -1, 1, 0x7F, 0xFF, i128::MIN, i128::MAX]
-                .iter()
-                .flat_map(|value| [(value, true), (value, false)])
-                .map(|(value, fixed)| {
-                    let expected: Vec<u8> = if fixed {
-                        value.to_le_bytes().to_vec()
-                    } else {
-                        VarInt128::from_zigzag(*value).encode_as_vec().unwrap()
-                    };
-                    (*value, fixed, expected)
-                })
-                .collect();
+        let cases: &[(i128, bool)] = &[
+            (0, true),
+            (0, false),
+            (-1, true),
+            (-1, false),
+            (1, true),
+            (1, false),
+            (0x7F, true),
+            (0x7F, false),
+            (0xFF, true),
+            (0xFF, false),
+            (i128::MIN, true),
+            (i128::MIN, false),
+            (i128::MAX, true),
+            (i128::MAX, false),
+        ];
 
-        for (value, fixed, expected) in &test_cases {
+        for (value, fixed) in cases {
+            let expected: Vec<u8> = if *fixed {
+                value.to_le_bytes().to_vec()
+            } else {
+                VarInt128::from_zigzag(*value).encode_as_vec().unwrap()
+            };
             let encoder: Encoder<'_, i128> = Encoder::new(value, *fixed);
-            test::test_encode(&encoder, expected.as_slice());
+            test::test_encode(&encoder, &expected);
         }
     }
 }

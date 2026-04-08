@@ -24,6 +24,21 @@ impl ListHeader {
 
     /// The overflow sentinel value in the low 5 bits. (31)
     const OVERFLOW_SENTINEL: u8 = 0x1F;
+
+    /// The maximum value returned by [Self::element_capacity_hint].
+    ///
+    /// Bounds the initial `Vec::with_capacity` allocation when decoding lists from untrusted
+    /// input. Without this clamp, an attacker-controlled header with a large `size` could
+    /// trigger a multi-gigabyte allocation before the decoder reads any elements. The vector
+    /// will still grow on demand as elements are pushed, so legitimate large lists decode
+    /// correctly — they just pay a few reallocations.
+    pub(crate) const MAX_CAPACITY_HINT: usize = 4096;
+
+    /// The minimum value returned by [Self::element_capacity_hint] when the list is non-empty.
+    ///
+    /// Floors the hint so that small lists skip the first few `Vec` reallocations. Empty lists
+    /// (`size == 0`) still return `0`.
+    pub(crate) const MIN_CAPACITY_HINT: usize = 4;
 }
 
 impl ListHeader {
@@ -46,6 +61,38 @@ impl ListHeader {
     /// Gets the size of the list. (in bytes)
     pub const fn size(self) -> usize {
         self.size
+    }
+
+    /// Returns a bounded capacity hint for `Vec::with_capacity` when decoding the list.
+    ///
+    /// Computed from the element wire type and the total byte size. Exact for fixed-width wire
+    /// types; a typical-case estimate for variable-width wire types ([WireType::VarInt],
+    /// [WireType::LengthPrefixed], [WireType::List]). The result is clamped to
+    /// [Self::MAX_CAPACITY_HINT] so an attacker-controlled `size` cannot trigger an arbitrarily
+    /// large initial allocation, and floored at [Self::MIN_CAPACITY_HINT] when the list is
+    /// non-empty so small lists skip the first few `Vec` reallocations. An empty list returns
+    /// `0`.
+    pub(crate) const fn element_capacity_hint(self) -> usize {
+        if self.size == 0 {
+            return 0;
+        }
+        let raw: usize = match self.wire {
+            WireType::Fixed1Byte => self.size,
+            WireType::Fixed2Byte => self.size / 2,
+            WireType::Fixed4Byte => self.size / 4,
+            WireType::Fixed8Byte => self.size / 8,
+            WireType::Fixed16Byte => self.size / 16,
+            WireType::VarInt => self.size / 2,
+            WireType::LengthPrefixed => self.size / 4,
+            WireType::List => self.size / 4,
+        };
+        if raw > Self::MAX_CAPACITY_HINT {
+            Self::MAX_CAPACITY_HINT
+        } else if raw < Self::MIN_CAPACITY_HINT {
+            Self::MIN_CAPACITY_HINT
+        } else {
+            raw
+        }
     }
 }
 
@@ -123,7 +170,9 @@ impl enc::DecodeFromReadPrefix for ListHeader {
             let first: u8 = read_single_byte(r)?;
             let adjusted: usize =
                 VarIntSize::decode_from_read_prefix_with_first_byte(r, first)?.value();
-            adjusted + Self::MAX_SINGLE_BYTE_SIZE
+            adjusted
+                .checked_add(Self::MAX_SINGLE_BYTE_SIZE)
+                .ok_or(Error::InvalidEncodedData { reason: None })?
         };
         Ok(Self { wire, size })
     }

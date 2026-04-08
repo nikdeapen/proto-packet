@@ -31,7 +31,8 @@ impl EncodeToSlice for Encoder<'_, Vec<String>> {
         let mut offset: usize = unsafe { header.encode_to_slice_unchecked(target)? };
         for element in self.value.iter() {
             let encoder: Encoder<'_, String> = Encoder::new(element, self.fixed);
-            offset += unsafe { encoder.encode_to_slice_unchecked(&mut target[offset..])? };
+            offset +=
+                unsafe { encoder.encode_to_slice_unchecked(target.get_unchecked_mut(offset..))? };
         }
         Ok(offset)
     }
@@ -60,19 +61,19 @@ mod tests {
 
     #[test]
     fn encode_string_slice() {
-        let value: Vec<String> = vec!["ab".to_string(), "c".to_string()];
-        let encoder: Encoder<'_, Vec<String>> = Encoder::new(&value, false);
-        // ListHeader: wire=LengthPrefixed(6), size=5 -> 0b110_00101 = 0xC5
-        // Element "ab": len_prefix=2, data=b"ab" -> [2, b'a', b'b']
-        // Element "c":  len_prefix=1, data=b"c"  -> [1, b'c']
-        test::test_encode(&encoder, &[0xC5, 2, b'a', b'b', 1, b'c']);
-    }
+        let cases: &[(&[&str], &[u8])] = &[
+            // empty: ListHeader{LengthPrefixed, 0} = 0xC0
+            (&[], &[0xC0]),
+            // ["ab", "c"]: each element is its own length-prefixed string.
+            // "ab" -> [2, b'a', b'b'] (3 bytes), "c" -> [1, b'c'] (2 bytes), total 5 body bytes.
+            // ListHeader{LengthPrefixed, 5} = 0xC0 | 5 = 0xC5
+            (&["ab", "c"], &[0xC5, 2, b'a', b'b', 1, b'c']),
+        ];
 
-    #[test]
-    fn encode_string_slice_empty() {
-        let value: Vec<String> = vec![];
-        let encoder: Encoder<'_, Vec<String>> = Encoder::new(&value, false);
-        // ListHeader: wire=LengthPrefixed(6), size=0 -> 0b110_00000 = 0xC0
-        test::test_encode(&encoder, &[0xC0]);
+        for (value, expected) in cases {
+            let value: Vec<String> = value.iter().map(|s| (*s).to_string()).collect();
+            let encoder: Encoder<'_, Vec<String>> = Encoder::new(&value, false);
+            test::test_encode(&encoder, expected);
+        }
     }
 }

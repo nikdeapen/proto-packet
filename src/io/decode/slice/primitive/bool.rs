@@ -20,7 +20,10 @@ impl Decoder {
         R: Read,
     {
         if wire != LengthPrefixed {
-            return Err(InvalidWireType(wire));
+            return Err(InvalidWireType {
+                semantic: "Vec<bool>",
+                wire,
+            });
         }
 
         let len: usize = VarIntSize::decode_from_read_prefix_with_first_byte(r, first)
@@ -80,7 +83,10 @@ mod tests {
             decoder.decode_bool_slice(VarInt, &mut &[][..], 0);
         assert!(matches!(
             result,
-            Err(DecodingError::InvalidWireType(VarInt))
+            Err(DecodingError::InvalidWireType {
+                semantic: "Vec<bool>",
+                wire: VarInt
+            })
         ));
     }
 }

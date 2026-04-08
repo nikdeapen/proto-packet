@@ -1,4 +1,4 @@
-use crate::packet::Packet;
+use crate::Packet;
 
 /// A struct.
 pub trait Struct: Packet {}

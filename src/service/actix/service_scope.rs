@@ -39,7 +39,7 @@ impl<S: 'static> ServiceScope<S> {
             let service: web::Data<Mutex<S>> = service.clone();
             let f: F = f.clone();
             async move {
-                let mut service = service.lock().unwrap();
+                let mut service = service.lock().unwrap_or_else(|e| e.into_inner());
                 handle_request::<I, O, _>(&body, |req| f(&mut *service, req))
             }
         };

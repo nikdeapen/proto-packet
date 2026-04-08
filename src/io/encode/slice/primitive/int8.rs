@@ -1,3 +1,13 @@
+//! # Wire Format
+//!
+//! `u8` and `i8` elements use the [`Fixed1Byte`](crate::io::WireType::Fixed1Byte) wire type,
+//! so the element count equals the byte count. This skips the
+//! [`ListHeader`](crate::io::ListHeader) (whose high 3 bits would just re-encode the
+//! already-known element wire type) and writes a raw [`VarIntSize`] length prefix followed by
+//! the element bytes. The result saves one byte per encoding for element counts in `31..=127`
+//! compared to a [`ListHeader`]-based encoding, and matches the byte length for all other
+//! sizes.
+
 use crate::io::Encoder;
 use enc::var_int::VarIntSize;
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
@@ -19,7 +29,13 @@ macro_rules! encode_single_byte_slice {
                 let prefix: usize =
                     unsafe { VarIntSize::from(len).encode_to_slice_unchecked(target)? };
                 let bytes: &[u8] = $to_bytes(self.value.as_slice());
-                target[prefix..prefix + len].copy_from_slice(bytes);
+                unsafe {
+                    std::ptr::copy_nonoverlapping(
+                        bytes.as_ptr(),
+                        target.as_mut_ptr().add(prefix),
+                        len,
+                    );
+                }
                 Ok(prefix + len)
             }
         }
@@ -57,22 +73,23 @@ mod tests {
 
     #[test]
     fn encode_u8_slice() {
-        let value: Vec<u8> = vec![1, 2, 3];
-        let encoder: Encoder<'_, Vec<u8>> = Encoder::new(&value, false);
-        test::test_encode(&encoder, &[3, 1, 2, 3]);
-    }
+        let cases: &[(&[u8], &[u8])] = &[(&[], &[0]), (&[1, 2, 3], &[3, 1, 2, 3])];
 
-    #[test]
-    fn encode_u8_slice_empty() {
-        let value: Vec<u8> = vec![];
-        let encoder: Encoder<'_, Vec<u8>> = Encoder::new(&value, false);
-        test::test_encode(&encoder, &[0]);
+        for (value, expected) in cases {
+            let value: Vec<u8> = value.to_vec();
+            let encoder: Encoder<'_, Vec<u8>> = Encoder::new(&value, false);
+            test::test_encode(&encoder, expected);
+        }
     }
 
     #[test]
     fn encode_i8_slice() {
-        let value: Vec<i8> = vec![-1, 0, 1];
-        let encoder: Encoder<'_, Vec<i8>> = Encoder::new(&value, false);
-        test::test_encode(&encoder, &[3, 0xFF, 0, 1]);
+        let cases: &[(&[i8], &[u8])] = &[(&[], &[0]), (&[-1, 0, 1], &[3, 0xFF, 0, 1])];
+
+        for (value, expected) in cases {
+            let value: Vec<i8> = value.to_vec();
+            let encoder: Encoder<'_, Vec<i8>> = Encoder::new(&value, false);
+            test::test_encode(&encoder, expected);
+        }
     }
 }

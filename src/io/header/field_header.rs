@@ -65,7 +65,7 @@ impl EncodedLen for FieldHeader {
         if self.is_single_byte() {
             Ok(1)
         } else {
-            let adjusted: u32 = self.tag.value() - Self::MAX_SINGLE_BYTE_TAG_NUMBER;
+            let adjusted: u32 = self.tag.value() - (Self::MAX_SINGLE_BYTE_TAG_NUMBER + 1);
             let tag_len: usize = VarInt32::from(adjusted).encoded_len()?;
             Ok(1 + tag_len)
         }
@@ -78,7 +78,7 @@ impl EncodeToSlice for FieldHeader {
         if self.is_single_byte() {
             Ok(1)
         } else {
-            let adjusted: u32 = self.tag.value() - Self::MAX_SINGLE_BYTE_TAG_NUMBER;
+            let adjusted: u32 = self.tag.value() - (Self::MAX_SINGLE_BYTE_TAG_NUMBER + 1);
             let written: usize =
                 unsafe { VarInt32::from(adjusted).encode_to_slice_unchecked(&mut target[1..])? };
             Ok(1 + written)
@@ -95,7 +95,7 @@ impl EncodeToWrite for FieldHeader {
         if self.is_single_byte() {
             Ok(1)
         } else {
-            let adjusted: u32 = self.tag.value() - Self::MAX_SINGLE_BYTE_TAG_NUMBER;
+            let adjusted: u32 = self.tag.value() - (Self::MAX_SINGLE_BYTE_TAG_NUMBER + 1);
             let written: usize = VarInt32::from(adjusted).encode_to_write(w)?;
             Ok(1 + written)
         }
@@ -115,7 +115,7 @@ impl enc::DecodeFromReadPrefix for FieldHeader {
             let first: u8 = read_single_byte(r)?;
             let adjusted: u32 =
                 VarInt32::decode_from_read_prefix_with_first_byte(r, first)?.value();
-            adjusted + Self::MAX_SINGLE_BYTE_TAG_NUMBER
+            adjusted + Self::MAX_SINGLE_BYTE_TAG_NUMBER + 1
         };
         let tag: TagNumber =
             TagNumber::new(tag_value).ok_or(Error::InvalidEncodedData { reason: None })?;

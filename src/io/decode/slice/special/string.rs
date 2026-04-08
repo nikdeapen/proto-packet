@@ -19,19 +19,25 @@ impl Decoder {
         R: Read,
     {
         if wire != List {
-            return Err(InvalidWireType(wire));
+            return Err(InvalidWireType {
+                semantic: "Vec<String>",
+                wire,
+            });
         }
 
         let header: ListHeader = ListHeader::decode_from_read_prefix_with_first_byte(r, first)
             .map_err(DecodingError::from_length_prefix_error)?;
 
         if header.wire() != WireType::LengthPrefixed {
-            return Err(InvalidWireType(header.wire()));
+            return Err(InvalidWireType {
+                semantic: "Vec<String>",
+                wire: header.wire(),
+            });
         }
 
         const _: () = assert!(usize::BITS <= 64);
         let mut r: Take<&mut R> = r.take(header.size() as u64);
-        let mut result: Vec<String> = Vec::new();
+        let mut result: Vec<String> = Vec::with_capacity(header.element_capacity_hint());
 
         while r.limit() > 0 {
             let first: u8 = read_single_byte(&mut r).map_err(DecodingError::from)?;
@@ -78,7 +84,10 @@ mod tests {
             decoder.decode_string_slice(VarInt, &mut &[][..], 0);
         assert!(matches!(
             result,
-            Err(DecodingError::InvalidWireType(VarInt))
+            Err(DecodingError::InvalidWireType {
+                semantic: "Vec<String>",
+                wire: VarInt
+            })
         ));
     }
 }

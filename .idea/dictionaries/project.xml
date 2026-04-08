@@ -3,6 +3,7 @@
     <words>
       <w>roundtrip</w>
       <w>rustfmt</w>
+      <w>varint</w>
     </words>
   </dictionary>
 </component>

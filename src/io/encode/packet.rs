@@ -5,32 +5,51 @@ use enc::var_int::VarIntSize;
 use enc::{EncodeToSlice, EncodeToWrite, EncodedLen, Error};
 use std::io::Write;
 
+impl<P: Packet> Encoder<'_, P> {
+    //! Utilities
+
+    /// Gets the byte length of the length prefix.
+    ///
+    /// Returns `0` if [P] is not length-prefixed.
+    fn prefix_len(body_len: usize) -> Result<usize, Error> {
+        if P::wire() == LengthPrefixed {
+            VarIntSize::from(body_len).encoded_len()
+        } else {
+            Ok(0)
+        }
+    }
+
+    /// Gets the length-prefix for the value.
+    ///
+    /// Returns `None` if [P] is not length-prefixed.
+    fn length_prefix(&self) -> Result<Option<VarIntSize>, Error> {
+        if P::wire() == LengthPrefixed {
+            Ok(Some(VarIntSize::from(self.value.encoded_len()?)))
+        } else {
+            Ok(None)
+        }
+    }
+}
+
 impl<P: Packet> EncodedLen for Encoder<'_, P> {
     fn encoded_len(&self) -> Result<usize, Error> {
-        let value: usize = self.value.encoded_len()?;
-        let prefix: usize = if P::wire() == LengthPrefixed {
-            VarIntSize::from(value).encoded_len()?
-        } else {
-            0
-        };
-        Ok(prefix + value)
+        let body_len: usize = self.value.encoded_len()?;
+        let prefix_len: usize = Self::prefix_len(body_len)?;
+        Ok(prefix_len + body_len)
     }
 }
 
 impl<P: Packet> EncodeToSlice for Encoder<'_, P> {
     unsafe fn encode_to_slice_unchecked(&self, target: &mut [u8]) -> Result<usize, Error> {
-        if P::wire() == LengthPrefixed {
-            let value: usize = self.value.encoded_len()?;
-            let prefix: usize =
-                unsafe { VarIntSize::from(value).encode_to_slice_unchecked(target)? };
-            unsafe {
-                self.value
-                    .encode_to_slice_unchecked(&mut target[prefix..])?;
-            }
-            Ok(prefix + value)
-        } else {
-            unsafe { self.value.encode_to_slice_unchecked(target) }
-        }
+        let prefix_len: usize = match self.length_prefix()? {
+            Some(varint) => unsafe { varint.encode_to_slice_unchecked(target)? },
+            None => 0,
+        };
+        let written: usize = unsafe {
+            self.value
+                .encode_to_slice_unchecked(target.get_unchecked_mut(prefix_len..))?
+        };
+        Ok(prefix_len + written)
     }
 }
 
@@ -39,13 +58,11 @@ impl<P: Packet> EncodeToWrite for Encoder<'_, P> {
     where
         W: Write,
     {
-        if P::wire() == LengthPrefixed {
-            let value: usize = self.value.encoded_len()?;
-            let prefix: usize = VarIntSize::from(value).encode_to_write(w)?;
-            self.value.encode_to_write(w)?;
-            Ok(prefix + value)
-        } else {
-            self.value.encode_to_write(w)
-        }
+        let prefix_len: usize = match self.length_prefix()? {
+            Some(varint) => varint.encode_to_write(w)?,
+            None => 0,
+        };
+        let written: usize = self.value.encode_to_write(w)?;
+        Ok(prefix_len + written)
     }
 }

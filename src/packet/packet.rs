@@ -5,13 +5,16 @@ use std::hash::Hash;
 
 /// A packet.
 pub trait Packet:
-    Clone
+    'static
+    + Clone
     + Ord
     + PartialOrd
     + Eq
     + PartialEq
     + Hash
     + Debug
+    + Sync
+    + Send
     + EncodedLen
     + EncodeToSlice
     + EncodeToWrite

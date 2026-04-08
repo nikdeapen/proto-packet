@@ -21,19 +21,25 @@ impl Decoder {
         R: Read,
     {
         if wire != List {
-            return Err(InvalidWireType(wire));
+            return Err(InvalidWireType {
+                semantic: "Vec<Packet>",
+                wire,
+            });
         }
 
         let header: ListHeader = ListHeader::decode_from_read_prefix_with_first_byte(r, first)
             .map_err(DecodingError::from_length_prefix_error)?;
 
         if header.wire() != P::wire() {
-            return Err(InvalidWireType(header.wire()));
+            return Err(InvalidWireType {
+                semantic: "Vec<Packet>",
+                wire: header.wire(),
+            });
         }
 
         const _: () = assert!(usize::BITS <= 64);
         let mut r: Take<&mut R> = r.take(header.size() as u64);
-        let mut result: Vec<P> = Vec::new();
+        let mut result: Vec<P> = Vec::with_capacity(header.element_capacity_hint());
 
         while r.limit() > 0 {
             let first: u8 = read_single_byte(&mut r).map_err(DecodingError::from)?;
