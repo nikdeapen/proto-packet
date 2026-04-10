@@ -37,16 +37,15 @@ impl<S: 'static> ServiceScope<S> {
         F: Fn(&mut S, I) -> Result<O, ServiceError> + 'static + Clone,
     {
         let service: web::Data<Mutex<S>> = self.service.clone();
-        let handler =
-            move |body: web::Bytes, query: web::Query<HashMap<String, String>>| {
-                let service: web::Data<Mutex<S>> = service.clone();
-                let f: F = f.clone();
-                let fmt: String = query.get("fmt").cloned().unwrap_or_default();
-                async move {
-                    let mut service = service.lock().unwrap_or_else(|e| e.into_inner());
-                    handle_request::<I, O, _>(&body, &fmt, |req| f(&mut *service, req))
-                }
-            };
+        let handler = move |body: web::Bytes, query: web::Query<HashMap<String, String>>| {
+            let service: web::Data<Mutex<S>> = service.clone();
+            let f: F = f.clone();
+            let fmt: String = query.get("fmt").cloned().unwrap_or_default();
+            async move {
+                let mut service = service.lock().unwrap_or_else(|e| e.into_inner());
+                handle_request::<I, O, _>(&body, &fmt, |req| f(&mut *service, req))
+            }
+        };
         self.scope = self.scope.route(path, web::post().to(handler));
         self
     }

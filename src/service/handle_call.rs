@@ -33,6 +33,8 @@ where
     let mut reader: Cursor<&[u8]> = Cursor::new(request);
     let request: I = I::decode_from_read(&mut reader).map_err(ServiceDispatchError::decode)?;
     let result: O = service_call(request)?;
-    let response: Vec<u8> = result.encode_as_vec().map_err(ServiceDispatchError::encode)?;
+    let response: Vec<u8> = result
+        .encode_as_vec()
+        .map_err(ServiceDispatchError::encode)?;
     Ok(response)
 }
