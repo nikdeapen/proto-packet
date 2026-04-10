@@ -17,6 +17,7 @@ use std::io::{Read, Write};
 /// The wire format is [`WireType::Fixed4Byte`] and uses little-ending encoding. The values for
 /// `NaN` and `+-0` will be normalized for `[]u8` comparison of serialized data.
 #[derive(Copy, Clone, Debug, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Float32 {
     value: f32,
 }

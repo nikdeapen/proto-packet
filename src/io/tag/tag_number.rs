@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
 use std::fmt::{Debug, Display, Formatter};
 
 /// A tag number.
-#[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TagNumber {
     value: u32,
 }
