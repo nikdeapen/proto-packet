@@ -49,6 +49,15 @@
   hard cap (e.g., 64 MB), so memory grows only as bytes are actually delivered. Decision needed on the cap
   value and whether it should be per-`Decoder` or a constant.
 
+- **Decoding `Vec<bool>` fails with `InvalidWireType`:** Decoding a struct containing a `Vec<bool>` field fails with
+  `InvalidWireType { semantic: "Vec<bool>", wire: List }`. Encoding works correctly but the round-trip decode rejects
+  the wire type. The encoder uses `LengthPrefixed` for `Vec<bool>` but the decoder expects `List`.
+
+- **Enums and variants should implement `Ord`/`PartialOrd` by tag number instead of deriving.** The derived
+  `Ord`/`PartialOrd` orders by variant declaration order, which puts `Unrecognized` before all named cases. A macro
+  should generate a manual `Ord`/`PartialOrd` impl that orders by tag number (via `WithTagNumber::tag()`). This gives a
+  natural numeric ordering where `Unrecognized(99)` sorts after `Five(5)`.
+
 ## Encoding
 
 - **Redundant `encoded_len()` calls:** When encoding `Vec<P>` of length-prefixed packets, each element's
