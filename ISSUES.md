@@ -14,11 +14,6 @@
   bound on `Packet` and would let `+ 'static` be added back. Decision deferred — needs profiling to know
   whether the optimization is worth the complexity.
 
-- **Re-add `+ 'static` to `Packet`:** Removed during review pending the arena decision above. Multithreaded
-  async use (`tokio::spawn`, channels, `Arc<dyn Trait>`) generally requires `'static`. Add back once the
-  arena field-type design is settled — both viable arena directions (above) are compatible with `'static`
-  because both use owned handles, not borrowed references.
-
 ## Documentation
 
 - **Missing crate-level doc comment in `lib.rs`:** As a published crate pitched as a protobuf alternative, the
@@ -52,11 +47,6 @@
 - **Decoding `Vec<bool>` fails with `InvalidWireType`:** Decoding a struct containing a `Vec<bool>` field fails with
   `InvalidWireType { semantic: "Vec<bool>", wire: List }`. Encoding works correctly but the round-trip decode rejects
   the wire type. The encoder uses `LengthPrefixed` for `Vec<bool>` but the decoder expects `List`.
-
-- **Enums and variants should implement `Ord`/`PartialOrd` by tag number instead of deriving.** The derived
-  `Ord`/`PartialOrd` orders by variant declaration order, which puts `Unrecognized` before all named cases. A macro
-  should generate a manual `Ord`/`PartialOrd` impl that orders by tag number (via `WithTagNumber::tag()`). This gives a
-  natural numeric ordering where `Unrecognized(99)` sorts after `Five(5)`.
 
 ## Encoding
 

@@ -9,5 +9,3 @@ mod encode;
 mod header;
 mod tag;
 mod wire;
-
-mod macros;
