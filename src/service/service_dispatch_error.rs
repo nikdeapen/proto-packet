@@ -5,13 +5,25 @@ use std::fmt::{Display, Formatter};
 #[derive(Debug)]
 pub enum ServiceDispatchError {
     /// An error decoding the request.
-    Decode(serde_json::Error),
+    Decode(Box<dyn std::error::Error + Send + Sync>),
 
     /// The service call returned an error.
     Service(ServiceError),
 
     /// An error encoding the response.
-    Encode(serde_json::Error),
+    Encode(Box<dyn std::error::Error + Send + Sync>),
+}
+
+impl ServiceDispatchError {
+    /// Creates a decode error.
+    pub fn decode<E: std::error::Error + Send + Sync + 'static>(error: E) -> Self {
+        Self::Decode(Box::new(error))
+    }
+
+    /// Creates an encode error.
+    pub fn encode<E: std::error::Error + Send + Sync + 'static>(error: E) -> Self {
+        Self::Encode(Box::new(error))
+    }
 }
 
 impl From<ServiceError> for ServiceDispatchError {
@@ -30,12 +42,4 @@ impl Display for ServiceDispatchError {
     }
 }
 
-impl std::error::Error for ServiceDispatchError {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            Self::Decode(error) => Some(error),
-            Self::Service(error) => Some(error),
-            Self::Encode(error) => Some(error),
-        }
-    }
-}
+impl std::error::Error for ServiceDispatchError {}

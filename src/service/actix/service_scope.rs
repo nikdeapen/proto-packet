@@ -1,7 +1,9 @@
 use crate::service::ServiceError;
 use actix_web::web;
+use enc::{DecodeFromRead, EncodeToSlice};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
+use std::collections::HashMap;
 use std::sync::Mutex;
 
 use super::handle_request;
@@ -30,17 +32,18 @@ impl<S: 'static> ServiceScope<S> {
     /// Registers a service call at the given `path`.
     pub fn call<I, O, F>(mut self, path: &str, f: F) -> Self
     where
-        I: DeserializeOwned + 'static,
-        O: Serialize + 'static,
+        I: DeserializeOwned + DecodeFromRead + 'static,
+        O: Serialize + EncodeToSlice + 'static,
         F: Fn(&mut S, I) -> Result<O, ServiceError> + 'static + Clone,
     {
         let service: web::Data<Mutex<S>> = self.service.clone();
-        let handler = move |body: web::Bytes| {
+        let handler = move |body: web::Bytes, query: web::Query<HashMap<String, String>>| {
             let service: web::Data<Mutex<S>> = service.clone();
             let f: F = f.clone();
+            let fmt: String = query.get("fmt").cloned().unwrap_or_default();
             async move {
                 let mut service = service.lock().unwrap_or_else(|e| e.into_inner());
-                handle_request::<I, O, _>(&body, |req| f(&mut *service, req))
+                handle_request::<I, O, _>(&body, &fmt, |req| f(&mut *service, req))
             }
         };
         self.scope = self.scope.route(path, web::post().to(handler));
